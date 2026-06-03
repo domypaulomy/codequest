@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>CodeQuest Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#05060F;
+  --bg2:#0A0C1E;
+  --bg3:#0E1028;
+  --card:#111427;
+  --card2:#161933;
+  --glass:rgba(255,255,255,0.04);
+  --glass2:rgba(255,255,255,0.07);
+  --border:rgba(99,102,241,0.25);
+  --border2:rgba(99,102,241,0.45);
+  --neon:#6366F1;
+  --neon2:#818CF8;
+  --cyan:#22D3EE;
+  --pink:#EC4899;
+  --gold:#F59E0B;
+  --green:#10B981;
+  --red:#EF4444;
+  --orange:#F97316;
+  --text:#E2E8F0;
+  --muted:#64748B;
+  --muted2:#94A3B8;
+  --font-display:'Orbitron',sans-serif;
+  --font-body:'Exo 2',sans-serif;
+  --r:16px;
+  --r2:12px;
+  --r3:24px;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:var(--font-body);color:var(--text);position:relative;}
+
+/* CANVAS BG */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+/* ============================
+   FEEDBACK BUTTON (floating)
+   ============================ */
+#feedback-fab{
+  position:fixed;bottom:28px;right:16px;z-index:200;
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,#0891B2,#06B6D4);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(34,211,238,0.45);
+  transition:all 0.25s cubic-bezier(.23,1,.32,1);
+  animation:fab-float 3s ease-in-out infinite;
+}
+#feedback-fab:hover{transform:scale(1.12);box-shadow:0 8px 32px rgba(34,211,238,0.65);}
+#feedback-fab:active{transform:scale(0.93);}
+@keyframes fab-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#feedback-fab svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ============================
+   FEEDBACK MODAL
+   ============================ */
+#feedback-modal{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,0);
+  pointer-events:none;
+  transition:background 0.3s;
+}
+#feedback-modal.show{
+  background:rgba(0,0,0,0.7);
+  pointer-events:all;
+  backdrop-filter:blur(4px);
+}
+.feedback-sheet{
+  width:100%;max-width:480px;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  border:1px solid var(--border);
+  border-bottom:none;
+  padding:0 0 32px;
+  transform:translateY(100%);
+  transition:transform 0.4s cubic-bezier(.23,1,.32,1);
+  position:relative;
+  overflow:hidden;
+}
+.feedback-sheet::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--neon),var(--cyan),var(--pink),var(--neon));
+  background-size:200% 100%;
+  animation:gradShift 3s linear infinite;
+}
+#feedback-modal.show .feedback-sheet{transform:translateY(0);}
+
+.fb-handle{
+  width:40px;height:4px;border-radius:2px;
+  background:rgba(255,255,255,0.15);
+  margin:12px auto 0;
+}
+.fb-header{
+  padding:16px 20px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.fb-title{
+  font-family:var(--font-display);font-size:15px;font-weight:700;
+  color:var(--text);letter-spacing:0.3px;
+}
+.fb-subtitle{font-size:11px;color:var(--muted);margin-top:2px;}
+.fb-close{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--glass2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;color:var(--muted2);
+  transition:all 0.2s;flex-shrink:0;
+}
+.fb-close:hover{border-color:var(--border2);color:var(--text);}
+
+.fb-body{padding:0 20px;}
+.fb-field{margin-bottom:14px;}
+.fb-label{
+  font-size:11px;font-weight:600;color:var(--muted2);
+  letter-spacing:0.4px;text-transform:uppercase;
+  margin-bottom:6px;display:block;
+}
+.fb-input{
+  width:100%;background:var(--bg3);
+  border:1.5px solid var(--border);
+  border-radius:12px;padding:12px 14px;
+  font-family:var(--font-body);font-size:13px;
+  color:var(--text);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  -webkit-appearance:none;
+}
+.fb-input::placeholder{color:var(--muted);}
+.fb-input:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(34,211,238,0.12);
+}
+textarea.fb-input{
+  resize:none;min-height:90px;line-height:1.6;
+}
+.fb-submit{
+  width:100%;margin-top:4px;
+  background:linear-gradient(135deg,#0891B2,#06B6D4);
+  color:#fff;border:none;border-radius:12px;
+  padding:14px;font-family:var(--font-body);
+  font-size:14px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 20px rgba(34,211,238,0.35);
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.fb-submit::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.fb-submit:hover::after{opacity:1;}
+.fb-submit:hover{box-shadow:0 6px 28px rgba(34,211,238,0.55);}
+.fb-submit:active{transform:scale(0.97);}
+.fb-submit:disabled{opacity:0.6;cursor:not-allowed;}
+.fb-spinner{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  animation:spin-slow 0.6s linear infinite;
+}
+
+/* SUCCESS STATE */
+.fb-success{
+  display:none;flex-direction:column;align-items:center;
+  text-align:center;padding:24px 20px 8px;
+}
+.fb-success.show{display:flex;}
+.fb-success-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.08));
+  border:2px solid rgba(16,185,129,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:14px;
+  animation:pop-in 0.4s cubic-bezier(.23,1,.32,1);
+}
+@keyframes pop-in{from{transform:scale(0)}to{transform:scale(1)}}
+.fb-success-title{
+  font-family:var(--font-display);font-size:16px;font-weight:700;
+  color:var(--green);margin-bottom:6px;
+}
+.fb-success-sub{font-size:12px;color:var(--muted2);line-height:1.6;}
+
+/* GRAIN OVERLAY */
+body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.35;mix-blend-mode:overlay;}
+
+/* SCREENS */
+.screen{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:10;overflow-y:auto;overflow-x:hidden;
+  display:none;flex-direction:column;
+  background:transparent;
+}
+.screen.active{display:flex;}
+.screen-enter{animation:screenIn 0.35s cubic-bezier(.23,1,.32,1) both;}
+@keyframes screenIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--neon);border-radius:3px;}
+
+/* ============================
+   HEALTH BAR (global, fixed)
+   ============================ */
+#health-bar-wrap{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:5px;
+  background:rgba(0,0,0,0.6);
+  display:none;
+}
+#health-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--red),var(--orange),var(--gold));
+  transition:width 0.5s cubic-bezier(.23,1,.32,1);
+  position:relative;
+  box-shadow:0 0 8px var(--gold);
+}
+#health-bar-fill::after{
+  content:'';
+  position:absolute;right:0;top:0;bottom:0;
+  width:4px;
+  background:#fff;
+  border-radius:2px;
+  box-shadow:0 0 6px #fff;
+  animation:pulse-dot 1s ease infinite alternate;
+}
+@keyframes pulse-dot{from{opacity:0.6}to{opacity:1}}
+#health-label{
+  position:fixed;top:6px;left:8px;z-index:101;
+  font-size:10px;font-family:var(--font-display);
+  color:var(--gold);letter-spacing:0.5px;display:none;
+}
+#health-bar-wrap.low-hp #health-bar-fill{animation:hp-danger 0.8s ease infinite alternate;}
+@keyframes hp-danger{from{box-shadow:0 0 6px var(--red);}to{box-shadow:0 0 22px var(--red),0 0 40px rgba(239,68,68,0.35);}}
+.flash-red{animation:flashRed 0.4s ease;}
+@keyframes flashRed{0%{box-shadow:inset 0 0 0 0 transparent}40%{box-shadow:inset 0 0 40px 10px rgba(239,68,68,0.12)}100%{box-shadow:inset 0 0 0 0 transparent}}
+.flash-green{animation:flashGreen 0.4s ease;}
+@keyframes flashGreen{0%{box-shadow:inset 0 0 0 0 transparent}40%{box-shadow:inset 0 0 40px 10px rgba(16,185,129,0.1)}100%{box-shadow:inset 0 0 0 0 transparent}}
+@keyframes hpShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.hp-shake{animation:hpShake 0.35s ease;}
+
+/* ============================
+   BUTTONS
+   ============================ */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 20px;border:none;border-radius:var(--r2);
+  font-family:var(--font-body);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;
+  letter-spacing:0.3px;
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.btn:hover::after{opacity:1;}
+.btn:active{transform:scale(0.96);}
+
+.btn-primary{
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(99,102,241,0.4);
+  border:1px solid rgba(129,140,248,0.3);
+}
+.btn-primary:hover{box-shadow:0 6px 28px rgba(99,102,241,0.6);}
+
+.btn-cyan{
+  background:linear-gradient(135deg,#0891B2,#06B6D4);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(34,211,238,0.3);
+  border:1px solid rgba(34,211,238,0.3);
+}
+.btn-gold{
+  background:linear-gradient(135deg,#D97706,#F59E0B);
+  color:#1A0F00;
+  box-shadow:0 4px 20px rgba(245,158,11,0.35);
+  border:1px solid rgba(245,158,11,0.3);
+  font-weight:800;
+}
+.btn-ghost{
+  background:var(--glass2);
+  color:var(--muted2);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+.btn-danger{
+  background:linear-gradient(135deg,#9F1239,#EF4444);
+  color:#fff;
+  border:1px solid rgba(239,68,68,0.3);
+}
+.btn-green{
+  background:linear-gradient(135deg,#065F46,#10B981);
+  color:#fff;
+  border:1px solid rgba(16,185,129,0.3);
+  box-shadow:0 4px 20px rgba(16,185,129,0.3);
+}
+.btn-full{width:100%;}
+.btn-lg{padding:16px 24px;font-size:15px;border-radius:var(--r);}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:8px;}
+
+/* ============================
+   CARDS
+   ============================ */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(99,102,241,0.04),transparent 60%);
+  pointer-events:none;
+}
+.card-glow{
+  box-shadow:0 0 30px rgba(99,102,241,0.1),inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ============================
+   TOP NAV BAR
+   ============================ */
+.top-nav{
+  display:flex;align-items:center;gap:12px;
+  padding:52px 16px 12px;
+  background:linear-gradient(to bottom,rgba(5,6,15,0.95),transparent);
+  position:sticky;top:0;z-index:50;flex-shrink:0;
+}
+.top-nav.no-top{padding-top:14px;}
+.nav-back{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--glass2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;color:var(--muted2);
+  transition:all 0.2s;flex-shrink:0;
+}
+.nav-back:hover{border-color:var(--border2);color:var(--text);}
+.nav-title{
+  flex:1;font-family:var(--font-display);font-size:13px;
+  font-weight:600;color:var(--text);letter-spacing:0.5px;
+}
+.nav-xp{
+  background:rgba(245,158,11,0.12);
+  border:1px solid rgba(245,158,11,0.25);
+  border-radius:20px;padding:5px 12px;
+  font-family:var(--font-display);font-size:10px;
+  color:var(--gold);font-weight:700;letter-spacing:0.3px;
+}
+.nav-heart{
+  background:rgba(239,68,68,0.12);
+  border:1px solid rgba(239,68,68,0.25);
+  border-radius:20px;padding:5px 10px;
+  font-family:var(--font-display);font-size:10px;
+  color:#FCA5A5;font-weight:700;cursor:pointer;
+}
+
+/* ============================
+   HOME SCREEN
+   ============================ */
+.home-hero{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 24px 20px;text-align:center;
+}
+.home-logo{
+  position:relative;margin-bottom:24px;
+}
+.logo-ring{
+  width:90px;height:90px;border-radius:50%;
+  background:conic-gradient(var(--neon) 0deg,var(--cyan) 120deg,var(--pink) 240deg,var(--neon) 360deg);
+  display:flex;align-items:center;justify-content:center;
+  animation:spin-slow 8s linear infinite;
+  box-shadow:0 0 40px rgba(99,102,241,0.5);
+}
+@keyframes spin-slow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.logo-inner{
+  width:76px;height:76px;border-radius:50%;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:22px;font-weight:900;
+  background:linear-gradient(135deg,#4F46E5,#22D3EE);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.home-title{
+  font-family:var(--font-display);font-size:28px;font-weight:900;
+  line-height:1.1;margin-bottom:8px;
+  background:linear-gradient(135deg,#fff 0%,#818CF8 50%,#22D3EE 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.home-sub{
+  font-size:13px;color:var(--muted2);line-height:1.7;
+  max-width:280px;margin:0 auto 28px;
+}
+
+.stats-strip{
+  display:flex;gap:10px;margin-bottom:16px;width:100%;max-width:320px;
+}
+.stat-item{
+  flex:1;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 8px;text-align:center;
+  transition:border-color 0.2s,transform 0.2s;
+}
+.stat-item:hover{border-color:var(--border2);transform:translateY(-1px);}
+.stat-val{
+  font-family:var(--font-display);font-size:18px;font-weight:700;
+  background:linear-gradient(135deg,var(--neon2),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:block;
+}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;display:block;}
+/* XP Progress toward next level */
+.xp-progress-wrap{width:100%;max-width:320px;margin-bottom:22px;}
+.xp-level-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.xp-level-lbl{font-family:var(--font-display);font-size:10px;color:var(--muted2);letter-spacing:0.3px;}
+.xp-level-next{font-family:var(--font-display);font-size:9px;color:var(--muted);}
+.xp-bar-track{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--cyan));border-radius:3px;transition:width 0.8s cubic-bezier(.23,1,.32,1);}
+
+.home-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;}
+
+.home-bottom{
+  padding:16px 24px 32px;display:flex;justify-content:center;gap:32px;
+}
+.home-nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  background:none;border:none;cursor:pointer;
+  font-family:var(--font-body);font-size:10px;color:var(--muted);
+  transition:color 0.2s;
+}
+.home-nav-btn svg{width:22px;height:22px;}
+.home-nav-btn:hover{color:var(--neon2);}
+.home-nav-btn.active{color:var(--neon2);}
+
+/* ============================
+   CATEGORY SCREEN
+   ============================ */
+.cat-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;padding:16px;
+}
+.cat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 14px;
+  cursor:pointer;transition:all 0.25s;
+  position:relative;overflow:hidden;
+}
+.cat-card::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:100px;height:100px;border-radius:50%;
+  background:radial-gradient(circle,rgba(99,102,241,0.15),transparent 70%);
+  pointer-events:none;transition:transform 0.3s;
+}
+.cat-card:hover::before{transform:scale(1.5);}
+.cat-card:hover{border-color:var(--border2);transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.cat-card:active{transform:scale(0.97) translateY(0);}
+.cat-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;font-size:22px;
+}
+.cat-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.cat-sub{font-size:10px;color:var(--muted);line-height:1.5;}
+.cat-prog-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:8px;overflow:hidden;}
+.cat-prog-fill{height:100%;border-radius:2px;transition:width 0.6s ease;}
+.cat-levels{
+  margin-top:4px;font-size:10px;
+  color:var(--neon2);font-family:var(--font-display);
+}
+.cat-lock{
+  position:absolute;top:10px;right:10px;
+  font-size:16px;opacity:0.5;
+}
+
+/* ============================
+   LEVEL MAP SCREEN
+   ============================ */
+.level-map-wrap{padding:12px 16px 32px;}
+.level-path{
+  display:flex;flex-direction:column;gap:0;
+  position:relative;
+}
+.level-path::before{
+  content:'';position:absolute;left:29px;top:20px;bottom:20px;width:2px;
+  background:linear-gradient(to bottom,var(--neon),var(--cyan));
+  opacity:0.3;
+}
+.level-node{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 0;position:relative;z-index:1;
+  cursor:pointer;
+}
+.level-node.locked-node{cursor:default;opacity:0.4;}
+.node-circle{
+  width:58px;height:58px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;
+  border:2px solid var(--border);
+  background:var(--card2);
+  transition:all 0.2s;
+}
+.level-node:not(.locked-node):hover .node-circle{border-color:var(--neon);}
+.node-circle.done-circle{
+  background:linear-gradient(135deg,#065F46,#10B981);
+  border-color:#10B981;
+  box-shadow:0 0 15px rgba(16,185,129,0.3);
+}
+.node-circle.active-circle{
+  background:linear-gradient(135deg,#312E81,#4F46E5);
+  border-color:var(--neon2);
+  box-shadow:0 0 20px rgba(99,102,241,0.4);
+  animation:node-pulse 2s ease infinite;
+}
+@keyframes node-pulse{0%,100%{box-shadow:0 0 20px rgba(99,102,241,0.4)}50%{box-shadow:0 0 35px rgba(99,102,241,0.7)}}
+.node-num{
+  font-family:var(--font-display);font-size:14px;font-weight:700;
+  color:var(--text);line-height:1;
+}
+.node-stars{display:flex;gap:1px;margin-top:2px;}
+.star-icon{font-size:8px;}
+.node-info{flex:1;}
+.node-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.node-meta{font-size:11px;color:var(--muted);}
+.node-badge{
+  font-size:10px;padding:3px 10px;border-radius:20px;
+  font-family:var(--font-display);font-weight:600;
+  letter-spacing:0.3px;
+}
+.badge-easy{background:rgba(16,185,129,0.15);color:#10B981;border:1px solid rgba(16,185,129,0.2);}
+.badge-med{background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.2);}
+.badge-hard{background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.2);}
+.badge-expert{background:rgba(168,85,247,0.15);color:#A855F7;border:1px solid rgba(168,85,247,0.2);}
+
+/* ============================
+   GAME SCREEN
+   ============================ */
+.game-hud{
+  padding:52px 16px 12px;
+  background:linear-gradient(to bottom,rgba(5,6,15,0.98),transparent);
+  position:sticky;top:0;z-index:50;
+}
+.hud-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.hud-back{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--glass2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:15px;color:var(--muted2);flex-shrink:0;
+}
+.hud-title{
+  flex:1;font-size:11px;color:var(--muted2);
+  font-family:var(--font-display);letter-spacing:0.3px;
+}
+.hud-xp{
+  font-family:var(--font-display);font-size:10px;
+  color:var(--gold);background:rgba(245,158,11,0.1);
+  border:1px solid rgba(245,158,11,0.2);
+  border-radius:20px;padding:4px 10px;
+}
+.hud-hp-row{
+  display:flex;align-items:center;gap:8px;
+}
+.hp-icon{font-size:14px;}
+.hp-track{
+  flex:1;height:8px;background:rgba(255,255,255,0.08);
+  border-radius:4px;overflow:hidden;position:relative;
+}
+.hp-fill{
+  height:100%;border-radius:4px;
+  background:linear-gradient(90deg,#EF4444,#F97316,#F59E0B);
+  transition:width 0.5s cubic-bezier(.23,1,.32,1);
+  position:relative;
+  box-shadow:0 0 8px rgba(245,158,11,0.5);
+}
+.hp-pct{
+  font-family:var(--font-display);font-size:10px;
+  color:var(--gold);font-weight:700;min-width:32px;text-align:right;
+}
+.hp-btn{
+  padding:4px 10px;font-size:10px;
+  background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);
+  color:#FCA5A5;border-radius:8px;cursor:pointer;
+  font-family:var(--font-display);white-space:nowrap;
+  transition:all 0.2s;
+}
+.hp-btn:hover{background:rgba(239,68,68,0.25);}
+
+.q-progress{
+  display:flex;gap:4px;align-items:center;margin-top:8px;
+}
+.q-pip{
+  flex:1;height:3px;background:rgba(255,255,255,0.1);
+  border-radius:2px;transition:background 0.3s;
+}
+.q-pip.done-pip{background:var(--green);}
+.q-pip.wrong-pip{background:var(--red);}
+.q-pip.curr-pip{background:var(--neon2);}
+.q-num{font-size:10px;color:var(--muted);font-family:var(--font-display);margin-left:4px;}
+
+/* QUESTION CARD */
+.q-card-wrap{padding:12px 16px;}
+.q-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:20px 18px;margin-bottom:14px;
+  position:relative;overflow:hidden;
+  animation:qCardIn 0.35s cubic-bezier(.23,1,.32,1) both;
+}
+@keyframes qCardIn{from{opacity:0;transform:translateY(10px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+.q-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--neon),var(--cyan),var(--pink),var(--neon));
+  background-size:200% 100%;
+  animation:gradShift 3s linear infinite;
+}
+@keyframes gradShift{from{background-position:0% 0%}to{background-position:200% 0%}}
+.q-num-label{
+  font-size:10px;color:var(--muted);font-family:var(--font-display);
+  letter-spacing:0.5px;margin-bottom:10px;
+}
+.q-text{
+  font-size:15px;font-weight:600;color:var(--text);
+  line-height:1.6;margin-bottom:4px;
+}
+.q-code{
+  background:#0A0C1A;border:1px solid rgba(99,102,241,0.2);
+  border-radius:10px;padding:12px 14px;margin:10px 0;
+  font-family:'Courier New',monospace;font-size:12px;
+  line-height:1.7;color:#CBD5E1;overflow-x:auto;
+  white-space:pre;
+}
+.kw{color:#F472B6;}
+.fn{color:#34D399;}
+.str{color:#FBBF24;}
+.cm{color:#475569;font-style:italic;}
+.num{color:#A78BFA;}
+.var{color:#67E8F9;}
+.op{color:#94A3B8;}
+
+/* OPTIONS */
+.opts-grid{
+  display:flex;flex-direction:column;gap:9px;
+  padding:0 16px 16px;
+}
+.opts-grid .opt-btn:nth-child(1){animation:optIn 0.3s 0.05s cubic-bezier(.23,1,.32,1) both;}
+.opts-grid .opt-btn:nth-child(2){animation:optIn 0.3s 0.10s cubic-bezier(.23,1,.32,1) both;}
+.opts-grid .opt-btn:nth-child(3){animation:optIn 0.3s 0.15s cubic-bezier(.23,1,.32,1) both;}
+.opts-grid .opt-btn:nth-child(4){animation:optIn 0.3s 0.20s cubic-bezier(.23,1,.32,1) both;}
+@keyframes optIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.opt-btn{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:var(--card2);
+  border:1.5px solid var(--border);
+  border-radius:14px;cursor:pointer;
+  transition:all 0.2s;text-align:left;
+  font-family:var(--font-body);
+  position:relative;overflow:hidden;
+  width:100%;
+}
+/* Ripple layer */
+.opt-btn::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),rgba(99,102,241,0.18) 0%,transparent 65%);
+  opacity:0;transition:opacity 0.3s;pointer-events:none;
+}
+.opt-btn:hover::before{opacity:1;}
+.opt-btn:hover{border-color:var(--border2);transform:translateX(3px);}
+.opt-btn:active{transform:scale(0.98) translateX(0);}
+.opt-letter{
+  width:32px;height:32px;border-radius:9px;
+  background:rgba(99,102,241,0.1);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:11px;font-weight:700;
+  color:var(--neon2);flex-shrink:0;transition:all 0.2s;
+}
+.opt-text{font-size:13px;font-weight:500;color:var(--text);line-height:1.4;flex:1;}
+.opt-btn.selected{
+  border-color:var(--neon2);
+  background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(99,102,241,0.06));
+  transform:translateX(3px);
+}
+.opt-btn.selected .opt-letter{background:var(--neon);color:#fff;border-color:var(--neon);box-shadow:0 0 10px rgba(99,102,241,0.5);}
+.opt-btn.correct{
+  border-color:#10B981;
+  background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.05));
+  animation:optCorrect 0.4s ease;
+}
+.opt-btn.correct .opt-letter{background:#10B981;color:#fff;border-color:#10B981;box-shadow:0 0 12px rgba(16,185,129,0.5);}
+@keyframes optCorrect{0%{transform:scale(1)}40%{transform:scale(1.02) translateX(4px)}100%{transform:translateX(3px)}}
+.opt-btn.wrong{
+  border-color:#EF4444;
+  background:linear-gradient(135deg,rgba(239,68,68,0.09),rgba(239,68,68,0.04));
+  animation:optWrong 0.35s ease;
+}
+.opt-btn.wrong .opt-letter{background:#EF4444;color:#fff;border-color:#EF4444;}
+@keyframes optWrong{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opt-btn:disabled{cursor:default;}
+/* Correct answer tick */
+.opt-tick{
+  margin-left:auto;font-size:14px;opacity:0;
+  transform:scale(0);transition:all 0.2s;flex-shrink:0;
+}
+.opt-btn.correct .opt-tick{opacity:1;transform:scale(1);color:#10B981;}
+.opt-btn.wrong .opt-tick{opacity:1;transform:scale(1);color:#EF4444;}
+
+/* GAME ACTION BAR */
+.game-action{
+  padding:12px 16px 32px;
+  position:sticky;bottom:0;
+  background:linear-gradient(to top,rgba(5,6,15,0.98) 60%,transparent);
+}
+.action-feedback{
+  border-radius:12px;padding:10px 14px;margin-bottom:10px;
+  font-size:13px;font-weight:600;display:none;
+  animation:feedIn 0.3s ease;
+  align-items:center;gap:8px;
+}
+.action-feedback.show{display:flex;}
+@keyframes feedIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.feedback-ok{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34D399;}
+.feedback-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#FCA5A5;}
+.feedback-icon{font-size:18px;flex-shrink:0;}
+
+/* ============================
+   RESULT SCREEN
+   ============================ */
+.result-wrap{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;padding:60px 24px 32px;
+  text-align:center;
+}
+.result-stars{
+  display:flex;gap:6px;margin-bottom:16px;
+  justify-content:center;position:relative;
+}
+.result-stars::after{
+  content:'';position:absolute;inset:-20px;
+  background:radial-gradient(circle,rgba(245,158,11,0.1),transparent 70%);
+  pointer-events:none;
+}
+.star-big{
+  font-size:50px;
+  animation:starPop 0.5s cubic-bezier(.23,1,.32,1) both;
+  filter:drop-shadow(0 0 12px var(--gold));
+  line-height:1;
+}
+.star-big.empty-star{filter:grayscale(1) opacity(0.3);animation:starPopEmpty 0.5s cubic-bezier(.23,1,.32,1) both;}
+@keyframes starPop{
+  from{transform:scale(0) rotate(-45deg);opacity:0;}
+  70%{transform:scale(1.15) rotate(5deg);}
+  to{transform:scale(1) rotate(0deg);opacity:1;}
+}
+@keyframes starPopEmpty{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.result-title{
+  font-family:var(--font-display);font-size:22px;font-weight:700;
+  margin-bottom:6px;
+  background:linear-gradient(135deg,#fff,var(--neon2),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.result-msg{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6;max-width:280px;}
+.result-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:8px;width:100%;max-width:320px;margin-bottom:20px;
+}
+.rs-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:12px 8px;
+  animation:rsStat 0.4s cubic-bezier(.23,1,.32,1) both;
+}
+.rs-item:nth-child(1){animation-delay:0.2s;}
+.rs-item:nth-child(2){animation-delay:0.3s;}
+.rs-item:nth-child(3){animation-delay:0.4s;}
+@keyframes rsStat{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.rs-val{
+  font-family:var(--font-display);font-size:22px;font-weight:700;
+  display:block;margin-bottom:3px;
+}
+.rs-lbl{font-size:10px;color:var(--muted);}
+.result-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;}
+.xp-badge-big{
+  background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);
+  border-radius:var(--r);padding:14px 20px;margin-bottom:18px;width:100%;max-width:320px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  animation:xpBadge 0.5s cubic-bezier(.23,1,.32,1) 0.1s both;
+}
+@keyframes xpBadge{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+.xp-gained-num{
+  font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--gold);
+}
+
+/* ============================
+   UPGRADE / ADS SCREEN
+   ============================ */
+.upgrade-wrap{padding:16px;}
+.hp-big-display{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;margin-bottom:16px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.hp-big-display::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--red),var(--orange),var(--gold));}
+.hp-big-num{
+  font-family:var(--font-display);font-size:52px;font-weight:700;
+  background:linear-gradient(135deg,#EF4444,#F97316,#F59E0B);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;
+}
+.hp-big-label{font-size:12px;color:var(--muted);margin-top:4px;}
+.hp-full-bar{
+  height:12px;background:rgba(255,255,255,0.06);
+  border-radius:6px;overflow:hidden;margin:12px 0 4px;
+  position:relative;
+}
+.hp-full-fill{
+  height:100%;border-radius:6px;
+  background:linear-gradient(90deg,#EF4444,#F97316,#F59E0B);
+  transition:width 0.5s ease;
+  box-shadow:0 0 10px rgba(245,158,11,0.4);
+}
+.hp-reserve-fill{
+  position:absolute;top:0;bottom:0;right:0;
+  background:linear-gradient(90deg,#6366F1,#818CF8);
+  border-radius:6px;opacity:0.5;
+  transition:width 0.5s ease;
+}
+.reserve-info{
+  font-size:11px;color:var(--muted2);
+  background:rgba(99,102,241,0.08);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;margin-bottom:16px;
+  line-height:1.6;
+}
+.ad-cards{display:flex;flex-direction:column;gap:10px;}
+.ad-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all 0.25s;
+  position:relative;overflow:hidden;
+}
+.ad-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent);pointer-events:none;}
+.ad-card:hover{border-color:var(--border2);transform:translateX(3px);}
+.ad-card:active{transform:scale(0.98);}
+.ad-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.ad-info{flex:1;}
+.ad-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.ad-desc{font-size:11px;color:var(--muted);}
+.ad-reward{
+  font-family:var(--font-display);font-size:13px;
+  font-weight:700;color:var(--green);
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
+  border-radius:8px;padding:5px 12px;white-space:nowrap;
+}
+
+/* ============================
+   SETTINGS SCREEN
+   ============================ */
+.settings-wrap{padding:16px;}
+.settings-section{margin-bottom:20px;}
+.settings-label{
+  font-size:11px;font-family:var(--font-display);
+  color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;
+}
+.settings-row{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+}
+.s-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.s-item:last-child{border-bottom:none;}
+.s-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.s-info{flex:1;}
+.s-name{font-size:13px;font-weight:600;color:var(--text);}
+.s-desc{font-size:11px;color:var(--muted);}
+.toggle{
+  width:44px;height:24px;border-radius:12px;
+  background:rgba(255,255,255,0.1);position:relative;
+  cursor:pointer;transition:background 0.3s;flex-shrink:0;
+}
+.toggle.on{background:var(--neon);}
+.toggle::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:20px;height:20px;border-radius:10px;background:#fff;
+  transition:left 0.3s;
+  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+}
+.toggle.on::after{left:22px;}
+
+/* ============================
+   AD MODAL
+   ============================ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;display:none;
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:28px 24px;
+  width:100%;max-width:340px;text-align:center;
+  animation:modalIn 0.35s cubic-bezier(.23,1,.32,1);
+  position:relative;overflow:hidden;
+}
+.modal-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--neon),var(--cyan),var(--pink));
+}
+@keyframes modalIn{from{transform:scale(0.85) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-title{
+  font-family:var(--font-display);font-size:18px;font-weight:700;
+  color:var(--text);margin-bottom:8px;
+}
+.modal-sub{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
+.ad-progress-wrap{
+  background:rgba(255,255,255,0.06);border-radius:8px;
+  height:8px;overflow:hidden;margin-bottom:16px;
+}
+.ad-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan),var(--neon));
+  width:0%;transition:width 0.1s linear;
+}
+.ad-timer{
+  font-family:var(--font-display);font-size:22px;font-weight:700;
+  color:var(--cyan);margin-bottom:6px;
+}
+.ad-fake-content{
+  background:#0A0C1A;border-radius:12px;padding:20px;
+  margin-bottom:16px;min-height:100px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(34,211,238,0.1);
+}
+.ad-fake-text{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
+
+/* ============================
+   NO LIFE MODAL
+   ============================ */
+.nolife-box{
+  background:var(--card);border:1px solid rgba(239,68,68,0.3);
+  border-radius:24px;padding:28px 24px;
+  width:100%;max-width:340px;text-align:center;
+  animation:modalIn 0.35s cubic-bezier(.23,1,.32,1);
+}
+.nolife-icon{font-size:48px;margin-bottom:14px;}
+.nolife-title{
+  font-family:var(--font-display);font-size:18px;color:#FCA5A5;
+  margin-bottom:8px;
+}
+.nolife-sub{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
+
+/* ============================
+   PROFILE SCREEN
+   ============================ */
+.profile-hero{
+  background:linear-gradient(135deg,rgba(79,70,229,0.15),rgba(34,211,238,0.08));
+  padding:60px 20px 20px;border-bottom:1px solid var(--border);
+  text-align:center;
+}
+.avatar-ring{
+  width:80px;height:80px;border-radius:50%;
+  background:conic-gradient(var(--neon),var(--cyan),var(--pink),var(--neon));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;animation:spin-slow 10s linear infinite;
+}
+.avatar-inner{
+  width:68px;height:68px;border-radius:50%;
+  background:var(--bg3);display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+}
+.profile-name{
+  font-family:var(--font-display);font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;
+}
+.profile-level-badge{
+  display:inline-block;font-size:11px;
+  background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);
+  color:var(--gold);border-radius:20px;padding:4px 14px;margin-bottom:14px;
+  font-family:var(--font-display);font-weight:600;
+}
+.profile-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ps-item{
+  background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 6px;text-align:center;
+}
+.ps-val{
+  font-family:var(--font-display);font-size:18px;font-weight:700;
+  color:var(--neon2);display:block;
+}
+.ps-lbl{font-size:10px;color:var(--muted);}
+.badges-wrap{padding:16px;}
+.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.badge-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:12px 8px;text-align:center;
+  transition:border-color 0.2s;
+}
+.badge-card.earned{border-color:rgba(245,158,11,0.35);}
+.badge-card.locked-b{opacity:0.35;}
+.badge-ico{font-size:26px;display:block;margin-bottom:5px;}
+.badge-nm{font-size:10px;font-weight:700;color:var(--muted2);}
+.badge-earned-txt{font-size:9px;color:var(--gold);margin-top:2px;display:block;}
+
+/* ============================
+   PARTICLES / EFFECTS
+   ============================ */
+.particle{
+  position:fixed;pointer-events:none;z-index:999;
+  width:6px;height:6px;border-radius:50%;
+  animation:particle-fly 0.8s ease-out both;
+}
+@keyframes particle-fly{
+  from{opacity:1;transform:translate(0,0) scale(1);}
+  to{opacity:0;transform:var(--tx,translate(40px,-80px)) scale(0);}
+}
+
+/* ============================
+   ANIMATIONS
+   ============================ */
+.fade-in{animation:fadeIn 0.4s ease both;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.slide-up{animation:slideUp 0.35s cubic-bezier(.23,1,.32,1) both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* STAGGER CHILDREN */
+.stagger > *:nth-child(1){animation-delay:0.05s}
+.stagger > *:nth-child(2){animation-delay:0.1s}
+.stagger > *:nth-child(3){animation-delay:0.15s}
+.stagger > *:nth-child(4){animation-delay:0.2s}
+.stagger > *:nth-child(5){animation-delay:0.25s}
+.stagger > *:nth-child(6){animation-delay:0.3s}
+
+/* ============================
+   MISC
+   ============================ */
+.divider{height:1px;background:var(--border);margin:0 16px;}
+.section-title{
+  font-family:var(--font-display);font-size:11px;
+  color:var(--muted);letter-spacing:0.5px;
+  padding:12px 16px 6px;
+}
+.empty-state{
+  text-align:center;padding:40px 24px;color:var(--muted);
+  font-size:13px;line-height:1.6;
+}
+.shine{
+  position:relative;overflow:hidden;
+}
+.shine::after{
+  content:'';position:absolute;top:-50%;left:-60%;
+  width:40%;height:200%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
+  transform:skewX(-20deg);
+  animation:shine 3s ease infinite;
+}
+@keyframes shine{0%{left:-60%}100%{left:140%}}
+
+/* LEVEL COMPLETE BURST */
+.burst{
+  position:fixed;inset:0;z-index:500;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  display:none;
+}
+.burst.show{display:flex;}
+.burst-ring{
+  width:200px;height:200px;border-radius:50%;
+  border:3px solid var(--gold);
+  animation:burstRing 0.6s ease-out both;
+}
+@keyframes burstRing{from{transform:scale(0);opacity:1}to{transform:scale(3);opacity:0}}
+
+svg.icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ============================
+   FEEDBACK FLOATING BUTTON
+   ============================ */
+#feedback-fab{
+  position:fixed;bottom:28px;right:18px;z-index:150;
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,#7C3AED,#06B6D4);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(99,102,241,0.55),0 0 0 0 rgba(99,102,241,0.35);
+  transition:transform 0.2s,box-shadow 0.2s;
+  animation:fab-pulse 3s ease infinite;
+}
+@keyframes fab-pulse{
+  0%,100%{box-shadow:0 4px 20px rgba(99,102,241,0.55),0 0 0 0 rgba(99,102,241,0.3);}
+  50%{box-shadow:0 4px 28px rgba(99,102,241,0.7),0 0 0 10px rgba(99,102,241,0);}
+}
+#feedback-fab:hover{transform:scale(1.1) rotate(8deg);box-shadow:0 6px 28px rgba(99,102,241,0.7);}
+#feedback-fab:active{transform:scale(0.95);}
+#feedback-fab svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+/* tooltip */
+#feedback-fab::before{
+  content:'Saran & Masukan';
+  position:absolute;right:54px;top:50%;transform:translateY(-50%) translateX(6px);
+  background:rgba(15,15,30,0.92);color:var(--text);
+  font-family:var(--font-body);font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:8px;white-space:nowrap;
+  border:1px solid var(--border);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:all 0.2s;
+}
+#feedback-fab:hover::before{opacity:1;transform:translateY(-50%) translateX(0);}
+
+/* ============================
+   FEEDBACK MODAL
+   ============================ */
+#feedback-modal{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);
+  display:none;align-items:flex-end;justify-content:center;
+  padding:0;
+}
+#feedback-modal.show{display:flex;}
+.feedback-sheet{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:24px 24px 0 0;
+  width:100%;max-width:480px;
+  padding:0 0 env(safe-area-inset-bottom,16px);
+  animation:sheetUp 0.38s cubic-bezier(.23,1,.32,1) both;
+  position:relative;overflow:hidden;
+  max-height:92vh;overflow-y:auto;
+}
+@keyframes sheetUp{from{transform:translateY(100%);opacity:0.5;}to{transform:translateY(0);opacity:1;}}
+/* top accent line */
+.feedback-sheet::before{
+  content:'';position:sticky;top:0;display:block;
+  height:3px;background:linear-gradient(90deg,var(--neon),var(--cyan),var(--pink));
+  background-size:200% 100%;animation:gradShift 3s linear infinite;
+}
+.fb-drag{
+  width:40px;height:4px;border-radius:2px;
+  background:rgba(255,255,255,0.12);
+  margin:12px auto 0;
+}
+.fb-header{
+  padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;
+}
+.fb-title{
+  font-family:var(--font-display);font-size:15px;font-weight:700;
+  background:linear-gradient(90deg,var(--neon2),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.fb-close{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--glass2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted2);font-size:18px;
+  transition:all 0.2s;flex-shrink:0;
+  font-family:monospace;line-height:1;
+}
+.fb-close:hover{border-color:var(--border2);color:var(--text);}
+.fb-desc{
+  padding:0 20px 16px;font-size:12px;color:var(--muted2);line-height:1.7;
+  border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:4px;
+}
+.fb-desc a{color:var(--cyan);text-decoration:none;}
+/* Form */
+.fb-form{padding:16px 20px 24px;display:flex;flex-direction:column;gap:14px;}
+.fb-field{display:flex;flex-direction:column;gap:6px;}
+.fb-label{
+  font-size:11px;font-weight:700;color:var(--muted2);
+  font-family:var(--font-display);letter-spacing:0.4px;
+}
+.fb-input{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:12px;padding:12px 14px;
+  font-family:var(--font-body);font-size:13px;color:var(--text);
+  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+  width:100%;
+}
+.fb-input::placeholder{color:var(--muted);}
+.fb-input:focus{
+  border-color:var(--neon2);
+  box-shadow:0 0 0 3px rgba(99,102,241,0.12);
+}
+.fb-input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,0.1);}
+textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
+.fb-error{font-size:11px;color:var(--red);display:none;margin-top:-4px;}
+.fb-error.show{display:block;}
+.fb-submit{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,#4F46E5,#06B6D4);
+  color:#fff;font-family:var(--font-body);font-size:14px;font-weight:800;
+  border:none;border-radius:14px;cursor:pointer;
+  transition:all 0.2s;position:relative;overflow:hidden;
+  letter-spacing:0.3px;
+  box-shadow:0 4px 20px rgba(99,102,241,0.4);
+}
+.fb-submit:hover{box-shadow:0 6px 28px rgba(99,102,241,0.6);transform:translateY(-1px);}
+.fb-submit:active{transform:scale(0.97) translateY(0);}
+.fb-submit:disabled{opacity:0.55;cursor:default;transform:none;}
+.fb-submit .submit-spinner{
+  display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.7s linear infinite;margin:0 auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fb-submit.loading .submit-text{display:none;}
+.fb-submit.loading .submit-spinner{display:block;}
+/* Success state */
+.fb-success{
+  padding:32px 20px 28px;text-align:center;display:none;
+  flex-direction:column;align-items:center;gap:12px;
+}
+.fb-success.show{display:flex;}
+.fb-success-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.08));
+  border:2px solid rgba(16,185,129,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  animation:successPop 0.5s cubic-bezier(.23,1,.32,1) both;
+}
+@keyframes successPop{from{transform:scale(0) rotate(-20deg);}70%{transform:scale(1.1);}to{transform:scale(1);}}
+.fb-success-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:#fff;}
+.fb-success-msg{font-size:12px;color:var(--muted2);line-height:1.6;max-width:260px;}
+.fb-note{
+  padding:0 20px 20px;font-size:10px;color:var(--muted);
+  text-align:center;line-height:1.5;
+}
+.fb-note a{color:var(--muted2);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="health-bar-wrap"><div id="health-bar-fill"></div></div>
+<div id="health-label">HP</div>
+
+<!-- BURST EFFECT -->
+<div class="burst" id="burst"><div class="burst-ring"></div></div>
+
+<!-- AD MODAL -->
+<div class="modal-overlay" id="ad-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="ad-modal-title">Nonton Iklan</div>
+    <div class="modal-sub" id="ad-modal-sub">Tonton iklan sampai selesai untuk mendapatkan HP</div>
+    <div class="ad-timer" id="ad-timer">30</div>
+    <div class="ad-progress-wrap"><div class="ad-progress-fill" id="ad-progress-fill"></div></div>
+    <div class="ad-fake-content">
+      <div class="ad-fake-text" id="ad-fake-text">Memuat iklan...</div>
+    </div>
+    <div id="ad-modal-btns"></div>
+  </div>
+</div>
+
+<!-- NO LIFE MODAL -->
+<div class="modal-overlay" id="nolife-modal">
+  <div class="nolife-box">
+    <div class="nolife-icon">&#x1F494;</div>
+    <div class="nolife-title">Nyawa Habis!</div>
+    <div class="nolife-sub">HP kamu sudah nol. Tonton iklan untuk mendapatkan nyawa kembali dan lanjutkan perjalanan!</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-gold btn-full" onclick="openAdModal(25,true)">
+        <svg class="icon"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Nonton Iklan Panjang (+25% HP)
+      </button>
+      <button class="btn btn-primary btn-full" onclick="openAdModal(10,true)">
+        <svg class="icon"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Nonton Iklan Biasa (+10% HP)
+      </button>
+      <button class="btn btn-ghost btn-full" onclick="closeNolifeModal()">Kembali ke Menu</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ======================== FEEDBACK FAB ======================== -->
+<button id="feedback-fab" onclick="openFeedback()" title="Saran &amp; Masukan">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+</button>
+
+<!-- ======================== FEEDBACK MODAL ======================== -->
+<div id="feedback-modal" onclick="handleFbOverlay(event)">
+  <div class="feedback-sheet" id="feedback-sheet">
+    <div class="fb-handle"></div>
+    <div class="fb-header">
+      <div>
+        <div class="fb-title">💬 Saran &amp; Masukan</div>
+        <div class="fb-subtitle">Bantu kami tingkatkan CodeQuest untuk kamu!</div>
+      </div>
+      <div class="fb-close" onclick="closeFeedback()">✕</div>
+    </div>
+    <div class="fb-body" id="fb-form-body">
+      <div class="fb-field"><label class="fb-label" for="fb-name">Nama</label><input class="fb-input" id="fb-name" type="text" placeholder="Nama lengkap kamu..." autocomplete="name"></div>
+      <div class="fb-field"><label class="fb-label" for="fb-email">Email</label><input class="fb-input" id="fb-email" type="email" placeholder="email@kamu.com" autocomplete="email"></div>
+      <div class="fb-field"><label class="fb-label" for="fb-msg">Saran / Masukan</label><textarea class="fb-input" id="fb-msg" placeholder="Tulis saran, bug, atau masukan kamu di sini..."></textarea></div>
+      <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">Kirim Masukan</button>
+    </div>
+    <div class="fb-success" id="fb-success">
+      <div class="fb-success-icon">🎉</div>
+      <div class="fb-success-title">Terima Kasih!</div>
+      <div class="fb-success-sub">Masukan kamu sudah kami terima. Kami akan terus meningkatkan CodeQuest!</div>
+    </div>
+  </div>
+</div>
+<!-- ======================== HOME ======================== -->
+<div class="screen active" id="screen-home">
+  <div class="home-hero fade-in">
+    <div class="home-logo">
+      <div class="logo-ring">
+        <div class="logo-inner">CQ</div>
+      </div>
+    </div>
+    <div class="home-title">CODE<br>QUEST</div>
+    <p class="home-sub">Kuasai dunia pemrograman dari nol hingga expert. Belajar sambil bermain!</p>
+
+    <div class="stats-strip stagger">
+      <div class="stat-item slide-up">
+        <span class="stat-val" id="home-xp-val">0</span>
+        <span class="stat-lbl">Total XP</span>
+      </div>
+      <div class="stat-item slide-up">
+        <span class="stat-val" id="home-done-val">0</span>
+        <span class="stat-lbl">Selesai</span>
+      </div>
+      <div class="stat-item slide-up">
+        <span class="stat-val" id="home-streak-val">0</span>
+        <span class="stat-lbl">Streak</span>
+      </div>
+    </div>
+
+    <div class="xp-progress-wrap slide-up">
+      <div class="xp-level-row">
+        <span class="xp-level-lbl" id="home-level-lbl">Level 1 — Pemula</span>
+        <span class="xp-level-next" id="home-level-next">0 / 100 XP</span>
+      </div>
+      <div class="xp-bar-track"><div class="xp-bar-fill" id="home-xp-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="home-btns stagger">
+      <button class="btn btn-primary btn-full btn-lg slide-up" onclick="goCats()">
+        <svg class="icon"><path d="M9 17H7A5 5 0 017 7h2"/><path d="M15 7h2a5 5 0 010 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Mulai Belajar
+      </button>
+      <button class="btn btn-ghost btn-full slide-up" onclick="goScreen('screen-profile')">
+        <svg class="icon"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profil Saya
+      </button>
+      <button class="btn btn-ghost btn-full slide-up" onclick="goScreen('screen-settings')">
+        <svg class="icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Pengaturan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== CATEGORIES ======================== -->
+<div class="screen" id="screen-cats">
+  <div class="top-nav">
+    <div class="nav-back" onclick="goHome()">
+      <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title">Pilih Bahasa / Topik</div>
+    <div class="nav-xp" id="cats-xp">0 XP</div>
+  </div>
+  <div style="padding:8px 16px 12px;">
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Pilih kategori untuk mulai belajar. Selesaikan level minimal 2 bintang untuk membuka yang berikutnya.</div>
+  </div>
+  <div class="cat-grid stagger" id="cat-grid"></div>
+</div>
+
+<!-- ======================== LEVEL MAP ======================== -->
+<div class="screen" id="screen-levels">
+  <div class="top-nav">
+    <div class="nav-back" onclick="goCats()">
+      <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title" id="level-nav-title">Level</div>
+    <div class="nav-xp" id="level-xp-nav">0 XP</div>
+  </div>
+  <div style="padding:0 16px 8px;">
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;" id="level-nav-desc"></div>
+  </div>
+  <div class="level-map-wrap">
+    <div class="level-path stagger" id="level-path"></div>
+  </div>
+</div>
+
+<!-- ======================== GAME ======================== -->
+<div class="screen" id="screen-game">
+  <div class="game-hud">
+    <div class="hud-row">
+      <div class="hud-back" id="game-back-btn">
+        <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="hud-title" id="game-hud-title">Level 1</div>
+      <div class="hud-xp" id="game-hud-xp">0 XP</div>
+    </div>
+    <div class="hud-hp-row">
+      <div class="hp-icon">&#9829;</div>
+      <div class="hp-track"><div class="hp-fill" id="game-hp-fill" style="width:100%"></div></div>
+      <div class="hp-pct" id="game-hp-pct">100%</div>
+      <div class="hp-btn" onclick="goScreen('screen-upgrade')">+HP</div>
+    </div>
+    <div class="q-progress" id="q-progress"></div>
+  </div>
+  <div class="q-card-wrap" id="q-card-wrap"></div>
+  <div class="opts-grid" id="opts-grid"></div>
+  <div class="game-action">
+    <div class="action-feedback" id="action-feedback"></div>
+    <button class="btn btn-primary btn-full btn-lg" id="game-action-btn" disabled onclick="handleGameAction()">Pilih Jawaban</button>
+  </div>
+</div>
+
+<!-- ======================== RESULT ======================== -->
+<div class="screen" id="screen-result">
+  <div class="result-wrap">
+    <div class="result-stars" id="result-stars"></div>
+    <div class="result-title" id="result-title">Level Selesai!</div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="xp-badge-big">
+      <svg class="icon" style="color:var(--gold)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <div>
+        <div class="xp-gained-num" id="result-xp">+0 XP</div>
+        <div style="font-size:11px;color:var(--muted);">XP Didapat</div>
+      </div>
+    </div>
+    <div class="result-stats" id="result-stats"></div>
+    <div class="result-btns" id="result-btns"></div>
+  </div>
+</div>
+
+<!-- ======================== UPGRADE HP ======================== -->
+<div class="screen" id="screen-upgrade">
+  <div class="top-nav">
+    <div class="nav-back" onclick="goBack()">
+      <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title">Isi Nyawa</div>
+  </div>
+  <div class="upgrade-wrap">
+    <div class="hp-big-display">
+      <div class="hp-big-num" id="upgrade-hp-num">100%</div>
+      <div class="hp-big-label">Nyawa Saat Ini</div>
+      <div class="hp-full-bar"><div class="hp-full-fill" id="upgrade-hp-fill" style="width:100%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;">
+        <span>0%</span><span>Cadangan: <span id="upgrade-reserve" style="color:var(--cyan)">0%</span></span><span>100%</span>
+      </div>
+    </div>
+    <div class="reserve-info">
+      <strong style="color:var(--cyan);">Sistem Cadangan Nyawa</strong><br>
+      Jika nyawa sudah di atas 90% dan kamu nonton iklan, kelebihan HP disimpan sebagai <strong>cadangan</strong>. Cadangan otomatis aktif saat nyawa hampir habis (di bawah 5%).
+    </div>
+    <div style="font-family:var(--font-display);font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;">PILIH IKLAN</div>
+    <div class="ad-cards">
+      <div class="ad-card shine" onclick="openAdModal(10,false)">
+        <div class="ad-icon" style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);">
+          <svg style="width:24px;height:24px;stroke:var(--cyan);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="ad-info">
+          <div class="ad-title">Iklan Singkat</div>
+          <div class="ad-desc">Durasi ~15 detik</div>
+        </div>
+        <div class="ad-reward">+10% HP</div>
+      </div>
+      <div class="ad-card shine" onclick="openAdModal(25,false)">
+        <div class="ad-icon" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
+          <svg style="width:24px;height:24px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="ad-info">
+          <div class="ad-title">Iklan Premium</div>
+          <div class="ad-desc">Durasi ~30 detik</div>
+        </div>
+        <div class="ad-reward">+25% HP</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SETTINGS ======================== -->
+<div class="screen" id="screen-settings">
+  <div class="top-nav">
+    <div class="nav-back" onclick="goHome()">
+      <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title">Pengaturan</div>
+  </div>
+  <div class="settings-wrap">
+    <div class="settings-section">
+      <div class="settings-label">GAMEPLAY</div>
+      <div class="settings-row">
+        <div class="s-item">
+          <div class="s-icon" style="background:rgba(99,102,241,0.12);">
+            <svg class="icon" style="color:var(--neon2)"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+          </div>
+          <div class="s-info"><div class="s-name">Efek Suara</div><div class="s-desc">Suara saat jawaban benar/salah</div></div>
+          <div class="toggle on" id="toggle-sound" onclick="toggleSetting('sound')"></div>
+        </div>
+        <div class="s-item">
+          <div class="s-icon" style="background:rgba(34,211,238,0.1);">
+            <svg class="icon" style="color:var(--cyan)"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="s-info"><div class="s-name">Animasi</div><div class="s-desc">Efek visual dan partikel</div></div>
+          <div class="toggle on" id="toggle-anim" onclick="toggleSetting('anim')"></div>
+        </div>
+        <div class="s-item">
+          <div class="s-icon" style="background:rgba(245,158,11,0.1);">
+            <svg class="icon" style="color:var(--gold)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="s-info"><div class="s-name">Tampilkan Timer</div><div class="s-desc">Timer hitung mundur per soal</div></div>
+          <div class="toggle" id="toggle-timer" onclick="toggleSetting('timer')"></div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-label">AKUN</div>
+      <div class="settings-row">
+        <div class="s-item">
+          <div class="s-icon" style="background:rgba(16,185,129,0.1);">
+            <svg class="icon" style="color:var(--green)"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="s-info"><div class="s-name">Reset Progress</div><div class="s-desc">Mulai dari awal lagi</div></div>
+          <button class="btn btn-danger btn-sm" onclick="resetProgress()">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div style="padding:16px;text-align:center;">
+      <div style="font-family:var(--font-display);font-size:11px;color:var(--muted);letter-spacing:0.5px;">CODEQUEST PRO v1.0</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Belajar Pemrograman Interaktif</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== PROFILE ======================== -->
+<div class="screen" id="screen-profile">
+  <div class="profile-hero">
+    <div class="avatar-ring">
+      <div class="avatar-inner">&#x1F9D1;&#x200D;&#x1F4BB;</div>
+    </div>
+    <div class="profile-name">Coder Muda</div>
+    <div class="profile-level-badge" id="prof-level-badge">Level 1 — Pemula</div>
+    <div class="profile-stats-grid">
+      <div class="ps-item"><span class="ps-val" id="ps-xp">0</span><span class="ps-lbl">XP</span></div>
+      <div class="ps-item"><span class="ps-val" id="ps-done">0</span><span class="ps-lbl">Selesai</span></div>
+      <div class="ps-item"><span class="ps-val" id="ps-streak">0</span><span class="ps-lbl">Streak</span></div>
+    </div>
+  </div>
+  <div class="top-nav no-top" style="background:transparent;padding-top:14px;position:relative;">
+    <div class="nav-back" onclick="goHome()">
+      <svg class="icon"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title">Profil & Pencapaian</div>
+  </div>
+  <div class="badges-wrap">
+    <div style="font-family:var(--font-display);font-size:11px;color:var(--muted);letter-spacing:0.5px;margin-bottom:12px;">LENCANA</div>
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA — Soal valid, akurat, dan representatif per kategori
+   ============================================================ */
+const CATEGORIES = [
+  {
+    id:'python', name:'Python', sub:'Bahasa populer & serbaguna',
+    icon:'&#128013;', color:'#3B82F6',
+    iconBg:'rgba(59,130,246,0.12)', desc:'Python — interpreted, dynamically typed, multi-paradigm.',
+    totalLevels:6,
+    levels:[
+      {title:'Sintaks Dasar', diff:'easy', xp:50, questions:[
+        {q:'Apa output dari: print(type(5))?',a:1,opts:["<class 'float'>","<class 'int'>","<class 'str'>","<class 'num'>"],
+         code:"print(type(5))"},
+        {q:'Cara membuat komentar satu baris di Python adalah...',a:2,opts:['// ini komentar','/* komentar */','# ini komentar','<!-- komentar -->'],code:null},
+        {q:'Apa nilai dari: 10 // 3 ?',a:0,opts:['3','3.33','4','0'],code:'print(10 // 3)'},
+        {q:'Operator mana yang digunakan untuk eksponen di Python?',a:3,opts:['exp()','^^','**=','**'],code:null},
+        {q:'Apa output dari kode berikut?\n\nx = "Hello"\nprint(x[1])',a:1,opts:['H','e','l','x'],code:'x = "Hello"\nprint(x[1])'},
+        {q:'Fungsi built-in untuk mengetahui panjang sebuah list adalah...',a:0,opts:['len()','size()','length()','count()'],code:null},
+        {q:'Apa output dari: bool(0)?',a:2,opts:['True','None','False','0'],code:'print(bool(0))'},
+        {q:'Cara mendefinisikan fungsi di Python menggunakan keyword...',a:1,opts:['function','def','func','define'],code:null},
+      ]},
+      {title:'String & List', diff:'easy', xp:60, questions:[
+        {q:'Apa output dari: "Python"[2:5]?',a:2,opts:['Pyt','yth','tho','hon'],code:'"Python"[2:5]'},
+        {q:'Method untuk mengubah string menjadi huruf kapital semua?',a:0,opts:['upper()','capitalize()','toUpper()','UP()'],code:null},
+        {q:'Apa output dari:\nmy_list = [1,2,3]\nmy_list.append(4)\nprint(my_list)',a:3,opts:['[1,2,3]','[4,1,2,3]','Error','[1,2,3,4]'],code:'my_list = [1,2,3]\nmy_list.append(4)\nprint(my_list)'},
+        {q:'Cara membuat list kosong di Python adalah...',a:1,opts:['list{}','[]','()','{}'],code:null},
+        {q:'Apa output dari:\nfruits = ["apple","banana","cherry"]\nprint(fruits[-1])',a:2,opts:['apple','banana','cherry','IndexError'],code:'fruits = ["apple","banana","cherry"]\nprint(fruits[-1])'},
+        {q:'Method string untuk memisahkan berdasarkan delimiter?',a:0,opts:['split()','separate()','divide()','cut()'],code:null},
+        {q:'Apa hasil dari: len("Hello World")?',a:3,opts:['10','9','12','11'],code:null},
+        {q:'Apa output dari:\nprint(", ".join(["a","b","c"]))',a:1,opts:['a b c','a, b, c','[a,b,c]','a,b,c'],code:'print(", ".join(["a","b","c"]))'},
+      ]},
+      {title:'Kondisi & Perulangan', diff:'medium', xp:70, questions:[
+        {q:'Apa output dari:\nfor i in range(3):\n    print(i)',a:0,opts:['0 1 2','1 2 3','0 1 2 3','1 2'],code:'for i in range(3):\n    print(i)'},
+        {q:'Keyword untuk menghentikan loop sebelum selesai?',a:2,opts:['stop','exit','break','continue'],code:null},
+        {q:'Apa output dari:\nx = 10\nif x > 5:\n    print("A")\nelif x > 8:\n    print("B")\nelse:\n    print("C")',a:0,opts:['A','B','C','AB'],code:'x = 10\nif x > 5:\n    print("A")\nelif x > 8:\n    print("B")'},
+        {q:'Keyword untuk melewati iterasi saat ini dan lanjut ke berikutnya?',a:3,opts:['pass','skip','break','continue'],code:null},
+        {q:'Apa output dari:\nresult = [x**2 for x in range(4)]\nprint(result)',a:1,opts:['[1,4,9,16]','[0,1,4,9]','[0,1,2,3]','[0,2,4,6]'],code:'result = [x**2 for x in range(4)]\nprint(result)'},
+        {q:'Berapa kali loop berikut berjalan?\nfor i in range(2,10,3):',a:2,opts:['3','4','3','2'],code:'for i in range(2,10,3): pass'},
+        {q:'Apa itu while loop?',a:0,opts:['Loop yang berjalan selama kondisi True','Loop yang berjalan sejumlah tertentu','Loop bawaan untuk list','Loop yang tidak bisa dihentikan'],code:null},
+        {q:'Apa output dari:\ni = 0\nwhile i < 3:\n    i += 1\nprint(i)',a:3,opts:['0','1','2','3'],code:'i = 0\nwhile i < 3:\n    i += 1\nprint(i)'},
+      ]},
+      {title:'Fungsi & Lambda', diff:'medium', xp:80, questions:[
+        {q:'Apa output dari:\ndef add(a, b=5):\n    return a + b\nprint(add(3))',a:1,opts:['3','8','5','Error'],code:'def add(a, b=5):\n    return a + b\nprint(add(3))'},
+        {q:'Lambda di Python adalah...',a:2,opts:['Fungsi rekursif','Fungsi dengan banyak return','Fungsi anonim satu baris','Fungsi generator'],code:null},
+        {q:'Apa output dari:\nf = lambda x, y: x * y\nprint(f(4, 3))',a:0,opts:['12','7','43','Error'],code:'f = lambda x, y: x * y\nprint(f(4, 3))'},
+        {q:'Fungsi map() digunakan untuk...',a:1,opts:['Membuat dict dari list','Menerapkan fungsi ke setiap elemen iterable','Menyaring elemen list','Mengurutkan list'],code:null},
+        {q:'Apa output dari:\ndef counter():\n    count = 0\n    def inc():\n        nonlocal count\n        count += 1\n        return count\n    return inc\nc = counter()\nprint(c(), c())',a:3,opts:['0 0','0 1','1 1','1 2'],code:'def counter():\n    count = 0\n    def inc():\n        nonlocal count\n        count += 1\n        return count\n    return inc\nc = counter()\nprint(c(), c())'},
+        {q:'*args dalam parameter fungsi digunakan untuk...',a:0,opts:['Menerima banyak argumen posisional','Menerima keyword argument','Mengembalikan banyak nilai','Membuat optional parameter'],code:null},
+        {q:'Apa output dari:\nprint(list(filter(lambda x: x%2==0, [1,2,3,4,5,6])))',a:2,opts:['[1,3,5]','[1,2,3,4,5,6]','[2,4,6]','[2,3,4]'],code:'print(list(filter(lambda x: x%2==0, [1,2,3,4,5,6])))'},
+        {q:'Apa itu rekursi?',a:1,opts:['Fungsi yang tidak punya return','Fungsi yang memanggil dirinya sendiri','Fungsi dalam fungsi','Fungsi tanpa parameter'],code:null},
+      ]},
+      {title:'OOP Python', diff:'hard', xp:100, questions:[
+        {q:'Method khusus yang dipanggil saat objek dibuat di Python?',a:0,opts:['__init__','__new__','__create__','__start__'],code:null},
+        {q:'Apa output dari:\nclass Animal:\n    def speak(self):\n        return "..."\nclass Dog(Animal):\n    def speak(self):\n        return "Woof"\nd = Dog()\nprint(d.speak())',a:3,opts:['...','None','Animal','Woof'],code:'class Animal:\n    def speak(self):\n        return "..."\nclass Dog(Animal):\n    def speak(self):\n        return "Woof"\nd = Dog()\nprint(d.speak())'},
+        {q:'Konsep menyembunyikan detail implementasi dan hanya menampilkan interface?',a:2,opts:['Inheritance','Polymorphism','Encapsulation','Abstraction'],code:null},
+        {q:'Decorator @property digunakan untuk...',a:1,opts:['Membuat method static','Mengakses method seperti atribut','Membuat class abstract','Inheritance berganda'],code:null},
+        {q:'Apa itu @classmethod?',a:0,opts:['Method yang menerima class sebagai argumen pertama','Method yang tidak menerima parameter','Method yang hanya bisa dipanggil sekali','Method untuk hashing'],code:null},
+        {q:'Keyword untuk mewarisi class di Python?',a:2,opts:['implements','extends','class Child(Parent):','inherit Child from Parent:'],code:null},
+        {q:'Apa output dari:\nclass Num:\n    def __add__(self, other):\n        return Num()\n    def __str__(self):\n        return "Num"\na = Num()\nb = Num()\nprint(a + b)',a:3,opts:['Error','None','0','Num'],code:'...'},
+        {q:'MRO (Method Resolution Order) di Python menggunakan algoritma?',a:1,opts:['BFS','C3 linearization','DFS','Round-robin'],code:null},
+      ]},
+      {title:'Advanced Python', diff:'expert', xp:150, questions:[
+        {q:'Apa itu Generator di Python?',a:2,opts:['List biasa','Fungsi rekursif','Fungsi yang menggunakan yield untuk menghasilkan nilai satu per satu','Class dengan __iter__'],code:null},
+        {q:'Apa kegunaan context manager (with statement)?',a:0,opts:['Memastikan resource ditutup/dibersihkan otomatis','Membuat variabel global','Menangkap exception','Membuat decorator'],code:null},
+        {q:'Perbedaan deepcopy dan copy (shallow copy)?',a:3,opts:['Tidak ada perbedaan','deepcopy lebih lambat tapi hasilnya sama','Shallow copy menyalin semua nested object','deepcopy menyalin semua nested object secara rekursif'],code:null},
+        {q:'Apa itu GIL (Global Interpreter Lock) di Python?',a:1,opts:['Library untuk GUI','Mutex yang mencegah multiple thread mengeksekusi Python bytecode bersamaan','Garbage collector Python','Sistem modul Python'],code:null},
+        {q:'Decorator functools.lru_cache digunakan untuk?',a:2,opts:['Logging fungsi','Membuat fungsi async','Memoization/caching hasil fungsi','Membuat fungsi thread-safe'],code:null},
+        {q:'Apa itu __slots__ dalam class Python?',a:0,opts:['Membatasi atribut yang bisa dibuat, menghemat memori','Mendefinisikan method abstract','Membuat atribut read-only','Mengaktifkan multiple inheritance'],code:null},
+        {q:'asyncio digunakan untuk?',a:3,opts:['Multithreading','Multiprocessing','Operasi matematika vektor','Concurrency I/O-bound dengan async/await'],code:null},
+        {q:'Apa output dari:\ndef gen():\n    yield 1\n    yield 2\n    yield 3\ng = gen()\nprint(next(g), next(g))',a:1,opts:['1 1','1 2','2 3','Error'],code:'def gen():\n    yield 1\n    yield 2\n    yield 3\ng = gen()\nprint(next(g), next(g))'},
+      ]},
+    ]
+  },
+  {
+    id:'javascript', name:'JavaScript', sub:'Bahasa pemrograman web',
+    icon:'JS', color:'#F59E0B',
+    iconBg:'rgba(245,158,11,0.12)', desc:'JavaScript — bahasa web interaktif, Node.js, dan lebih.',
+    totalLevels:5,
+    levels:[
+      {title:'Dasar JavaScript', diff:'easy', xp:50, questions:[
+        {q:'Cara mendeklarasikan variabel yang tidak bisa di-reassign di JS modern?',a:2,opts:['var','let','const','static'],code:null},
+        {q:'Apa output dari:\nconsole.log(typeof null)',a:0,opts:['"object"','"null"','"undefined"','"boolean"'],code:'console.log(typeof null)'},
+        {q:'Apa perbedaan == dan === di JavaScript?',a:3,opts:['Tidak ada perbedaan','=== lebih lambat','== digunakan untuk angka saja','=== membandingkan nilai DAN tipe data'],code:null},
+        {q:'Apa output dari:\nconsole.log(0.1 + 0.2 === 0.3)',a:1,opts:['true','false','Error','undefined'],code:'console.log(0.1 + 0.2 === 0.3)'},
+        {q:'Cara mengubah string "42" menjadi integer di JavaScript?',a:0,opts:['parseInt("42")','int("42")','Number.toInt("42")','convert("42")'],code:null},
+        {q:'Apa output dari:\nconsole.log([] + [])',a:2,opts:['[]','null','""','undefined'],code:'console.log([] + [])'},
+        {q:'Apa itu hoisting di JavaScript?',a:1,opts:['Menghapus variabel tidak terpakai','Deklarasi variabel/fungsi dipindah ke atas scope secara virtual','Menyimpan variabel di memory heap','Garbage collection'],code:null},
+        {q:'Keyword untuk membuat fungsi panah (arrow function)?',a:3,opts:['function=>','arrow','fn','=> (digunakan sebagai: () => {})'],code:'const fn = () => {}'},
+      ]},
+      {title:'DOM & Events', diff:'easy', xp:60, questions:[
+        {q:'Method untuk memilih elemen berdasarkan ID?',a:0,opts:['getElementById()','querySelector()','getElement()','selectById()'],code:null},
+        {q:'Cara menambahkan event listener di JavaScript?',a:1,opts:['element.on("click",fn)','element.addEventListener("click",fn)','element.click(fn)','element.bind("click",fn)'],code:null},
+        {q:'Method DOM untuk membuat elemen baru?',a:2,opts:['DOM.new()','document.makeElement()','document.createElement()','new Element()'],code:null},
+        {q:'Cara mencegah default behavior sebuah event?',a:3,opts:['event.stop()','event.prevent()','event.cancel()','event.preventDefault()'],code:null},
+        {q:'Property untuk mengambil teks dalam sebuah elemen HTML?',a:0,opts:['textContent','innerHTML','innerText','getText'],code:null},
+        {q:'Method untuk menambahkan class pada elemen?',a:1,opts:['element.addClass()','element.classList.add()','element.setClass()','element.class.push()'],code:null},
+        {q:'Cara mengambil value dari input HTML?',a:2,opts:['input.text','input.content','input.value','input.data'],code:null},
+        {q:'Event apa yang dipicu saat halaman HTML selesai dimuat?',a:3,opts:['load','ready','init','DOMContentLoaded'],code:null},
+      ]},
+      {title:'Async JavaScript', diff:'medium', xp:80, questions:[
+        {q:'Apa itu Promise di JavaScript?',a:0,opts:['Objek yang mewakili nilai yang mungkin tersedia di masa depan','Fungsi callback biasa','Timer asinkron','Import module'],code:null},
+        {q:'Apa output dari:\nPromise.resolve(1)\n  .then(v => v + 1)\n  .then(v => console.log(v))',a:2,opts:['1','1,2','2','undefined'],code:'Promise.resolve(1)\n  .then(v => v + 1)\n  .then(v => console.log(v))'},
+        {q:'Keyword untuk menunggu hasil Promise tanpa .then()?',a:1,opts:['wait','await','sync','defer'],code:null},
+        {q:'Fungsi yang harus dideklarasikan dengan "async" untuk menggunakan "await"?',a:3,opts:['Semua fungsi','Fungsi arrow saja','Fungsi dalam class saja','Async function'],code:null},
+        {q:'Apa perbedaan macrotask dan microtask di event loop?',a:0,opts:['Microtask (seperti Promise) dieksekusi sebelum macrotask berikutnya','Macrotask lebih cepat','Keduanya dieksekusi bersamaan','Tidak ada perbedaan'],code:null},
+        {q:'Method Promise untuk menjalankan beberapa Promise sekaligus dan menunggu semuanya?',a:2,opts:['Promise.race()','Promise.any()','Promise.all()','Promise.allSettled() '],code:null},
+        {q:'Apa output dari:\nconsole.log("A")\nsetTimeout(() => console.log("B"), 0)\nconsole.log("C")',a:3,opts:['A B C','B A C','C A B','A C B'],code:'console.log("A")\nsetTimeout(() => console.log("B"), 0)\nconsole.log("C")'},
+        {q:'fetch() API mengembalikan?',a:1,opts:['JSON langsung','Promise<Response>','XMLHttpRequest object','String'],code:null},
+      ]},
+      {title:'Closures & Prototype', diff:'hard', xp:100, questions:[
+        {q:'Apa itu closure di JavaScript?',a:2,opts:['Fungsi tanpa nama','Objek global','Fungsi yang mengingat scope di mana ia dibuat','Method constructor'],code:null},
+        {q:'Apa output dari:\nfor (var i=0; i<3; i++) {\n  setTimeout(()=>console.log(i), 0)\n}',a:0,opts:['3 3 3','0 1 2','0 0 0','undefined'],code:'for (var i=0; i<3; i++) {\n  setTimeout(()=>console.log(i), 0)\n}'},
+        {q:'Perbedaan prototype dan __proto__?',a:3,opts:['Tidak ada perbedaan','prototype lebih modern','__proto__ untuk class','prototype ada di fungsi konstruktor, __proto__ ada di instance'],code:null},
+        {q:'Apa itu IIFE (Immediately Invoked Function Expression)?',a:1,opts:['Fungsi yang dipanggil secara rekursif','Fungsi yang langsung dipanggil saat didefinisikan','Fungsi tanpa parameter','Fungsi arrow'],code:null},
+        {q:'this dalam arrow function mengacu pada?',a:0,opts:['Scope lexical di mana arrow function didefinisikan','Objek global selalu','Objek yang memanggil fungsi','undefined selalu'],code:null},
+        {q:'Apa kegunaan Object.create()?',a:2,opts:['Mengclone object','Membuat class baru','Membuat object baru dengan prototype tertentu','Menyalin properti object'],code:null},
+        {q:'Apa itu currying di functional programming?',a:3,opts:['Memoization fungsi','Komposisi fungsi','Fungsi rekursif ekor','Mengubah fungsi multi-argumen menjadi rantai fungsi satu argumen'],code:null},
+        {q:'Symbol di JavaScript digunakan untuk?',a:1,opts:['String khusus','Membuat properti object yang benar-benar unik dan tidak bisa di-enumerate','Tipe data angka khusus','Membuat ID acak'],code:null},
+      ]},
+      {title:'ES6+ & Modern JS', diff:'expert', xp:130, questions:[
+        {q:'Apa itu destructuring assignment?',a:0,opts:['Mengekstrak nilai dari array/object ke variabel secara singkat','Menghapus properti object','Membuat copy object','Mengubah object menjadi array'],code:null},
+        {q:'Apa itu Proxy di JavaScript?',a:2,opts:['Server proxy','Import dari CDN','Objek yang membungkus objek lain untuk intercept operasi','Fungsi middleware'],code:null},
+        {q:'Apa output dari:\nconst [a, ...rest] = [1,2,3,4]\nconsole.log(rest)',a:3,opts:['[1,2,3,4]','[1]','[2,3]','[2,3,4]'],code:'const [a, ...rest] = [1,2,3,4]\nconsole.log(rest)'},
+        {q:'WeakMap berbeda dari Map karena?',a:1,opts:['WeakMap lebih cepat','Key di WeakMap tidak mencegah garbage collection (weak reference)','WeakMap bisa iterate','WeakMap bisa menyimpan primitive'],code:null},
+        {q:'Apa itu Optional Chaining (?.) ?',a:0,opts:['Mengakses properti nested tanpa error jika null/undefined','Membuat properti optional dalam class','Kondisi ternary singkat','Nullish coalescing'],code:null},
+        {q:'Nullish coalescing operator (??) mengembalikan nilai kanan jika nilai kiri adalah?',a:2,opts:['false atau 0','Semua falsy value','null atau undefined','String kosong'],code:null},
+        {q:'Apa kegunaan Symbol.iterator?',a:3,opts:['Membuat ID unik','Mengiterasi properti symbol','Membuat symbol global','Mendefinisikan perilaku iterasi custom pada objek'],code:null},
+        {q:'Perbedaan module ES6 (import/export) dengan CommonJS (require)?',a:1,opts:['Tidak ada perbedaan','ES6 module bersifat static (dianalisis saat compile), CommonJS dynamic (saat runtime)','CommonJS lebih modern','ES6 module tidak bisa digunakan di browser'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'html_css', name:'HTML & CSS', sub:'Fondasi tampilan web',
+    icon:'&#60;/&#62;', color:'#F97316',
+    iconBg:'rgba(249,115,22,0.12)', desc:'HTML untuk struktur, CSS untuk tampilan dan animasi.',
+    totalLevels:4,
+    levels:[
+      {title:'HTML Dasar', diff:'easy', xp:40, questions:[
+        {q:'Tag HTML untuk judul terbesar (heading level 1)?',a:0,opts:['<h1>','<h6>','<title>','<header>'],code:null},
+        {q:'Atribut yang menentukan URL tujuan pada tag anchor <a>?',a:2,opts:['src','url','href','link'],code:null},
+        {q:'Tag untuk membuat list tidak berurutan (bullet)?',a:1,opts:['<ol>','<ul>','<list>','<dl>'],code:null},
+        {q:'Atribut alt pada tag <img> digunakan untuk?',a:3,opts:['Mengatur ukuran gambar','URL gambar cadangan','Judul tooltip gambar','Teks alternatif jika gambar tidak tampil / aksesibilitas'],code:null},
+        {q:'Tag HTML untuk membuat tabel, baris, dan sel secara berturut?',a:0,opts:['<table>,<tr>,<td>','<table>,<row>,<cell>','<tbl>,<tr>,<td>','<grid>,<tr>,<td>'],code:null},
+        {q:'Perbedaan tag <div> dan <span>?',a:2,opts:['Keduanya sama','<div> untuk teks, <span> untuk layout','<div> block element, <span> inline element','<span> lebih baru'],code:null},
+        {q:'Atribut untuk menentukan target form dikirim ke mana (URL)?',a:1,opts:['src','action','href','target'],code:null},
+        {q:'Tag HTML5 yang digunakan untuk konten navigasi?',a:3,opts:['<menu>','<header>','<aside>','<nav>'],code:null},
+      ]},
+      {title:'CSS Fondasi', diff:'easy', xp:50, questions:[
+        {q:'Property CSS untuk mengubah warna teks?',a:0,opts:['color','text-color','font-color','foreground'],code:null},
+        {q:'Perbedaan padding dan margin di CSS?',a:2,opts:['Keduanya sama','padding di luar border, margin di dalam','padding di dalam border (antara konten dan border), margin di luar border','margin di dalam konten'],code:null},
+        {q:'Nilai display apa yang membuat elemen mengambil lebar penuh dan memulai di baris baru?',a:1,opts:['inline','block','inline-block','flex'],code:null},
+        {q:'Selector CSS untuk menarget semua paragraf di dalam div?',a:3,opts:['div.p','div + p','div > p','div p'],code:null},
+        {q:'CSS property untuk mengatur transparansi/ketembusan elemen?',a:0,opts:['opacity','transparency','alpha','visibility'],code:null},
+        {q:'Nilai position CSS yang membuat elemen relatif terhadap viewport, tidak mengikuti scroll?',a:2,opts:['relative','absolute','fixed','sticky'],code:null},
+        {q:'Pseudo-class CSS yang aktif saat mouse hover di atas elemen?',a:1,opts:[':focus',':hover',':active',':visited'],code:null},
+        {q:'Shorthand CSS untuk border adalah contohnya?',a:3,opts:['border: solid 1px red','border: 1px red solid','border-all: 1px solid red','border: 1px solid red'],code:null},
+      ]},
+      {title:'Flexbox & Grid', diff:'medium', xp:70, questions:[
+        {q:'Property flexbox untuk mengatur arah sumbu utama?',a:0,opts:['flex-direction','flex-flow','axis','flex-axis'],code:null},
+        {q:'Nilai justify-content untuk meletakkan item dengan jarak sama di antara mereka?',a:2,opts:['center','space-around','space-between','flex-end'],code:null},
+        {q:'Property untuk mendefinisikan kolom di CSS Grid?',a:1,opts:['grid-columns','grid-template-columns','columns','grid-col'],code:null},
+        {q:'Apa fungsi grid-gap (atau gap)?',a:3,opts:['Membuat gutter/jarak antar kolom grid','Padding dari grid container','Margin luar grid','Jarak antar sel grid (baris dan kolom)'],code:null},
+        {q:'Property flexbox untuk membuat item membungkus ke baris baru jika tidak muat?',a:0,opts:['flex-wrap: wrap','flex-overflow: wrap','overflow: flex','flex-break: wrap'],code:null},
+        {q:'align-items: center di flexbox meratakan item terhadap?',a:2,opts:['Main axis (sumbu utama)','Left edge','Cross axis (sumbu silang)','Right edge'],code:null},
+        {q:'Nilai CSS grid untuk membuat kolom yang otomatis mengisi sisa ruang?',a:1,opts:['auto','1fr','100%','fill'],code:null},
+        {q:'Shorthand untuk grid-template: "header header" / 1fr menggunakan property?',a:3,opts:['grid-layout','grid-areas','grid-setup','grid-template-areas'],code:null},
+      ]},
+      {title:'CSS Lanjutan', diff:'hard', xp:90, questions:[
+        {q:'CSS specificity dari highest ke lowest?',a:0,opts:['inline > ID > class > element','ID > inline > class > element','class > ID > element > inline','element > class > ID > inline'],code:null},
+        {q:'Property CSS untuk animasi yang didefinisikan dengan @keyframes?',a:2,opts:['transition','transform','animation','motion'],code:null},
+        {q:'Apa itu CSS Custom Properties (CSS Variables)?',a:1,opts:['Variabel JavaScript di CSS','Variabel yang didefinisikan dengan -- dan diakses dengan var()','Mixin CSS','Preprocessor variable'],code:null},
+        {q:'CSS media query untuk layar dengan lebar maksimal 768px?',a:3,opts:['@media (width: 768px)','@media screen (max: 768px)','@media only (max-width: 768px)','@media (max-width: 768px)'],code:null},
+        {q:'Apa itu BEM (Block Element Modifier) dalam CSS?',a:0,opts:['Metodologi penamaan class CSS untuk komponen reusable','Framework CSS','Preprocessor','Build tool'],code:null},
+        {q:'Property CSS untuk mengontrol apakah konten yang meluap div terlihat?',a:2,opts:['clip','display','overflow','visibility'],code:null},
+        {q:'Fungsi calc() di CSS digunakan untuk?',a:1,opts:['Melakukan kalkulasi server-side','Kalkulasi nilai dinamis yang mencampur unit berbeda','Menghitung specificity','Round nilai pixel'],code:null},
+        {q:'CSS transform untuk memutar elemen 45 derajat?',a:3,opts:['transform: spin(45deg)','transform: rotate3d(45)','transform: angle(45deg)','transform: rotate(45deg)'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'java', name:'Java', sub:'OOP & enterprise apps',
+    icon:'&#9749;', color:'#EF4444',
+    iconBg:'rgba(239,68,68,0.12)', desc:'Java — strongly typed, OOP, JVM, enterprise.',
+    totalLevels:5,
+    levels:[
+      {title:'Java Dasar', diff:'easy', xp:55, questions:[
+        {q:'Tipe data di Java untuk menyimpan bilangan bulat 32-bit?',a:0,opts:['int','Integer','long','short'],code:null},
+        {q:'Apa output dari:\nSystem.out.println(10 / 3)',a:2,opts:['3.33','3.0','3','4'],code:'System.out.println(10 / 3)'},
+        {q:'Cara mendeklarasikan konstanta di Java?',a:1,opts:['const int X = 5','final int X = 5','static int X = 5','readonly int X = 5'],code:null},
+        {q:'Perbedaan String dan char di Java?',a:3,opts:['Tidak ada perbedaan','String untuk angka','char lebih besar','char untuk 1 karakter, String untuk rangkaian karakter'],code:null},
+        {q:'Keyword untuk memeriksa apakah objek adalah instance dari class tertentu?',a:0,opts:['instanceof','isInstance','typeof','checkType'],code:null},
+        {q:'Apa itu autoboxing di Java?',a:2,opts:['Membuat array otomatis','Mengalokasikan heap secara otomatis','Konversi otomatis antara primitive type dan wrapper class-nya','Memory management otomatis'],code:null},
+        {q:'Method untuk mengkonversi int ke String di Java?',a:1,opts:['int.toString()','String.valueOf(num)','(String)num','num.toStr()'],code:null},
+        {q:'Apa output dari:\nint[] arr = {1,2,3};\nSystem.out.println(arr.length)',a:3,opts:['2','arr.length','4','3'],code:'int[] arr = {1,2,3};\nSystem.out.println(arr.length)'},
+      ]},
+      {title:'OOP Java', diff:'medium', xp:75, questions:[
+        {q:'Keyword di Java untuk mewarisi class?',a:0,opts:['extends','implements','inherits','super'],code:null},
+        {q:'Interface di Java berbeda dari abstract class karena?',a:2,opts:['Interface bisa punya konstruktor','Interface tidak bisa punya method','Semua method interface (sebelum Java 8) secara implisit abstract dan public','Interface bisa punya state/field non-static'],code:null},
+        {q:'Keyword untuk memanggil konstruktor parent class?',a:1,opts:['parent()','super()','base()','this.super()'],code:null},
+        {q:'Apa itu method overriding?',a:3,opts:['Membuat method dengan nama berbeda','Membuat method dengan parameter berbeda','Menimpa method static','Subclass menyediakan implementasi spesifik untuk method yang sudah ada di parent'],code:null},
+        {q:'Access modifier "protected" di Java berarti?',a:0,opts:['Accessible dalam class yang sama dan subclass-nya','Hanya accessible dalam class yang sama','Accessible dari semua class','Tidak accessible sama sekali'],code:null},
+        {q:'Apa itu polimorfisme runtime (dynamic dispatch)?',a:2,opts:['Overloading method','Overriding dengan return type berbeda','Method yang dipanggil ditentukan saat runtime berdasarkan tipe objek sebenarnya','Casting tipe data'],code:null},
+        {q:'Keyword "final" pada class Java berarti?',a:1,opts:['Class bisa diinstansiasi','Class tidak bisa di-extend/diwarisi','Semua method menjadi abstract','Class bersifat immutable'],code:null},
+        {q:'Apa itu Design Pattern Singleton?',a:3,opts:['Pattern untuk membuat banyak instance','Pattern inheritance','Pattern observer','Memastikan hanya satu instance class yang dibuat'],code:null},
+      ]},
+      {title:'Collections & Generics', diff:'medium', xp:85, questions:[
+        {q:'Interface Java Collections mana yang menjamin tidak ada elemen duplikat?',a:0,opts:['Set','List','Queue','Deque'],code:null},
+        {q:'Perbedaan ArrayList dan LinkedList?',a:2,opts:['ArrayList lebih lambat','LinkedList akses random lebih cepat','ArrayList akses random O(1), LinkedList insert/delete lebih efisien','Keduanya identik'],code:null},
+        {q:'HashMap di Java menggunakan struktur data apa?',a:1,opts:['Binary tree','Hash table','Linked list','Array sorted'],code:null},
+        {q:'Apa kegunaan Generics di Java?',a:3,opts:['Membuat class lebih besar','Menggantikan interface','Kompresi data','Type safety dan kode reusable tanpa casting'],code:null},
+        {q:'Iterator Pattern digunakan untuk?',a:0,opts:['Melintasi elemen koleksi satu per satu tanpa tahu implementasi internalnya','Mengurutkan koleksi','Mencari elemen dalam koleksi','Membuat koleksi baru'],code:null},
+        {q:'Collections.sort() untuk List menggunakan algoritma?',a:2,opts:['Quick Sort','Merge Sort biasa','Timsort (hybrid Merge+Insertion Sort)','Bubble Sort'],code:null},
+        {q:'Apa itu TreeMap dibanding HashMap?',a:1,opts:['TreeMap tidak bisa null key','TreeMap menyimpan key dalam urutan terurut (Red-Black Tree)','TreeMap lebih cepat','HashMap mengurutkan value'],code:null},
+        {q:'Bounded type parameter <T extends Comparable<T>> artinya?',a:3,opts:['T harus abstract','T hanya untuk angka','T tidak boleh null','T harus mengimplementasikan interface Comparable'],code:null},
+      ]},
+      {title:'Exception & I/O', diff:'hard', xp:100, questions:[
+        {q:'Perbedaan checked dan unchecked exception di Java?',a:0,opts:['Checked exception harus ditangani atau dideklarasikan, unchecked tidak wajib','Keduanya wajib ditangani','Unchecked lebih berbahaya','Checked untuk runtime error'],code:null},
+        {q:'Block "finally" di try-catch-finally?',a:2,opts:['Hanya dieksekusi jika tidak ada exception','Dieksekusi hanya jika ada exception','Selalu dieksekusi terlepas ada atau tidak ada exception','Dieksekusi jika catch gagal'],code:null},
+        {q:'Cara membuat custom exception di Java?',a:1,opts:['Implement interface Exception','Extend class Exception atau subclass-nya','Annotate class dengan @Exception','Implement Throwable'],code:null},
+        {q:'Perbedaan FileInputStream dan FileReader?',a:3,opts:['Keduanya sama','FileReader lebih cepat','FileInputStream untuk teks','FileInputStream untuk binary data, FileReader untuk teks (character)'],code:null},
+        {q:'try-with-resources di Java digunakan untuk?',a:0,opts:['Otomatis menutup resource yang mengimplementasikan AutoCloseable','Menangkap semua exception','Membuat resource yang tidak bisa ditutup','Thread-safe resource'],code:null},
+        {q:'Apa itu serialization di Java?',a:2,opts:['Konversi XML ke objek','Enkripsi data','Konversi objek menjadi byte stream (untuk disimpan/dikirim)','Kompresi file'],code:null},
+        {q:'NIO (New I/O) di Java keunggulannya dibanding I/O biasa?',a:1,opts:['Lebih mudah digunakan','Non-blocking I/O dan buffer-oriented, lebih efisien untuk banyak koneksi','Lebih aman','Lebih kompatibel'],code:null},
+        {q:'Apa itu BufferedReader vs InputStreamReader?',a:3,opts:['Sama saja','BufferedReader hanya untuk file','InputStreamReader untuk network','BufferedReader membungkus reader dengan buffer untuk efisiensi, InputStreamReader bridge byte ke char'],code:null},
+      ]},
+      {title:'Concurrency Java', diff:'expert', xp:140, questions:[
+        {q:'Perbedaan Thread dan Runnable di Java?',a:0,opts:['Thread adalah class yang bisa di-extend, Runnable interface yang lebih fleksibel karena mendukung multiple inheritance','Keduanya sama','Runnable lebih lambat','Thread tidak bisa membuat Thread baru'],code:null},
+        {q:'synchronized keyword di Java memastikan?',a:2,opts:['Thread berjalan lebih cepat','Multiple thread bisa akses bersamaan','Hanya satu thread yang bisa mengeksekusi blok/method tersebut pada satu waktu','Thread tidak bisa dihentikan'],code:null},
+        {q:'ExecutorService digunakan untuk?',a:1,opts:['Monitoring thread','Mengelola thread pool dan eksekusi task asinkron','Sinkronisasi akses data','Garbage collection manual'],code:null},
+        {q:'Apa itu race condition?',a:3,opts:['Thread yang berlomba untuk selesai duluan','Kondisi CPU penuh','Deadlock antar thread','Bug yang terjadi ketika hasil program bergantung pada timing/urutan eksekusi thread'],code:null},
+        {q:'volatile keyword di Java memastikan?',a:0,opts:['Perubahan nilai variabel langsung terlihat oleh semua thread (visibility guarantee)','Variabel tidak bisa diubah','Thread tidak bisa mengakses variabel','Nilai variabel unik per thread'],code:null},
+        {q:'CompletableFuture di Java digunakan untuk?',a:2,opts:['Membuat Promise ES6 di Java','Sinkronisasi thread','Komputasi asinkron yang bisa di-chain dan dikombinasikan','Membuat thread baru'],code:null},
+        {q:'Deadlock terjadi ketika?',a:1,opts:['Thread berjalan terlalu lama','Dua atau lebih thread saling menunggu lock yang dipegang thread lain','Memory penuh','Stack overflow'],code:null},
+        {q:'ConcurrentHashMap vs synchronized HashMap?',a:3,opts:['Keduanya identik','ConcurrentHashMap lebih lambat','synchronized HashMap lebih aman','ConcurrentHashMap menggunakan lock per segment, lebih efisien untuk concurrent access'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'sql', name:'SQL & Database', sub:'Query dan manajemen data',
+    icon:'&#128451;', color:'#22D3EE',
+    iconBg:'rgba(34,211,238,0.12)', desc:'SQL — bahasa standar untuk database relasional.',
+    totalLevels:4,
+    levels:[
+      {title:'SQL Dasar', diff:'easy', xp:45, questions:[
+        {q:'Perintah SQL untuk mengambil semua data dari tabel?',a:0,opts:['SELECT * FROM tabel','GET ALL FROM tabel','FETCH * FROM tabel','READ tabel'],code:null},
+        {q:'Perintah SQL untuk menambahkan data baru ke tabel?',a:2,opts:['ADD INTO tabel VALUES','PUT INTO tabel','INSERT INTO tabel VALUES','PUSH INTO tabel'],code:null},
+        {q:'Clause SQL untuk memfilter baris berdasarkan kondisi?',a:1,opts:['FILTER','WHERE','HAVING','CONDITION'],code:null},
+        {q:'Perintah SQL untuk memperbarui data yang sudah ada?',a:3,opts:['MODIFY tabel SET','CHANGE tabel WHERE','EDIT tabel','UPDATE tabel SET ... WHERE ...'],code:null},
+        {q:'Perintah SQL untuk menghapus data (baris) dari tabel?',a:0,opts:['DELETE FROM tabel WHERE ...','REMOVE FROM tabel','DROP tabel','ERASE FROM tabel'],code:null},
+        {q:'Fungsi SQL untuk menghitung jumlah baris?',a:2,opts:['SUM()','TOTAL()','COUNT()','NUM()'],code:null},
+        {q:'Clause SQL untuk mengurutkan hasil query?',a:1,opts:['SORT BY','ORDER BY','GROUP BY','ARRANGE BY'],code:null},
+        {q:'Perbedaan WHERE dan HAVING?',a:3,opts:['Tidak ada perbedaan','HAVING lebih modern','WHERE untuk JOIN','WHERE untuk filter sebelum GROUP BY, HAVING untuk filter setelah GROUP BY'],code:null},
+      ]},
+      {title:'JOIN & Relasi', diff:'medium', xp:70, questions:[
+        {q:'INNER JOIN menghasilkan?',a:0,opts:['Hanya baris yang punya kecocokan di kedua tabel','Semua baris tabel kiri','Semua baris tabel kanan','Semua kombinasi baris'],code:null},
+        {q:'LEFT JOIN menghasilkan?',a:2,opts:['Hanya baris yang cocok','Semua dari tabel kanan, cocok dari kiri','Semua dari tabel kiri, dan baris cocok dari tabel kanan (NULL jika tidak cocok)','Semua kombinasi'],code:null},
+        {q:'Perbedaan PRIMARY KEY dan FOREIGN KEY?',a:1,opts:['Keduanya sama','PRIMARY KEY pengidentifikasi unik tabel, FOREIGN KEY referensi ke PRIMARY KEY tabel lain','FOREIGN KEY lebih penting','PRIMARY KEY boleh NULL'],code:null},
+        {q:'Query untuk mendapatkan department yang memiliki lebih dari 5 karyawan?',a:3,opts:['WHERE COUNT(*) > 5','FILTER dept_count > 5','SELECT dept HAVING employees > 5','SELECT dept_id, COUNT(*) FROM emp GROUP BY dept_id HAVING COUNT(*) > 5'],code:null},
+        {q:'CROSS JOIN menghasilkan?',a:0,opts:['Cartesian product — semua kombinasi baris kedua tabel','Hanya baris cocok','Semua baris tabel kiri','Selalu gagal'],code:null},
+        {q:'Subquery correlated adalah?',a:2,opts:['Subquery yang lebih cepat','Subquery yang berdiri sendiri','Subquery yang referensi ke outer query','Subquery dalam JOIN'],code:null},
+        {q:'Fungsi SQL untuk mengelompokkan baris?',a:1,opts:['ORDER BY','GROUP BY','PARTITION BY','CLUSTER BY'],code:null},
+        {q:'UNION vs UNION ALL perbedaannya?',a:3,opts:['UNION ALL lebih lambat','Tidak ada perbedaan','UNION ALL menghilangkan duplikat','UNION menghilangkan duplikat, UNION ALL menyertakan semua termasuk duplikat'],code:null},
+      ]},
+      {title:'Index & Performance', diff:'hard', xp:95, questions:[
+        {q:'Index di database gunanya untuk?',a:0,opts:['Mempercepat operasi pencarian/query','Mengamankan data','Mengurangi ukuran tabel','Membuat data unik'],code:null},
+        {q:'EXPLAIN / EXPLAIN ANALYZE di SQL digunakan untuk?',a:2,opts:['Menjelaskan kolom tabel','Membuat dokumentasi','Melihat query execution plan dan performa','Memvalidasi query syntax'],code:null},
+        {q:'Tipe index yang paling umum digunakan di database relasional?',a:1,opts:['Hash Index','B-Tree Index','Bitmap Index','Full-text Index'],code:null},
+        {q:'N+1 query problem adalah?',a:3,opts:['Query dengan 1001 kolom','Paging query','Query yang mengambil null','Bug dimana untuk setiap baris hasil query pertama dilakukan 1 query tambahan'],code:null},
+        {q:'ACID properties dalam database, A singkatan dari?',a:0,opts:['Atomicity — semua operasi dalam transaksi berhasil atau gagal semua','Auto-commit','Availability','Asynchronous'],code:null},
+        {q:'Apa itu normalisasi database?',a:2,opts:['Mengenkripsi data','Membackup data','Mengorganisir struktur tabel untuk menghilangkan redundansi data','Mengoptimalkan query'],code:null},
+        {q:'Perbedaan OLTP dan OLAP?',a:1,opts:['OLAP lebih cepat untuk transaksi','OLTP untuk transaksi harian (INSERT/UPDATE), OLAP untuk analisis data (SELECT complex)','Keduanya sama','OLTP lebih cocok untuk data warehouse'],code:null},
+        {q:'Covering index adalah index yang?',a:3,opts:['Mencakup semua tabel','Index pada semua kolom','Hanya ada satu per tabel','Mencakup semua kolom yang dibutuhkan query sehingga tidak perlu akses ke tabel utama'],code:null},
+      ]},
+      {title:'NoSQL & Modern DB', diff:'expert', xp:130, questions:[
+        {q:'Perbedaan utama SQL dan NoSQL?',a:0,opts:['SQL structured relational dengan schema ketat, NoSQL flexible schema horizontal scaling','NoSQL selalu lebih cepat','SQL tidak bisa scale','NoSQL tidak bisa menyimpan relasi'],code:null},
+        {q:'MongoDB menyimpan data dalam format?',a:2,opts:['Tables','XML','BSON (Binary JSON)','CSV'],code:null},
+        {q:'CAP Theorem menyatakan bahwa distributed system tidak bisa menjamin ketiga property sekaligus. CAP singkatan dari?',a:1,opts:['Cache, Atomicity, Persistence','Consistency, Availability, Partition tolerance','Clustering, Asynchronous, Processing','Compute, Aggregate, Partition'],code:null},
+        {q:'Redis adalah contoh database tipe?',a:3,opts:['Document store','Column family','Graph database','Key-value in-memory store'],code:null},
+        {q:'Eventual consistency artinya?',a:0,opts:['Data akan konsisten di semua node pada akhirnya, tapi mungkin tidak langsung','Data tidak pernah konsisten','Konsistensi dijamin segera','Hanya satu node yang punya data terbaru'],code:null},
+        {q:'Sharding dalam database adalah?',a:2,opts:['Backup data','Enkripsi data','Membagi data ke beberapa node/server untuk horizontal scaling','Kompresi data'],code:null},
+        {q:'Vector database terutama digunakan untuk?',a:1,opts:['Menyimpan video','Pencarian semantik dan AI embeddings','Database grafis','Transaksi keuangan'],code:null},
+        {q:'Database graph seperti Neo4j optimal untuk?',a:3,opts:['Penyimpanan file besar','Transaksi tinggi','Analitik kolumnar','Data dengan banyak relasi kompleks seperti social network'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'algorithms', name:'Algoritma & DS', sub:'Struktur data & kompleksitas',
+    icon:'&#9000;', color:'#A855F7',
+    iconBg:'rgba(168,85,247,0.12)', desc:'Algoritma fundamental dan struktur data.',
+    totalLevels:5,
+    levels:[
+      {title:'Kompleksitas Algoritma', diff:'easy', xp:55, questions:[
+        {q:'Big O notation O(1) berarti?',a:0,opts:['Waktu eksekusi konstan, tidak bergantung ukuran input','Hanya 1 operasi','Paling lambat','Error'],code:null},
+        {q:'Manakah yang paling cepat (terbaik) dalam notasi Big O?',a:2,opts:['O(n)','O(n log n)','O(1)','O(log n)'],code:null},
+        {q:'Binary search memiliki kompleksitas waktu?',a:1,opts:['O(n)','O(log n)','O(n²)','O(1)'],code:null},
+        {q:'Bubble sort memiliki kompleksitas waktu worst case?',a:3,opts:['O(n)','O(n log n)','O(log n)','O(n²)'],code:null},
+        {q:'Algoritma manakah yang paling efisien untuk sorting data besar?',a:0,opts:['Merge Sort / Quick Sort O(n log n)','Bubble Sort O(n²)','Selection Sort O(n²)','Insertion Sort O(n²)'],code:null},
+        {q:'Space complexity O(n) berarti?',a:2,opts:['Program membutuhkan 0 memori tambahan','Program hanya butuh 1 variabel','Memori yang dibutuhkan tumbuh linear sesuai ukuran input','Program crash'],code:null},
+        {q:'Apa itu algoritma greedy?',a:1,opts:['Algoritma yang selalu gagal','Membuat pilihan optimal lokal di setiap langkah','Algoritma yang mencoba semua kemungkinan','Algoritma rekursif'],code:null},
+        {q:'Kompleksitas waktu linear search (cari satu per satu)?',a:3,opts:['O(1)','O(log n)','O(n log n)','O(n)'],code:null},
+      ]},
+      {title:'Array & Linked List', diff:'easy', xp:60, questions:[
+        {q:'Keunggulan array dibanding linked list?',a:0,opts:['Akses elemen random O(1) dengan index','Insert di tengah lebih cepat','Memori lebih efisien','Ukuran dinamis'],code:null},
+        {q:'Kompleksitas insert di awal linked list?',a:2,opts:['O(n)','O(n log n)','O(1)','O(n²)'],code:null},
+        {q:'Double linked list berbeda dari single linked list karena?',a:1,opts:['Bisa menyimpan 2x data','Setiap node punya pointer ke node sebelumnya DAN berikutnya','Lebih cepat','Menggunakan lebih sedikit memori'],code:null},
+        {q:'Apa itu sentinel node (dummy node) dalam linked list?',a:3,opts:['Node yang paling besar','Node yang mengandung data penting','Node yang tidak bisa dihapus','Node dummy di head/tail untuk menyederhanakan operasi edge case'],code:null},
+        {q:'Cara mendeteksi cycle dalam linked list? (Floyd\'s algorithm)',a:0,opts:['Dua pointer dengan kecepatan berbeda (slow & fast)','Menghitung semua node','Sorting linked list','Hashing semua node'],code:null},
+        {q:'Dynamic array (seperti Python list/Java ArrayList) saat kapasitas penuh, umumnya?',a:2,opts:['Throw error','Hanya simpan sampai kapasitas','Alokasi array baru 2x lebih besar dan salin semua elemen','Hapus elemen terlama'],code:null},
+        {q:'Operasi yang paling lambat di array statis?',a:1,opts:['Akses index tertentu','Insert/delete di tengah (geser elemen)','Membaca semua elemen','Mencari dengan index'],code:null},
+        {q:'Circular linked list berbeda karena?',a:3,opts:['Berputar sendiri','Node pertama selalu kosong','Tidak ada pointer next','Tail node menunjuk ke head node'],code:null},
+      ]},
+      {title:'Stack, Queue, Tree', diff:'medium', xp:75, questions:[
+        {q:'Prinsip Stack adalah?',a:0,opts:['LIFO — Last In First Out','FIFO — First In First Out','Random access','Priority based'],code:null},
+        {q:'Prinsip Queue adalah?',a:2,opts:['LIFO','Priority based','FIFO — First In First Out','Random access'],code:null},
+        {q:'Binary Search Tree (BST): node kiri selalu?',a:1,opts:['Lebih besar dari root','Lebih kecil dari parent node','Sama dengan parent','Lebih besar dari semua'],code:null},
+        {q:'Traversal tree yang mengunjungi root SEBELUM anak-anaknya?',a:3,opts:['Inorder','Postorder','Level-order','Preorder'],code:null},
+        {q:'Height balanced BST memiliki keunggulan?',a:0,opts:['Search, insert, delete selalu O(log n) karena tree tidak bisa skewed','Memori lebih sedikit','Lebih mudah diimplementasi','Insert selalu O(1)'],code:null},
+        {q:'Apa itu heap?',a:2,opts:['Nama lain untuk stack','Area memori untuk variabel lokal','Struktur tree yang setiap parent >= (max-heap) atau <= (min-heap) anaknya','Tipe queue khusus'],code:null},
+        {q:'Priority Queue umumnya diimplementasikan dengan?',a:1,opts:['Linked list biasa','Binary Heap','Array biasa','Hash table'],code:null},
+        {q:'Inorder traversal BST menghasilkan elemen dalam urutan?',a:3,opts:['Tidak terurut','Descending (terbesar dulu)','Level per level','Ascending (terkecil dulu)'],code:null},
+      ]},
+      {title:'Hashing & Graph', diff:'hard', xp:100, questions:[
+        {q:'Hash collision diselesaikan dengan teknik?',a:0,opts:['Chaining (linked list per bucket) atau Open Addressing','Menghapus salah satu','Tidak bisa diselesaikan','Sorting ulang'],code:null},
+        {q:'Graph BFS (Breadth First Search) menggunakan struktur data?',a:2,opts:['Stack','Priority Queue','Queue','Linked list'],code:null},
+        {q:'Graph DFS (Depth First Search) secara implisit menggunakan?',a:1,opts:['Queue','Call stack (atau stack eksplisit)','Heap','Array'],code:null},
+        {q:"Dijkstra's algorithm digunakan untuk?",a:3,opts:['Sorting graph','Mencari cycle dalam graph','Minimum spanning tree','Shortest path dari satu sumber ke semua node (non-negative weight)'],code:null},
+        {q:'Topological sort hanya bisa dilakukan pada?',a:0,opts:['Directed Acyclic Graph (DAG)','Semua jenis graph','Undirected graph','Graph dengan cycle'],code:null},
+        {q:'Perbedaan Prim dan Kruskal algorithm?',a:2,opts:['Keduanya sama','Prim untuk directed graph','Prim tumbuh dari satu vertex, Kruskal memilih edge terkecil global','Kruskal tidak optimal'],code:null},
+        {q:'Union-Find (Disjoint Set Union) digunakan untuk?',a:1,opts:['Sort elemen','Mendeteksi cycle dan cek konektivitas antar komponen','Search string','Shortest path'],code:null},
+        {q:'Load factor dalam hash table yang baik umumnya dibawah?',a:3,opts:['0.1','0.5','0.9','0.75'],code:null},
+      ]},
+      {title:'Dynamic Programming', diff:'expert', xp:145, questions:[
+        {q:'Dynamic Programming menyelesaikan masalah dengan?',a:0,opts:['Memecah masalah menjadi subproblem yang tumpang tindih dan menyimpan hasilnya (memoization/tabulation)','Random sampling','Heuristic lokal','Brute force'],code:null},
+        {q:'Apa beda memoization (top-down) dan tabulation (bottom-up)?',a:2,opts:['Tidak ada perbedaan','Memoization lebih lambat','Memoization rekursif simpan hasil, tabulation iteratif isi tabel dari bawah ke atas','Tabulation lebih lambat'],code:null},
+        {q:'Fibonacci dengan DP memiliki kompleksitas?',a:1,opts:['O(2^n) seperti naive recursion','O(n) time, O(n) space (bisa O(1) space optimized)','O(n²)','O(log n)'],code:null},
+        {q:'0/1 Knapsack Problem diselesaikan dengan DP, kompleksitasnya?',a:3,opts:['O(n)','O(n log n)','O(2^n) jika brute force','O(n * W) dimana W adalah kapasitas'],code:null},
+        {q:'Longest Common Subsequence (LCS) adalah masalah klasik DP yang?',a:0,opts:['Mencari subsequence terpanjang yang sama dari dua string','Mencari substring terpanjang','Mencari urutan karakter yang sama','Menghitung edit distance'],code:null},
+        {q:'Optimal substructure property artinya?',a:2,opts:['Subproblem bisa diselesaikan acak','Solusi optimal selalu rekursif','Solusi optimal masalah mengandung solusi optimal dari subproblemnya','Tidak ada overlapping subproblem'],code:null},
+        {q:'Edit Distance (Levenshtein distance) mengukur?',a:1,opts:['Panjang string terpanjang','Minimum operasi (insert,delete,replace) untuk mengubah satu string ke string lain','Karakter yang sama','Substring yang hilang'],code:null},
+        {q:'Matrix Chain Multiplication diselesaikan DP untuk?',a:3,opts:['Mengalikan matriks dengan cepat','Menjumlahkan matriks','Invers matriks','Menentukan urutan perkalian matriks yang meminimalkan total operasi scalar'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'devops', name:'DevOps & Tools', sub:'Git, Docker, CI/CD',
+    icon:'&#9881;', color:'#10B981',
+    iconBg:'rgba(16,185,129,0.12)', desc:'Version control, containerization, dan deployment.',
+    totalLevels:3,
+    levels:[
+      {title:'Git Dasar', diff:'easy', xp:45, questions:[
+        {q:'Perintah Git untuk menyimpan perubahan ke repository lokal?',a:0,opts:['git commit -m "pesan"','git save','git push','git store'],code:null},
+        {q:'Perintah untuk membuat branch baru dan langsung pindah ke sana?',a:2,opts:['git branch nama','git new nama','git checkout -b nama','git switch --create nama'],code:null},
+        {q:'Perbedaan git merge dan git rebase?',a:1,opts:['Keduanya identik','merge membuat merge commit, rebase memindahkan commit ke atas branch target (linear history)','rebase lebih berbahaya karena membuat branch baru','merge tidak bisa digabungkan'],code:null},
+        {q:'Perintah untuk melihat riwayat commit?',a:3,opts:['git history','git log --all','git show','git log'],code:null},
+        {q:'.gitignore digunakan untuk?',a:0,opts:['Menentukan file/folder yang tidak perlu dilacak Git','Menghapus file dari repository','Mengabaikan commit tertentu','Mengunci branch'],code:null},
+        {q:'Perintah untuk mengupload perubahan dari lokal ke remote?',a:2,opts:['git send','git upload','git push origin main','git sync'],code:null},
+        {q:'git stash digunakan untuk?',a:1,opts:['Menghapus perubahan','Menyimpan sementara perubahan yang belum siap di-commit','Membuat backup branch','Reset ke commit terakhir'],code:null},
+        {q:'Perintah untuk mengunduh dan merge perubahan dari remote ke lokal?',a:3,opts:['git fetch','git clone','git download','git pull'],code:null},
+      ]},
+      {title:'Docker & Container', diff:'medium', xp:80, questions:[
+        {q:'Apa itu Docker Image?',a:0,opts:['Template read-only berisi instruksi untuk membuat container','Container yang sedang berjalan','File konfigurasi Docker','Repository Docker'],code:null},
+        {q:'Perintah untuk menjalankan container dari image?',a:2,opts:['docker start image','docker create image','docker run image','docker exec image'],code:null},
+        {q:'Dockerfile instruksi FROM digunakan untuk?',a:1,opts:['Mendefinisikan port','Menentukan base image yang digunakan','Menjalankan command saat container start','Menyalin file'],code:null},
+        {q:'Perbedaan Docker dan Virtual Machine?',a:3,opts:['Keduanya sama','VM lebih ringan','Docker lebih lambat','Docker berbagi OS kernel host (lebih ringan), VM memiliki OS sendiri yang lengkap'],code:null},
+        {q:'Docker Compose digunakan untuk?',a:0,opts:['Mendefinisikan dan menjalankan multi-container application dengan satu file YAML','Membuat single container','Mengatur network Docker','Build image'],code:null},
+        {q:'Volume di Docker digunakan untuk?',a:2,opts:['Mengatur CPU','Network isolation','Persistent data storage yang bertahan meski container dihapus','Membuat snapshot container'],code:null},
+        {q:'Perintah untuk melihat container yang sedang berjalan?',a:1,opts:['docker list','docker ps','docker show','docker containers'],code:null},
+        {q:'Multi-stage build di Dockerfile digunakan untuk?',a:3,opts:['Menjalankan banyak app','Membuat banyak container','Parallel build','Menghasilkan image production yang lebih kecil dengan memisahkan build dan runtime stage'],code:null},
+      ]},
+      {title:'CI/CD & Cloud', diff:'hard', xp:110, questions:[
+        {q:'CI/CD singkatan dari?',a:0,opts:['Continuous Integration / Continuous Delivery (atau Deployment)','Code Inspection / Code Delivery','Central Integration / Central Deployment','Compile Integration / Compile Deploy'],code:null},
+        {q:'Kubernetes (K8s) digunakan untuk?',a:2,opts:['Version control','Build otomatis','Orkestrasi container (deployment, scaling, manajemen container)','Monitoring server'],code:null},
+        {q:'IaC (Infrastructure as Code) contoh toolnya?',a:1,opts:['Docker','Terraform / Ansible','Git','Jenkins'],code:null},
+        {q:'Perbedaan horizontal scaling dan vertical scaling?',a:3,opts:['Keduanya sama','Horizontal menambah resource server yang ada','Vertical menambah server baru','Horizontal menambah server baru, vertical meningkatkan resource server yang ada'],code:null},
+        {q:'Blue-Green Deployment adalah strategi?',a:0,opts:['Dua environment identik, traffic di-switch saat deploy baru untuk zero-downtime deployment','Gradual rollout ke sebagian user','Deploy ke server biru dahulu','Batch deployment'],code:null},
+        {q:'Load balancer fungsinya?',a:2,opts:['Mengamankan jaringan','Cache konten statis','Mendistribusikan traffic ke beberapa server backend','Monitoring server'],code:null},
+        {q:'GitHub Actions adalah?',a:1,opts:['Version control tool','CI/CD platform terintegrasi dengan GitHub untuk otomasi workflow','Container registry','Code review tool'],code:null},
+        {q:'Microservices architecture vs Monolith, keuntungan microservices?',a:3,opts:['Lebih mudah dikembangkan','Tidak membutuhkan network','Deploy lebih murah','Deploy independen per service, scale per service, fault isolation'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'cpp', name:'C / C++', sub:'Sistem & performa tinggi',
+    icon:'C+', color:'#6366F1',
+    iconBg:'rgba(99,102,241,0.12)', desc:'C/C++ untuk sistem, embedded, dan high-performance computing.',
+    totalLevels:4,
+    levels:[
+      {title:'C Dasar', diff:'easy', xp:55, questions:[
+        {q:'Cara mendeklarasikan pointer ke int di C?',a:0,opts:['int *ptr','int ptr*','pointer int ptr','int &ptr'],code:null},
+        {q:'Operator untuk mengambil alamat memori variabel di C?',a:2,opts:['*','->','&','@'],code:null},
+        {q:'Apa output dari:\nint x = 5;\nint *p = &x;\nprintf("%d", *p)',a:1,opts:['alamat x','5','p','Error'],code:'int x = 5;\nint *p = &x;\nprintf("%d", *p)'},
+        {q:'Fungsi untuk mengalokasikan memori dinamis di C?',a:3,opts:['alloc()','new()','create()','malloc()'],code:null},
+        {q:'Setelah menggunakan malloc(), apa yang harus dilakukan?',a:0,opts:['Panggil free() untuk melepas memori','Tidak perlu melakukan apa-apa','Panggil delete()','Restart program'],code:null},
+        {q:'Perbedaan array dan pointer di C?',a:2,opts:['Keduanya identik','Array selalu lebih lambat','Array adalah pointer konstan ke elemen pertama, pointer bisa di-reassign','Pointer selalu lebih besar'],code:null},
+        {q:'Keyword struct di C digunakan untuk?',a:1,opts:['Membuat class','Mendefinisikan tipe data kustom yang mengelompokkan beberapa field','Mengalokasikan struct','Membuat namespace'],code:null},
+        {q:'scanf("%d", &num) — kenapa menggunakan &num?',a:3,opts:['Konvensi saja','Agar scanf lebih cepat','Untuk pass by value','Scanf butuh alamat memori untuk menyimpan nilai yang dibaca'],code:null},
+      ]},
+      {title:'C++ OOP', diff:'medium', xp:75, questions:[
+        {q:'Perbedaan class dan struct di C++?',a:0,opts:['Class default membernya private, struct default public','Struct lebih cepat','Class tidak punya method','Tidak ada perbedaan'],code:null},
+        {q:'Destructor di C++ dipanggil saat?',a:2,opts:['Objek dibuat','Method pertama dipanggil','Objek keluar dari scope atau di-delete','Setiap method dipanggil'],code:null},
+        {q:'Virtual function di C++ digunakan untuk?',a:1,opts:['Membuat fungsi lebih cepat','Polimorfisme — fungsi yang bisa di-override di subclass','Fungsi tanpa implementasi','Thread-safe function'],code:null},
+        {q:'RAII (Resource Acquisition Is Initialization) dalam C++ berarti?',a:3,opts:['Resource dibeli saat runtime','Resource tidak perlu dibebaskan','Hanya berlaku untuk file','Resource diperoleh di konstruktor dan dilepas di destruktor secara otomatis'],code:null},
+        {q:'Smart pointer unique_ptr di C++11 berarti?',a:0,opts:['Hanya satu owner — otomatis hapus resource saat pointer keluar scope','Pointer yang tidak bisa diubah','Pointer ke struct saja','Thread-safe pointer'],code:null},
+        {q:'Template di C++ digunakan untuk?',a:2,opts:['Mempercepat kompilasi','Membuat GUI','Generic programming — kode yang bekerja untuk berbagai tipe data','Membuat pointer smart'],code:null},
+        {q:'Rule of Three (atau Five) di C++ menyatakan?',a:1,opts:['Setiap class harus punya 3 method','Jika mendefinisikan destructor/copy constructor/copy assignment, biasanya perlu ketiganya','Maksimal 3 level inheritance','3 smart pointer per class'],code:null},
+        {q:'Move semantics di C++11 (&&) digunakan untuk?',a:3,opts:['Referensi ke pointer','Const reference','Increment variabel','Transfer ownership resource tanpa copy, meningkatkan performa'],code:null},
+      ]},
+      {title:'STL & Modern C++', diff:'hard', xp:100, questions:[
+        {q:'std::vector vs std::array perbedaannya?',a:0,opts:['vector dynamic size, array ukuran tetap saat kompilasi','array lebih lambat','vector tidak bisa random access','array selalu di heap'],code:null},
+        {q:'std::map menggunakan struktur data apa?',a:2,opts:['Hash table','Array sorted','Red-Black Tree (BST balanced)','Linked list'],code:null},
+        {q:'Lambda expression di C++ diperkenalkan di versi?',a:1,opts:['C++03','C++11','C++17','C++20'],code:null},
+        {q:'constexpr di C++ digunakan untuk?',a:3,opts:['Variabel konstan biasa','Fungsi yang tidak bisa dipanggil','Membuat template','Komputasi yang bisa dievaluasi saat compile time'],code:null},
+        {q:'std::unordered_map vs std::map?',a:0,opts:['unordered_map O(1) average (hash), map O(log n) (BST), unordered_map tidak terurut','map lebih cepat','unordered_map selalu lebih baik','Tidak ada perbedaan'],code:null},
+        {q:'Range-based for loop di C++11:\nfor (auto& x : container) — & berarti?',a:2,opts:['Pointer ke x','Alamat memori x','Referensi — modifikasi x mengubah elemen asli','Optional'],code:null},
+        {q:'Apa itu std::move()?',a:1,opts:['Memindahkan variabel ke lokasi memori lain','Cast ke rvalue reference untuk memicu move semantics','Menyalin objek','Menghapus variabel'],code:null},
+        {q:'Concepts di C++20 digunakan untuk?',a:3,opts:['Konsep OOP','Dokumentasi template','Namespace khusus','Constraint pada template parameter untuk error message yang lebih jelas'],code:null},
+      ]},
+      {title:'Sistem & Memori', diff:'expert', xp:150, questions:[
+        {q:'Stack vs Heap memory di C/C++?',a:0,opts:['Stack untuk variabel lokal otomatis, Heap untuk alokasi dinamis manual','Heap lebih cepat','Stack lebih besar','Tidak ada perbedaan'],code:null},
+        {q:'Buffer overflow terjadi ketika?',a:2,opts:['Buffer terlalu kecil sehingga program crash langsung','Network buffer penuh','Program menulis data melampaui batas buffer yang dialokasikan','Memory tidak cukup'],code:null},
+        {q:'Valgrind adalah tool untuk?',a:1,opts:['Build C++ project','Mendeteksi memory leak dan memory error','Optimasi kode','Profiling CPU'],code:null},
+        {q:'Perbedaan deep copy dan shallow copy dalam C++?',a:3,opts:['Deep copy lebih lambat saja','Shallow copy menyalin lebih dalam','Deep copy tidak aman','Shallow copy hanya salin pointer (berbagi data), deep copy buat salinan data baru'],code:null},
+        {q:'Cache locality dalam optimasi program berarti?',a:0,opts:['Akses data yang berurutan di memori (spatial/temporal locality) lebih cepat karena cache CPU','Cache yang lebih besar','Program yang berjalan di cache','CPU cache selalu benar'],code:null},
+        {q:'Lock-free programming menggunakan?',a:2,opts:['Tidak menggunakan thread','Mutex yang lebih cepat','Atomic operations dan CAS (Compare-And-Swap)','Thread yang tidak bisa di-lock'],code:null},
+        {q:'Undefined Behavior (UB) di C/C++?',a:1,opts:['Program selalu crash','Perilaku yang tidak terdefinisi standar — compiler bebas menghasilkan kode apa pun','Selalu error kompilasi','Peringatan saja'],code:null},
+        {q:'SIMD (Single Instruction Multiple Data) digunakan untuk?',a:3,opts:['Multiple thread','Akses memori paralel','Instruksi network','Memproses beberapa data sekaligus dalam satu instruksi CPU untuk performa'],code:null},
+      ]},
+    ]
+  },
+  {
+    id:'networking', name:'Jaringan & Web', sub:'HTTP, TCP/IP, REST API',
+    icon:'&#127760;', color:'#EC4899',
+    iconBg:'rgba(236,72,153,0.12)', desc:'Protokol jaringan, HTTP, REST, keamanan web.',
+    totalLevels:3,
+    levels:[
+      {title:'TCP/IP & HTTP', diff:'easy', xp:50, questions:[
+        {q:'HTTP status code 404 berarti?',a:0,opts:['Not Found — resource tidak ditemukan','Internal Server Error','Unauthorized','Redirect'],code:null},
+        {q:'Perbedaan GET dan POST di HTTP?',a:2,opts:['POST lebih cepat','GET untuk data besar','GET mengambil data (params di URL), POST mengirim data (di body)','Tidak ada perbedaan'],code:null},
+        {q:'HTTPS vs HTTP?',a:1,opts:['HTTPS lebih lambat saja','HTTPS mengenkripsi komunikasi menggunakan TLS/SSL','HTTP sudah aman','Hanya beda port'],code:null},
+        {q:'DNS (Domain Name System) berfungsi untuk?',a:3,opts:['Mengamankan website','Menyimpan file website','Mengatur bandwidth','Menerjemahkan nama domain ke alamat IP'],code:null},
+        {q:'TCP vs UDP perbedaan utamanya?',a:0,opts:['TCP connection-oriented reliable, UDP connectionless unreliable tapi lebih cepat','UDP lebih aman','TCP selalu lebih cepat','Keduanya sama'],code:null},
+        {q:'HTTP status code 500 berarti?',a:2,opts:['Not Found','Forbidden','Internal Server Error — error di sisi server','Success'],code:null},
+        {q:'Port default untuk HTTPS adalah?',a:1,opts:['80','443','8080','3000'],code:null},
+        {q:'REST API menggunakan metode HTTP DELETE untuk?',a:3,opts:['Melihat data','Membuat data baru','Update data','Menghapus resource'],code:null},
+      ]},
+      {title:'API & Authentication', diff:'medium', xp:75, questions:[
+        {q:'JWT (JSON Web Token) terdiri dari berapa bagian?',a:0,opts:['3 bagian: Header.Payload.Signature','2 bagian','4 bagian','1 bagian'],code:null},
+        {q:'OAuth 2.0 digunakan untuk?',a:2,opts:['Enkripsi data','Routing','Authorization — mengizinkan akses ke resource tanpa berbagi password','Authentication langsung'],code:null},
+        {q:'CORS (Cross-Origin Resource Sharing) adalah?',a:1,opts:['Sistem cache HTTP','Mekanisme browser untuk mengizinkan/memblokir request dari origin berbeda','Protocol enkripsi','Method HTTP baru'],code:null},
+        {q:'HTTP 401 vs 403 perbedaannya?',a:3,opts:['Keduanya sama','401 lebih serius','403 butuh login','401 Unauthorized (butuh autentikasi), 403 Forbidden (sudah auth tapi tidak punya izin)'],code:null},
+        {q:'REST API adalah stateless, artinya?',a:0,opts:['Server tidak menyimpan state session client — setiap request harus membawa semua info yang dibutuhkan','Server tidak punya database','API tidak bisa diubah','Tidak bisa mengirim data'],code:null},
+        {q:'GraphQL berbeda dari REST karena?',a:2,opts:['GraphQL lebih lambat','GraphQL tidak bisa query data','Client bisa meminta data yang tepat dibutuhkan, bukan endpoint fixed','GraphQL hanya untuk mobile'],code:null},
+        {q:'API Rate Limiting digunakan untuk?',a:1,opts:['Mempercepat API','Membatasi jumlah request per client dalam waktu tertentu','Mengenkripsi API','Cache response'],code:null},
+        {q:'Idempotent dalam HTTP method berarti?',a:3,opts:['Tidak bisa diulang','Selalu berhasil','Mengubah data','Dipanggil berkali-kali menghasilkan efek yang sama'],code:null},
+      ]},
+      {title:'Keamanan Web', diff:'hard', xp:105, questions:[
+        {q:'SQL Injection dicegah dengan?',a:0,opts:['Parameterized queries / prepared statements','Enkripsi database','Firewall saja','Validasi panjang input saja'],code:null},
+        {q:'XSS (Cross-Site Scripting) adalah?',a:2,opts:['SQL injection via form','CSRF attack','Injeksi script berbahaya ke halaman web yang dieksekusi browser user lain','Serangan brute force'],code:null},
+        {q:'HTTPS mencegah serangan apa?',a:1,opts:['SQL Injection','Man-in-the-Middle attack (penyadapan data dalam transit)','XSS','CSRF'],code:null},
+        {q:'CSRF (Cross-Site Request Forgery) dicegah dengan?',a:3,opts:['Enkripsi','Rate limiting','Input validation','CSRF token atau SameSite cookie attribute'],code:null},
+        {q:'bcrypt vs MD5 untuk hashing password?',a:0,opts:['bcrypt dirancang untuk password (slow, adaptive cost), MD5 terlalu cepat dan tidak aman untuk password','MD5 lebih aman','Keduanya sama','MD5 lebih lambat'],code:null},
+        {q:'Content Security Policy (CSP) HTTP header digunakan untuk?',a:2,opts:['Cache control','CORS','Mengurangi risiko XSS dengan membatasi sumber konten yang boleh dimuat','Rate limiting'],code:null},
+        {q:'Penetration Testing (Pentest) adalah?',a:1,opts:['Testing performa jaringan','Simulasi serangan siber untuk menemukan vulnerabilitas sebelum attacker','Testing database','Load testing'],code:null},
+        {q:'Zero-day vulnerability adalah?',a:3,opts:['Bug baru ditemukan hari ini','Kerentanan yang tidak berbahaya','Vulnerability yang sudah dipatch','Kerentanan yang belum diketahui vendor/publik dan belum ada patchnya'],code:null},
+      ]},
+    ]
+  },
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let G = {
+  xp:0, totalDone:0, streak:0,
+  hp:100, hpReserve:0,
+  settings:{sound:true,anim:true,timer:false},
+  progress:{},  /* catId -> {levelIdx, stars[]} */
+  currentCat:null, currentLevel:null,
+  /* game state */
+  questions:[], qIdx:0, score:0, wrong:0,
+  streakCorrect:0,  /* berturut benar */
+  selected:null, answered:false,
+  prevScreen:null,
+};
+
+function save(){try{localStorage.setItem('cqpro2',JSON.stringify(G));}catch(e){}}
+function load(){
+  try{
+    const s=localStorage.getItem('cqpro2');
+    if(s){
+      const p=JSON.parse(s);
+      Object.assign(G,p);
+    }
+  }catch(e){}
+}
+load();
+
+/* ============================================================
+   CANVAS BACKGROUND
+   ============================================================ */
+(function(){
+  const c=document.getElementById('bg-canvas');
+  const ctx=c.getContext('2d');
+  let W,H,stars=[],nebulas=[];
+  const starColors=['rgba(99,102,241,','rgba(34,211,238,','rgba(236,72,153,','rgba(167,139,250,'];
+  function resize(){
+    W=c.width=window.innerWidth;H=c.height=window.innerHeight;
+    stars=[];
+    for(let i=0;i<120;i++){
+      stars.push({
+        x:Math.random()*W,y:Math.random()*H,
+        r:Math.random()*1.8+0.2,
+        speed:Math.random()*0.25+0.05,
+        opacity:Math.random()*0.7+0.1,
+        twinkleSpeed:Math.random()*0.02+0.005,
+        twinklePhase:Math.random()*Math.PI*2,
+        color:starColors[Math.floor(Math.random()*starColors.length)],
+      });
+    }
+    nebulas=[];
+    for(let i=0;i<3;i++){
+      nebulas.push({x:Math.random()*W,y:Math.random()*H,r:150+Math.random()*200,
+        color:['rgba(99,102,241,0.04)','rgba(34,211,238,0.03)','rgba(236,72,153,0.03)'][i]});
+    }
+  }
+  resize();window.addEventListener('resize',resize);
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    /* nebulas */
+    nebulas.forEach(n=>{
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+      g.addColorStop(0,n.color);g.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=g;ctx.fill();
+    });
+    /* stars */
+    t+=0.016;
+    stars.forEach(s=>{
+      s.y-=s.speed;
+      if(s.y<0){s.y=H+5;s.x=Math.random()*W;}
+      const twinkle=s.opacity*(0.7+0.3*Math.sin(t/s.twinkleSpeed+s.twinklePhase));
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=s.color+twinkle+')';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   SCREEN NAVIGATION
+   ============================================================ */
+function goScreen(id, fromId){
+  const cur=document.querySelector('.screen.active');
+  if(cur) cur.classList.remove('active');
+  const next=document.getElementById(id);
+  next.classList.add('active','screen-enter');
+  setTimeout(()=>next.classList.remove('screen-enter'),400);
+  G.prevScreen=fromId||cur?.id||'screen-home';
+  updateHealthBar();
+}
+function goBack(){goScreen(G.prevScreen||'screen-home');}
+function goHome(){goScreen('screen-home');updateHome();}
+function goCats(){buildCats();goScreen('screen-cats','screen-home');}
+
+/* ============================================================
+   HEALTH BAR
+   ============================================================ */
+function updateHealthBar(){
+  const inGame=document.getElementById('screen-game').classList.contains('active');
+  document.getElementById('health-bar-wrap').style.display='block';
+  document.getElementById('health-label').style.display='block';
+  setHpUI(G.hp);
+}
+function setHpUI(hp){
+  const fill=document.getElementById('game-hp-fill');
+  const pct=document.getElementById('game-hp-pct');
+  /* Color gradient shifts: green->yellow->orange->red based on HP */
+  const hpColor=hp>60?'linear-gradient(90deg,#10B981,#F59E0B)':hp>30?'linear-gradient(90deg,#F59E0B,#F97316)':'linear-gradient(90deg,#EF4444,#F97316)';
+  if(fill){fill.style.width=hp+'%';fill.style.background=hpColor;}
+  if(pct){
+    pct.textContent=hp+'%';
+    pct.style.color=hp>60?'var(--green)':hp>30?'var(--gold)':'var(--red)';
+  }
+  document.getElementById('health-bar-fill').style.width=hp+'%';
+  document.getElementById('health-bar-fill').style.background=hpColor;
+  document.getElementById('health-label').textContent='HP '+hp+'%';
+  document.getElementById('health-label').style.color=hp>60?'var(--green)':hp>30?'var(--gold)':'var(--red)';
+  const wrap=document.getElementById('health-bar-wrap');
+  if(hp<=30)wrap.classList.add('low-hp');else wrap.classList.remove('low-hp');
+}
+function loseHp(){
+  G.hp=Math.max(0,G.hp-10);
+  G.streakCorrect=0;
+  setHpUI(G.hp);
+  /* Low HP warning */
+  const wrap=document.getElementById('health-bar-wrap');
+  if(G.hp<=30)wrap.classList.add('low-hp');
+  else wrap.classList.remove('low-hp');
+  save();
+  if(G.hp<=0){
+    /* Cek cadangan — aktif saat HP <= 5% */
+    if(G.hpReserve>0){
+      const restore=Math.min(30,G.hpReserve);
+      G.hp=restore;
+      G.hpReserve=Math.max(0,G.hpReserve-restore);
+      setHpUI(G.hp);
+      showToast('Cadangan HP aktif! +'+restore+'%');
+      save();return;
+    }
+    showNolife();
+  }
+}
+function gainHp(pct){
+  const prev=G.hp;
+  const available=100-G.hp;
+  if(available>=pct){
+    G.hp=Math.min(100,G.hp+pct);
+  } else {
+    const extra=pct-available;
+    G.hp=100;
+    G.hpReserve=Math.min(100,G.hpReserve+extra);
+  }
+  setHpUI(G.hp);
+  updateUpgradeScreen();
+  save();
+}
+function checkStreakBonus(){
+  G.streakCorrect++;
+  if(G.streakCorrect>=5){
+    G.streakCorrect=0;
+    gainHp(5);
+    showToast('+5% HP bonus — 5 jawaban benar berturut!','info');
+  }
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg,type){
+  /* Remove existing toasts */
+  document.querySelectorAll('.cq-toast').forEach(t=>t.remove());
+  const colors={error:'rgba(239,68,68,0.9)',warning:'rgba(245,158,11,0.9)',info:'rgba(99,102,241,0.9)'};
+  const bg=colors[type]||'rgba(16,185,129,0.9)';
+  const t=document.createElement('div');
+  t.className='cq-toast';
+  t.style.cssText=`position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(16px);background:${bg};color:#fff;padding:9px 20px;border-radius:24px;font-size:12px;font-weight:700;z-index:999;opacity:0;transition:all 0.3s cubic-bezier(.23,1,.32,1);white-space:nowrap;font-family:var(--font-body);backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,0.4);`;
+  t.textContent=msg;document.body.appendChild(t);
+  requestAnimationFrame(()=>{t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(-8px)';setTimeout(()=>t.remove(),320);},2600);
+}
+
+/* ============================================================
+   PARTICLES
+   ============================================================ */
+function spawnParticles(x,y,good){
+  if(!G.settings.anim)return;
+  const colors=good?['#10B981','#34D399','#6EE7B7','#F59E0B','#818CF8']:['#EF4444','#FCA5A5','#F97316'];
+  const count=good?14:8;
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div');
+    const angle=(Math.PI*2/count)*i + (Math.random()-0.5)*0.4;
+    const dist=50+Math.random()*60;
+    const size=3+Math.random()*5;
+    const tx=`translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist-70}px)`;
+    p.className='particle';
+    p.style.cssText=`left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};--tx:${tx};animation-delay:${i*0.03}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1000);
+  }
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+const XP_LEVELS=[
+  {lbl:'Level 1 — Pemula',    min:0,   max:100},
+  {lbl:'Level 2 — Pembangun', min:100, max:300},
+  {lbl:'Level 3 — Pengembang',min:300, max:600},
+  {lbl:'Level 4 — Senior',    min:600, max:1000},
+  {lbl:'Level 5 — Ahli',      min:1000,max:2000},
+  {lbl:'Level 6 — Maestro',   min:2000,max:4000},
+];
+function getLevel(xp){return XP_LEVELS.find((l,i)=>xp<l.max||(i===XP_LEVELS.length-1))||XP_LEVELS[XP_LEVELS.length-1];}
+function updateHome(){
+  document.getElementById('home-xp-val').textContent=G.xp;
+  document.getElementById('home-done-val').textContent=G.totalDone;
+  document.getElementById('home-streak-val').textContent=G.streak;
+  const lv=getLevel(G.xp);
+  const pct=Math.min(100,Math.round(((G.xp-lv.min)/(lv.max-lv.min))*100));
+  const lbl=document.getElementById('home-level-lbl');
+  const nxt=document.getElementById('home-level-next');
+  const fill=document.getElementById('home-xp-fill');
+  if(lbl)lbl.textContent=lv.lbl;
+  if(nxt)nxt.textContent=G.xp+' / '+lv.max+' XP';
+  if(fill)fill.style.width=pct+'%';
+}
+updateHome();
+
+/* ============================================================
+   CATEGORIES
+   ============================================================ */
+function buildCats(){
+  document.getElementById('cats-xp').textContent=G.xp+' XP';
+  const grid=document.getElementById('cat-grid');
+  grid.innerHTML='';
+  CATEGORIES.forEach((cat,ci)=>{
+    const prog=G.progress[cat.id]||{levelIdx:0,stars:[]};
+    const done=prog.stars.filter(s=>s>=2).length;
+    const locked=ci>0&&!isCatUnlocked(ci);
+    const div=document.createElement('div');
+    div.className='cat-card slide-up';
+    div.style.animationDelay=(ci*0.06)+'s';
+    if(locked){div.style.opacity='0.4';div.style.cursor='default';}
+    div.innerHTML=`<div class="cat-icon" style="background:${cat.iconBg};border:1px solid ${cat.color}33;">${renderCatIcon(cat)}</div>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-sub">${cat.sub}</div>
+      <div class="cat-prog-bar"><div class="cat-prog-fill" style="width:${cat.levels.length>0?Math.round(done/cat.levels.length*100):0}%;background:${cat.color};opacity:0.8;"></div></div>
+      <div class="cat-levels">${done}/${cat.levels.length} level selesai</div>
+      ${locked?'<div class="cat-lock">&#128274;</div>':(done===cat.levels.length&&cat.levels.length>0?'<div style="position:absolute;top:8px;right:8px;font-size:13px;color:#10B981;font-weight:700;">&#10003;</div>':'')}
+    `;
+    if(!locked)div.onclick=()=>goLevels(cat.id);
+    grid.appendChild(div);
+  });
+}
+function renderCatIcon(cat){
+  if(cat.id==='javascript') return '<span style="font-family:var(--font-display);font-size:16px;font-weight:700;color:'+cat.color+';">JS</span>';
+  if(cat.id==='cpp') return '<span style="font-family:var(--font-display);font-size:16px;font-weight:700;color:'+cat.color+';">C++</span>';
+  return '<span style="font-size:22px;">'+cat.icon+'</span>';
+}
+function isCatUnlocked(ci){
+  if(ci===0)return true;
+  const prev=CATEGORIES[ci-1];
+  const prog=G.progress[prev.id]||{stars:[]};
+  return prog.stars.filter(s=>s>=2).length>0;
+}
+
+/* ============================================================
+   LEVELS
+   ============================================================ */
+function goLevels(catId){
+  G.currentCat=catId;
+  const cat=CATEGORIES.find(c=>c.id===catId);
+  const prog=G.progress[catId]||{levelIdx:0,stars:[]};
+  document.getElementById('level-nav-title').textContent=cat.name+' — Level';
+  document.getElementById('level-xp-nav').textContent=G.xp+' XP';
+  document.getElementById('level-nav-desc').textContent=cat.desc;
+  const path=document.getElementById('level-path');
+  path.innerHTML='';
+  cat.levels.forEach((lv,i)=>{
+    const stars=prog.stars[i]||0;
+    const done=stars>=2;
+    const prevDone=i===0||((prog.stars[i-1]||0)>=2);
+    const isActive=prevDone&&!done;
+    const locked=!prevDone&&i>0;
+    const node=document.createElement('div');
+    node.className='level-node slide-up'+(locked?' locked-node':'');
+    node.style.animationDelay=(i*0.07)+'s';
+    const starHtml=[0,1,2].map(s=>`<span class="star-icon" style="color:${s<stars?'#F59E0B':'rgba(255,255,255,0.2)'};">&#9733;</span>`).join('');
+    const diffBadge={easy:'badge-easy',medium:'badge-med',hard:'badge-hard',expert:'badge-expert'};
+    const diffLabel={easy:'Mudah',medium:'Menengah',hard:'Sulit',expert:'Expert'};
+    node.innerHTML=`
+      <div class="node-circle ${done?'done-circle':isActive?'active-circle':''}">
+        <div class="node-num" style="font-size:${locked?'16px':'14px'}">${locked?'&#128274;':(i+1)}</div>
+        <div class="node-stars">${starHtml}</div>
+      </div>
+      <div class="node-info">
+        <div class="node-title">${lv.title}</div>
+        <div class="node-meta" style="display:flex;align-items:center;gap:6px;">
+          <span>${lv.questions.length} soal</span>
+          <span style="color:var(--gold);font-family:var(--font-display);font-size:10px;font-weight:700;">+${lv.xp} XP</span>
+        </div>
+        <span class="node-badge ${diffBadge[lv.diff]||'badge-easy'}" style="margin-top:5px;display:inline-block;">${diffLabel[lv.diff]||'Mudah'}</span>
+      </div>
+      ${done?'<div style="font-size:20px;color:#10B981;padding-right:4px;filter:drop-shadow(0 0 6px rgba(16,185,129,0.5));">&#10003;</div>':''}
+    `;
+    if(!locked)node.onclick=()=>startGame(catId,i);
+    path.appendChild(node);
+  });
+  goScreen('screen-levels','screen-cats');
+}
+
+/* ============================================================
+   GAME
+   ============================================================ */
+function startGame(catId,levelIdx){
+  if(G.hp<=0){showNolife();return;}
+  G.currentCat=catId;G.currentLevel=levelIdx;
+  const cat=CATEGORIES.find(c=>c.id===catId);
+  const lv=cat.levels[levelIdx];
+  G.questions=[...lv.questions].sort(()=>Math.random()-0.5);
+  G.qIdx=0;G.score=0;G.wrong=0;G.streakCorrect=0;
+  G.selected=null;G.answered=false;
+  document.getElementById('game-hud-title').textContent=cat.name+' — '+lv.title;
+  document.getElementById('game-hud-xp').textContent=G.xp+' XP';
+  document.getElementById('game-back-btn').onclick=()=>{if(confirm('Keluar dari level ini?'))goLevels(catId);};
+  setHpUI(G.hp);
+  buildQProgress();
+  renderQuestion();
+  goScreen('screen-game','screen-levels');
+}
+
+function buildQProgress(){
+  const el=document.getElementById('q-progress');
+  el.innerHTML='';
+  G.questions.forEach((_,i)=>{
+    const pip=document.createElement('div');
+    pip.className='q-pip';pip.id='qpip-'+i;
+    el.appendChild(pip);
+  });
+  const num=document.createElement('div');
+  num.className='q-num';num.id='q-num-label';num.textContent='1/'+G.questions.length;
+  el.appendChild(num);
+}
+function updateQProgress(correct){
+  G.questions.forEach((_,i)=>{
+    const pip=document.getElementById('qpip-'+i);
+    if(!pip)return;
+    if(i<G.qIdx){
+      /* pip stays as-is (already colored) */
+    } else if(i===G.qIdx){
+      pip.className='q-pip curr-pip';
+    }
+  });
+  const lbl=document.getElementById('q-num-label');
+  if(lbl)lbl.textContent=(G.qIdx+1)+'/'+G.questions.length;
+}
+function markPip(idx,ok){
+  const pip=document.getElementById('qpip-'+idx);
+  if(pip)pip.className='q-pip '+(ok?'done-pip':'wrong-pip');
+}
+
+function renderQuestion(){
+  if(G.qIdx>=G.questions.length){endGame();return;}
+  const q=G.questions[G.qIdx];
+  G.selected=null;G.answered=false;
+  updateQProgress();
+  /* Build card */
+  const wrap=document.getElementById('q-card-wrap');
+  wrap.innerHTML=`<div class="q-card">
+    <div class="q-num-label">Pertanyaan ${G.qIdx+1} dari ${G.questions.length}</div>
+    <div class="q-text">${escHtml(q.q)}</div>
+    ${q.code?`<div class="q-code">${formatCode(q.code)}</div>`:''}
+  </div>`;
+  /* Build opts */
+  const opts=document.getElementById('opts-grid');
+  opts.innerHTML='';
+  const letters=['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.innerHTML=`<div class="opt-letter">${letters[i]}</div><div class="opt-text">${escHtml(opt)}</div><span class="opt-tick"></span>`;
+    btn.addEventListener('mousemove',e=>{
+      const r=btn.getBoundingClientRect();
+      btn.style.setProperty('--rx',((e.clientX-r.left)/r.width*100)+'%');
+      btn.style.setProperty('--ry',((e.clientY-r.top)/r.height*100)+'%');
+    });
+    btn.onclick=()=>selectOpt(i,btn);
+    opts.appendChild(btn);
+  });
+  const actionBtn=document.getElementById('game-action-btn');
+  actionBtn.textContent='Pilih Jawaban';
+  actionBtn.disabled=true;
+  const fb=document.getElementById('action-feedback');
+  fb.className='action-feedback';fb.innerHTML='';
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatCode(code){
+  return escHtml(code)
+    .replace(/\b(def|class|if|elif|else|for|while|return|import|from|in|not|and|or|True|False|None|lambda|yield|async|await|with|as|try|except|finally|raise|del|pass|break|continue|global|nonlocal|print|var|let|const|function|arrow|new|this|typeof|instanceof|void|delete|switch|case|default|throw|catch|finally|public|private|protected|static|final|abstract|interface|extends|implements|super|this|void|int|float|double|char|boolean|String|long|short|byte|SELECT|FROM|WHERE|INSERT|INTO|UPDATE|DELETE|JOIN|ON|GROUP|BY|ORDER|HAVING|CREATE|TABLE|INDEX|DROP|ALTER|WITH|SET|VALUES|COUNT|SUM|AVG|MAX|MIN)\b/g,'<span class="kw">$1</span>')
+    .replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()/g,'<span class="fn">$1</span>')
+    .replace(/(["'`])((?:(?!\1).)*)\1/g,'<span class="str">$1$2$1</span>')
+    .replace(/(#[^\n]*|\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g,'<span class="cm">$1</span>')
+    .replace(/\b(\d+\.?\d*)\b/g,'<span class="num">$1</span>');
+}
+
+function selectOpt(i,btn){
+  if(G.answered)return;
+  G.selected=i;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('game-action-btn').textContent='Konfirmasi Jawaban';
+  document.getElementById('game-action-btn').disabled=false;
+}
+
+function handleGameAction(){
+  if(G.hp<=0){showNolife();return;}
+  if(G.answered){
+    markPip(G.qIdx,G.questions[G.qIdx].a===G.selected);
+    G.qIdx++;
+    document.getElementById('action-feedback').className='action-feedback';
+    renderQuestion();
+    return;
+  }
+  if(G.selected===null)return;
+  G.answered=true;
+  const q=G.questions[G.qIdx];
+  const correct=G.selected===q.a;
+  const opts=document.querySelectorAll('.opt-btn');
+  opts.forEach(b=>b.disabled=true);
+  opts[q.a].classList.add('correct');
+  opts[q.a].querySelector('.opt-tick').textContent='✓';
+  const gameScreen=document.getElementById('screen-game');
+  if(!correct){
+    opts[G.selected].classList.add('wrong');
+    opts[G.selected].querySelector('.opt-tick').textContent='✗';
+    loseHp();
+    G.wrong++;
+    G.streak=0;
+    /* shake hp bar */
+    const hpTrack=document.querySelector('.hp-track');
+    if(hpTrack){hpTrack.classList.remove('hp-shake');void hpTrack.offsetWidth;hpTrack.classList.add('hp-shake');}
+    gameScreen.classList.remove('flash-red','flash-green');void gameScreen.offsetWidth;gameScreen.classList.add('flash-red');
+  } else {
+    G.score++;
+    checkStreakBonus();
+    gameScreen.classList.remove('flash-red','flash-green');void gameScreen.offsetWidth;gameScreen.classList.add('flash-green');
+  }
+  /* Particles */
+  const rect=opts[correct?G.selected:q.a].getBoundingClientRect();
+  spawnParticles(rect.left+rect.width/2,rect.top+rect.height/2,correct);
+  /* Feedback */
+  const fb=document.getElementById('action-feedback');
+  if(correct){
+    fb.className='action-feedback feedback-ok show';
+    fb.innerHTML='<div class="feedback-icon">&#10003;</div><div>Benar! '+getCorrectMsg()+'</div>';
+  } else {
+    fb.className='action-feedback feedback-err show';
+    fb.innerHTML='<div class="feedback-icon">&#10007;</div><div>Salah. Jawaban: <strong>'+['A','B','C','D'][q.a]+'. '+escHtml(q.opts[q.a])+'</strong></div>';
+  }
+  const actionBtn=document.getElementById('game-action-btn');
+  if(G.qIdx<G.questions.length-1){
+    actionBtn.textContent='Soal Berikutnya &#8594;';
+  } else {
+    actionBtn.textContent='Lihat Hasil &#8594;';
+  }
+  actionBtn.disabled=false;
+  document.getElementById('game-hud-xp').textContent=G.xp+' XP';
+}
+
+const correctMsgs=['Tepat sekali!','Bagus!','Mantap!','Keren!','Luar biasa!','Sempurna!'];
+let cmIdx=0;
+function getCorrectMsg(){return correctMsgs[cmIdx++%correctMsgs.length];}
+
+/* ============================================================
+   END GAME / RESULT
+   ============================================================ */
+function endGame(){
+  const cat=CATEGORIES.find(c=>c.id===G.currentCat);
+  const lv=cat.levels[G.currentLevel];
+  const total=G.questions.length;
+  const pct=Math.round((G.score/total)*100);
+  let stars=0;
+  if(pct>=100)stars=3;
+  else if(pct>=75)stars=2;
+  else if(pct>=30)stars=1;
+  /* Save progress */
+  if(!G.progress[G.currentCat])G.progress[G.currentCat]={levelIdx:G.currentLevel,stars:[]};
+  const prev=G.progress[G.currentCat].stars[G.currentLevel]||0;
+  if(stars>prev){G.progress[G.currentCat].stars[G.currentLevel]=stars;}
+  const passed=stars>=2;
+  const prevXp=G.xp;
+  if(passed){
+    G.xp+=lv.xp;
+    G.totalDone++;
+    G.streak++;
+  }
+  /* Check level-up */
+  if(passed){
+    const prevLv=getLevel(prevXp);
+    const newLv=getLevel(G.xp);
+    if(newLv.lbl!==prevLv.lbl){
+      setTimeout(()=>showToast('Level naik! ' + newLv.lbl),800);
+    }
+  }
+  save();
+  /* Build result screen */
+  const starsEl=document.getElementById('result-stars');
+  starsEl.innerHTML='';
+  for(let i=1;i<=3;i++){
+    const s=document.createElement('div');
+    s.className='star-big'+(i>stars?' empty-star':'');
+    s.innerHTML='&#9733;';
+    s.style.animationDelay=(i*0.15)+'s';
+    starsEl.appendChild(s);
+  }
+  const msgs={3:'Sempurna! Semua jawaban benar!',2:'Bagus! Kamu lulus level ini.',1:'Hampir lulus. Coba lagi untuk melanjutkan.',0:'Belum cukup. Pelajari ulang materinya.'};
+  document.getElementById('result-title').textContent=passed?'Level Lulus!':'Level Gagal';
+  document.getElementById('result-msg').textContent=msgs[stars];
+  document.getElementById('result-xp').textContent=(passed?'+':'')+lv.xp+' XP';
+  document.getElementById('result-stats').innerHTML=`
+    <div class="rs-item"><span class="rs-val" style="color:var(--green)">${G.score}</span><span class="rs-lbl">Benar</span></div>
+    <div class="rs-item"><span class="rs-val" style="color:var(--red)">${G.wrong}</span><span class="rs-lbl">Salah</span></div>
+    <div class="rs-item"><span class="rs-val" style="color:var(--gold)">${pct}%</span><span class="rs-lbl">Skor</span></div>`;
+  const btns=document.getElementById('result-btns');
+  btns.innerHTML='';
+  if(passed&&G.currentLevel<cat.levels.length-1){
+    const nb=document.createElement('button');
+    nb.className='btn btn-primary btn-full btn-lg';
+    nb.innerHTML='Level Berikutnya &#8594;';
+    nb.onclick=()=>startGame(G.currentCat,G.currentLevel+1);
+    btns.appendChild(nb);
+  }
+  if(!passed||stars<3){
+    const rb=document.createElement('button');
+    rb.className='btn btn-ghost btn-full';
+    rb.innerHTML='&#8635; Ulangi Level';
+    rb.onclick=()=>startGame(G.currentCat,G.currentLevel);
+    btns.appendChild(rb);
+  }
+  const mb=document.createElement('button');
+  mb.className='btn btn-ghost btn-full';
+  mb.innerHTML='&#8592; Kembali ke Peta';
+  mb.onclick=()=>goLevels(G.currentCat);
+  btns.appendChild(mb);
+  /* Burst effect for 3 stars */
+  if(stars===3&&G.settings.anim){
+    const burst=document.getElementById('burst');
+    burst.classList.add('show');
+    setTimeout(()=>burst.classList.remove('show'),700);
+    /* Extra confetti from center */
+    const cx=window.innerWidth/2,cy=window.innerHeight/2;
+    for(let b=0;b<30;b++){
+      setTimeout(()=>spawnParticles(cx+(Math.random()-0.5)*100,cy+(Math.random()-0.5)*100,true),b*25);
+    }
+  }
+  goScreen('screen-result','screen-game');
+  updateHome();
+}
+
+/* ============================================================
+   UPGRADE / AD SCREEN
+   ============================================================ */
+function updateUpgradeScreen(){
+  document.getElementById('upgrade-hp-num').textContent=G.hp+'%';
+  document.getElementById('upgrade-hp-fill').style.width=G.hp+'%';
+  document.getElementById('upgrade-reserve').textContent=G.hpReserve+'%';
+  /* Reserve bar visual */
+  let reserveBar=document.getElementById('hp-reserve-fill');
+  if(!reserveBar){
+    reserveBar=document.createElement('div');
+    reserveBar.id='hp-reserve-fill';reserveBar.className='hp-reserve-fill';
+    const fullBar=document.querySelector('.hp-full-bar');
+    if(fullBar)fullBar.appendChild(reserveBar);
+  }
+  if(reserveBar)reserveBar.style.width=Math.min(G.hpReserve,100-G.hp)+'%';
+}
+
+let adTimer=null,adPct=0,adDuration=0;
+const adFakeContents=[
+  ['Coba CodeQuest Premium!','Akses semua konten tanpa batas. Belajar lebih cepat dengan fitur exclusive.'],
+  ['Master Python dalam 30 hari!','Kursus terlengkap dengan 500+ latihan coding interaktif.'],
+  ['Pelajari Data Science!','Machine Learning, Python, SQL — semua dalam satu platform.'],
+  ['Frontend Developer Bootcamp','React, Vue, CSS Modern — mulai karir web developer sekarang!'],
+  ['Kuasai System Design!','Wawancara software engineer lebih mudah dengan latihan soal FAANG.'],
+];
+
+function openAdModal(pct,fromNolife){
+  adPct=pct;
+  adDuration=pct===25?30:15;
+  const fakeContent=adFakeContents[Math.floor(Math.random()*adFakeContents.length)];
+  document.getElementById('ad-modal-title').textContent='Tonton Iklan'+(pct===25?' Premium':'');
+  document.getElementById('ad-modal-sub').textContent='Dapatkan +'+pct+'% HP setelah iklan selesai';
+  document.getElementById('ad-fake-text').innerHTML='<strong style="color:var(--cyan);font-size:14px;">'+fakeContent[0]+'</strong><br><br>'+fakeContent[1];
+  document.getElementById('ad-timer').textContent=adDuration;
+  document.getElementById('ad-progress-fill').style.width='0%';
+  document.getElementById('ad-modal-btns').innerHTML=`<button class="btn btn-ghost btn-full" id="ad-close-btn" disabled onclick="closeAdModal(${pct},${fromNolife})">Menunggu...</button>`;
+  document.getElementById('ad-modal').classList.add('show');
+  if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
+  let elapsed=0;
+  if(adTimer)clearInterval(adTimer);
+  adTimer=setInterval(()=>{
+    elapsed++;
+    const prog=(elapsed/adDuration)*100;
+    document.getElementById('ad-progress-fill').style.width=prog+'%';
+    document.getElementById('ad-timer').textContent=adDuration-elapsed;
+    if(elapsed>=adDuration){
+      clearInterval(adTimer);
+      document.getElementById('ad-timer').textContent='Selesai!';
+      const closeBtn=document.getElementById('ad-close-btn');
+      closeBtn.disabled=false;
+      closeBtn.textContent='Klaim +'+pct+'% HP';
+      closeBtn.className='btn btn-green btn-full';
+    }
+  },1000);
+}
+function closeAdModal(pct,fromNolife){
+  if(adTimer)clearInterval(adTimer);
+  document.getElementById('ad-modal').classList.remove('show');
+  gainHp(pct);
+  showToast('+'+pct+'% HP didapat!','info');
+  updateUpgradeScreen();
+  setHpUI(G.hp);
+  if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
+}
+function showNolife(){document.getElementById('nolife-modal').classList.add('show');}
+function closeNolifeModal(){document.getElementById('nolife-modal').classList.remove('show');goHome();}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function toggleSetting(key){
+  G.settings[key]=!G.settings[key];
+  const el=document.getElementById('toggle-'+key);
+  if(G.settings[key])el.classList.add('on');else el.classList.remove('on');
+  save();
+}
+function resetProgress(){
+  if(!confirm('Reset semua progress? Ini tidak bisa dibatalkan.'))return;
+  G.xp=0;G.totalDone=0;G.streak=0;G.hp=100;G.hpReserve=0;G.progress={};G.streakCorrect=0;
+  document.getElementById('health-bar-wrap').classList.remove('low-hp');
+  setHpUI(100);
+  save();updateHome();showToast('Progress berhasil direset!','warning');
+}
+/* Sync toggle UI on load */
+setTimeout(()=>{
+  ['sound','anim','timer'].forEach(k=>{
+    const el=document.getElementById('toggle-'+k);
+    if(el){if(G.settings[k])el.classList.add('on');else el.classList.remove('on');}
+  });
+},100);
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+function buildProfile(){
+  const lv=getLevel(G.xp);
+  document.getElementById('prof-level-badge').textContent=lv.lbl;
+  document.getElementById('ps-xp').textContent=G.xp;
+  document.getElementById('ps-done').textContent=G.totalDone;
+  document.getElementById('ps-streak').textContent=G.streak;
+  const BADGES=[
+    {n:'First Blood',ico:'&#9889;',cond:()=>G.totalDone>=1},
+    {n:'Pythonista',ico:'&#128013;',cond:()=>(G.progress['python']?.stars||[]).filter(s=>s>=2).length>0},
+    {n:'Web Dev',ico:'&#127758;',cond:()=>(G.progress['html_css']?.stars||[]).filter(s=>s>=2).length>0},
+    {n:'JS Ninja',ico:'&#128301;',cond:()=>(G.progress['javascript']?.stars||[]).filter(s=>s>=2).length>0},
+    {n:'DB Master',ico:'&#128451;',cond:()=>(G.progress['sql']?.stars||[]).filter(s=>s>=2).length>0},
+    {n:'XP 500',ico:'&#128142;',cond:()=>G.xp>=500},
+    {n:'Streak 5',ico:'&#128293;',cond:()=>G.streak>=5},
+    {n:'Algo Hero',ico:'&#128301;',cond:()=>(G.progress['algorithms']?.stars||[]).filter(s=>s>=2).length>=3},
+    {n:'DevOps Pro',ico:'&#9881;',cond:()=>(G.progress['devops']?.stars||[]).filter(s=>s>=2).length>0},
+  ];
+  const grid=document.getElementById('badges-grid');
+  grid.innerHTML='';
+  BADGES.forEach(b=>{
+    const earned=b.cond();
+    grid.innerHTML+=`<div class="badge-card ${earned?'earned':'locked-b'}">
+      <span class="badge-ico">${b.ico}</span>
+      <div class="badge-nm">${b.n}</div>
+      ${earned?'<span class="badge-earned-txt">&#10003; Diraih</span>':''}
+    </div>`;
+  });
+}
+
+/* Override goScreen to hook profile build */
+const _origGoScreen=goScreen;
+window.showProfile=function(){buildProfile();goScreen('screen-profile','screen-home');};
+window.goScreen=function(id,from){
+  if(id==='screen-upgrade')updateUpgradeScreen();
+  _origGoScreen(id,from);
+};
+
+/* ============================================================
+   INIT
+   ============================================================ */
+updateHealthBar();
+
+/* ============================================================
+   FEEDBACK / SARAN & MASUKAN
+   ============================================================ */
+function openFeedback(){
+  const modal=document.getElementById('feedback-modal');
+  modal.classList.add('show');
+  document.body.style.overflow='hidden';
+  /* Reset form state */
+  document.getElementById('fb-form-body').style.display='block';
+  document.getElementById('fb-success').classList.remove('show');
+  const btn=document.getElementById('fb-submit-btn');
+  btn.disabled=false;
+  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Masukan';
+}
+function closeFeedback(){
+  const modal=document.getElementById('feedback-modal');
+  modal.classList.remove('show');
+  document.body.style.overflow='';
+}
+function handleFbOverlay(e){
+  if(e.target===document.getElementById('feedback-modal'))closeFeedback();
+}
+async function submitFeedback(){
+  const name=document.getElementById('fb-name').value.trim();
+  const email=document.getElementById('fb-email').value.trim();
+  const msg=document.getElementById('fb-msg').value.trim();
+  if(!name){showToast('Nama tidak boleh kosong','warning');return;}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email tidak valid','warning');return;}
+  if(!msg){showToast('Masukan tidak boleh kosong','warning');return;}
+  const btn=document.getElementById('fb-submit-btn');
+  btn.disabled=true;
+  btn.innerHTML='<div class="fb-spinner"></div> Mengirim...';
+  try{
+    const res=await fetch('https://api.w3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        access_key:'14dafb37-07c1-4903-bd8b-5e99f24b4d9d',
+        subject:'[CodeQuest] Saran & Masukan dari '+name,
+        from_name:'CodeQuest — '+name,
+        name:name,
+        email:email,
+        message:msg,
+        redirect:'https://domypaulomy.github.io/codequest'
+      })
+    });
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('fb-form-body').style.display='none';
+      document.getElementById('fb-success').classList.add('show');
+      /* Clear fields */
+      document.getElementById('fb-name').value='';
+      document.getElementById('fb-email').value='';
+      document.getElementById('fb-msg').value='';
+      setTimeout(closeFeedback,3000);
+    } else {
+      showToast('Gagal mengirim. Coba lagi.','warning');
+      btn.disabled=false;
+      btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Masukan';
+    }
+  } catch(err){
+    showToast('Koneksi bermasalah. Coba lagi.','warning');
+    btn.disabled=false;
+    btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Masukan';
+  }
+}
+</script>
+</body>
+</html>
