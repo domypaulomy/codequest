@@ -229,21 +229,28 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   position:relative;margin-bottom:24px;
 }
 .logo-ring{
-  width:90px;height:90px;border-radius:50%;
+  width:110px;height:110px;border-radius:50%;
   background:conic-gradient(var(--neon) 0deg,var(--cyan) 120deg,var(--pink) 240deg,var(--neon) 360deg);
   display:flex;align-items:center;justify-content:center;
-  animation:spin-slow 8s linear infinite;
-  box-shadow:0 0 40px rgba(99,102,241,0.5);
+  box-shadow:0 0 40px rgba(99,102,241,0.5),0 0 80px rgba(34,211,238,0.2);
+  padding:3px;
+  animation:logo-glow 3s ease-in-out infinite;
+}
+@keyframes logo-glow{
+  0%,100%{box-shadow:0 0 30px rgba(99,102,241,0.5),0 0 60px rgba(34,211,238,0.15);}
+  50%{box-shadow:0 0 50px rgba(99,102,241,0.8),0 0 100px rgba(34,211,238,0.3);}
 }
 @keyframes spin-slow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .logo-inner{
-  width:76px;height:76px;border-radius:50%;
-  background:var(--bg);
+  width:100%;height:100%;border-radius:50%;
+  overflow:hidden;
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:22px;font-weight:900;
-  background:linear-gradient(135deg,#4F46E5,#22D3EE);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
+  background:var(--bg);
+}
+.logo-inner img{
+  width:100%;height:100%;
+  object-fit:cover;border-radius:50%;
+  display:block;
 }
 .home-title{
   font-family:var(--font-display);font-size:28px;font-weight:900;
@@ -980,21 +987,22 @@ svg.icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;str
 #feedback-modal{
   position:fixed;inset:0;z-index:300;
   background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);
-  display:none;align-items:flex-end;justify-content:center;
-  padding:0;
+  display:none;align-items:center;justify-content:center;
+  padding:24px;
 }
 #feedback-modal.show{display:flex;}
 .feedback-sheet{
   background:var(--bg2);
   border:1px solid var(--border);
-  border-radius:24px 24px 0 0;
-  width:100%;max-width:480px;
-  padding:0 0 env(safe-area-inset-bottom,16px);
-  animation:sheetUp 0.38s cubic-bezier(.23,1,.32,1) both;
+  border-radius:24px;
+  width:100%;max-width:420px;
+  padding:0;
+  animation:modalIn 0.35s cubic-bezier(.23,1,.32,1) both;
   position:relative;overflow:hidden;
-  max-height:92vh;overflow-y:auto;
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(99,102,241,0.15);
 }
-@keyframes sheetUp{from{transform:translateY(100%);opacity:0.5;}to{transform:translateY(0);opacity:1;}}
+@keyframes modalIn{from{transform:scale(0.92) translateY(16px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
 /* top accent line */
 .feedback-sheet::before{
   content:'';position:sticky;top:0;display:block;
@@ -1173,7 +1181,9 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
   <div class="home-hero fade-in">
     <div class="home-logo">
       <div class="logo-ring">
-        <div class="logo-inner">CQ</div>
+        <div class="logo-inner">
+          <img src="logo.png" alt="CodeQuest Logo">
+        </div>
       </div>
     </div>
     <div class="home-title">CODE<br>QUEST</div>
