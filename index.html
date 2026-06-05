@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CodeQuest Pro</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="shortcut icon" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -1175,53 +1172,80 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
 }
 .fb-note a{color:var(--muted2);text-decoration:none;}
 
-/* ===== SPONSOR CARD ===== */
-.sp-card{display:block;text-decoration:none;width:100%;border-radius:16px;overflow:hidden;transition:transform 0.25s cubic-bezier(.23,1,.32,1),box-shadow 0.25s;position:relative;}
-.sp-card:hover{transform:translateY(-3px) scale(1.01);}
-.sp-sosmed{background:#0A0C1E;border:1px solid rgba(255,255,255,0.08);}
-.sp-sosmed:hover{box-shadow:0 12px 40px rgba(0,0,0,0.5);}
-.sp-sosmed-header{position:relative;height:80px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-.sp-sosmed-header::before{content:'';position:absolute;inset:0;background:var(--sp-grad);opacity:0.9;}
-.sp-sosmed-header::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40 Q50 10 100 40 Q150 70 200 40 L200 80 L0 80Z' fill='rgba(0,0,0,0.18)'/%3E%3C/svg%3E");background-size:cover;}
-.sp-sosmed-platform-name{position:relative;z-index:2;font-family:var(--font-display);font-size:22px;font-weight:900;color:#fff;letter-spacing:1px;text-shadow:0 2px 12px rgba(0,0,0,0.4);}
-.sp-sosmed-body{padding:14px 16px 10px;display:flex;align-items:center;gap:12px;}
-.sp-sosmed-avatar{width:48px;height:48px;min-width:48px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);background:var(--sp-grad);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;position:relative;top:-24px;box-shadow:0 4px 16px rgba(0,0,0,0.4);}
-.sp-sosmed-info{flex:1;min-width:0;padding-top:4px;}
-.sp-sosmed-handle{font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
-.sp-sosmed-desc{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:8px;}
-.sp-sosmed-stats{display:flex;gap:12px;margin-bottom:10px;}
-.sp-sosmed-stat{display:flex;flex-direction:column;align-items:center;font-family:var(--font-display);font-size:10px;color:rgba(255,255,255,0.4);}
-.sp-sosmed-stat-val{font-size:13px;font-weight:700;color:rgba(255,255,255,0.8);}
-.sp-sosmed-cta{width:100%;padding:10px;background:var(--sp-grad);font-family:var(--font-body);font-size:12px;font-weight:800;color:#fff;text-align:center;letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;gap:6px;}
-.sp-website{border:1px solid rgba(255,255,255,0.08);background:#0A0C1E;}
-.sp-website:hover{box-shadow:0 12px 40px rgba(0,0,0,0.5);}
-.sp-website-preview{width:100%;height:140px;overflow:hidden;position:relative;background:#0d0f22;}
-.sp-website-preview-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,#0A0C1E 100%);}
-.sp-website-preview-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:var(--sp-fallback-bg);position:relative;overflow:hidden;}
-.sp-website-preview-fallback::before{content:'';position:absolute;inset:-40%;background:radial-gradient(ellipse at center,var(--sp-accent)22 0%,transparent 65%);}
-.sp-website-preview-fallback::after{content:'';position:absolute;inset:0;z-index:0;background-image:linear-gradient(var(--sp-accent)0a 1px,transparent 1px),linear-gradient(90deg,var(--sp-accent)0a 1px,transparent 1px);background-size:24px 24px;}
-.sp-website-preview-fallback-icon{font-size:36px;filter:drop-shadow(0 0 16px var(--sp-accent));position:relative;z-index:1;}
-.sp-website-preview-fallback-url{font-family:var(--font-display);font-size:11px;color:var(--sp-accent);opacity:0.7;position:relative;z-index:1;letter-spacing:0.5px;}
-.sp-website-body{padding:12px 16px 14px;border-top:1px solid rgba(255,255,255,0.05);}
-.sp-website-badge-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
-.sp-website-badge{font-size:9px;font-weight:700;letter-spacing:0.5px;padding:3px 9px;border-radius:20px;background:color-mix(in srgb,var(--sp-accent) 15%,transparent);color:var(--sp-accent);border:1px solid color-mix(in srgb,var(--sp-accent) 30%,transparent);font-family:var(--font-display);}
-.sp-website-ad-label{font-size:9px;color:rgba(255,255,255,0.25);margin-left:auto;letter-spacing:0.3px;}
-.sp-website-title{font-family:var(--font-display);font-size:14px;font-weight:700;color:#fff;margin-bottom:5px;line-height:1.2;}
-.sp-website-desc{font-size:11px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:12px;}
-.sp-website-footer{display:flex;align-items:center;justify-content:space-between;}
-.sp-website-url{font-size:10px;color:rgba(255,255,255,0.3);font-family:var(--font-display);letter-spacing:0.3px;}
-.sp-website-visit{font-size:11px;font-weight:700;padding:6px 16px;border-radius:20px;background:var(--sp-accent);color:#000;letter-spacing:0.3px;font-family:var(--font-body);display:flex;align-items:center;gap:5px;}
-.sp-sponsor-cta{background:linear-gradient(135deg,#0A0C1E,#0d0f26);border:1px dashed rgba(99,102,241,0.4);border-radius:16px;overflow:hidden;position:relative;}
-.sp-sponsor-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(34,211,238,0.06) 0%,transparent 60%);}
-.sp-sponsor-cta-inner{position:relative;z-index:1;padding:18px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;}
-.sp-sponsor-cta-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(34,211,238,0.1));border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 20px rgba(99,102,241,0.15);}
-.sp-sponsor-cta-title{font-family:var(--font-display);font-size:13px;font-weight:700;background:linear-gradient(90deg,#818CF8,#22D3EE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.3;}
-.sp-sponsor-cta-desc{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:260px;}
-.sp-sponsor-cta-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:24px;background:linear-gradient(135deg,#4F46E5,#06B6D4);color:#fff;font-size:12px;font-weight:800;font-family:var(--font-body);letter-spacing:0.3px;text-decoration:none;box-shadow:0 4px 16px rgba(99,102,241,0.3);}
-@keyframes sp-border-pulse{0%,100%{border-color:rgba(99,102,241,0.4);}50%{border-color:rgba(34,211,238,0.6);}}
+/* ===== SPONSOR CARD v2 ===== */
+.sp-card{display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;transition:transform 0.22s cubic-bezier(.23,1,.32,1),box-shadow 0.22s;position:relative;}
+.sp-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,0.55);}
+.sp-card:active{transform:scale(0.98);}
+
+/* === SOSMED CARD === */
+.sp-sosmed{background:#111827;border:1px solid rgba(255,255,255,0.12);}
+.sp-sosmed-header{position:relative;height:72px;display:flex;align-items:center;padding:0 16px;gap:12px;overflow:hidden;}
+.sp-sosmed-header::before{content:'';position:absolute;inset:0;background:var(--sp-grad);opacity:1;}
+.sp-sosmed-header-content{position:relative;z-index:2;display:flex;align-items:center;gap:10px;width:100%;}
+.sp-sosmed-platform-icon{font-size:28px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4));}
+.sp-sosmed-platform-name{font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;letter-spacing:0.5px;text-shadow:0 1px 8px rgba(0,0,0,0.5);}
+.sp-sosmed-body{padding:16px 16px 0;display:flex;align-items:flex-start;gap:12px;}
+.sp-sosmed-avatar{width:44px;height:44px;min-width:44px;border-radius:50%;background:var(--sp-grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-top:-26px;border:3px solid #111827;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
+.sp-sosmed-info{flex:1;min-width:0;padding-top:2px;}
+.sp-sosmed-handle{font-family:var(--font-display);font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:4px;}
+.sp-sosmed-desc{font-size:12px;color:#94A3B8;line-height:1.6;margin-bottom:10px;}
+.sp-sosmed-stats{display:flex;gap:16px;margin-bottom:12px;}
+.sp-sosmed-stat{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.sp-sosmed-stat-val{font-size:14px;font-weight:700;color:#E2E8F0;}
+.sp-sosmed-stat-lbl{font-size:9px;color:#64748B;font-family:var(--font-display);letter-spacing:0.3px;}
+.sp-sosmed-cta{margin:0 16px 16px;padding:10px 0;border-radius:10px;background:var(--sp-grad);font-family:var(--font-body);font-size:12px;font-weight:800;color:#fff;text-align:center;letter-spacing:0.4px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+
+/* === WEBSITE CARD === */
+.sp-website{border:1px solid rgba(255,255,255,0.1);background:#111827;}
+.sp-website-preview{width:100%;height:160px;overflow:hidden;position:relative;background:#0d0f1a;}
+.sp-website-preview iframe{width:100%;height:100%;border:none;pointer-events:none;transform:scale(1);transform-origin:top left;}
+.sp-website-preview-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,#111827 100%);}
+.sp-website-preview-badge{position:absolute;top:10px;left:10px;z-index:3;display:flex;align-items:center;gap:5px;}
+.sp-website-badge{font-size:9px;font-weight:700;letter-spacing:0.5px;padding:3px 10px;border-radius:20px;background:rgba(0,0,0,0.65);color:var(--sp-accent);border:1px solid color-mix(in srgb,var(--sp-accent) 40%,transparent);font-family:var(--font-display);backdrop-filter:blur(4px);}
+.sp-website-body{padding:12px 14px 14px;}
+.sp-website-title{font-family:var(--font-display);font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:4px;}
+.sp-website-desc{font-size:11px;color:#94A3B8;line-height:1.6;margin-bottom:10px;}
+.sp-website-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sp-website-url{font-size:10px;color:#475569;font-family:var(--font-display);letter-spacing:0.3px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sp-website-visit{font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;background:var(--sp-accent);color:#000;letter-spacing:0.3px;font-family:var(--font-body);flex-shrink:0;white-space:nowrap;}
+.sp-website-ad-label{font-size:9px;color:#334155;letter-spacing:0.3px;}
+
+/* === SPONSOR CTA === */
+.sp-sponsor-cta{background:linear-gradient(135deg,#0F1729,#111827);border:1px solid rgba(99,102,241,0.35);border-radius:14px;overflow:hidden;position:relative;}
+.sp-sponsor-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(99,102,241,0.1) 0%,transparent 55%),radial-gradient(ellipse at 85% 50%,rgba(34,211,238,0.07) 0%,transparent 55%);}
+.sp-sponsor-cta-inner{position:relative;z-index:1;padding:20px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;}
+.sp-sponsor-cta-icon{width:50px;height:50px;border-radius:14px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.sp-sponsor-cta-title{font-family:var(--font-display);font-size:13px;font-weight:700;color:#E2E8F0;line-height:1.3;margin-top:2px;}
+.sp-sponsor-cta-accent{font-family:var(--font-display);font-size:11px;font-weight:600;background:linear-gradient(90deg,#818CF8,#22D3EE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sp-sponsor-cta-desc{font-size:11px;color:#64748B;line-height:1.6;max-width:260px;}
+.sp-sponsor-cta-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:24px;background:linear-gradient(135deg,#4F46E5,#0891B2);color:#fff;font-size:12px;font-weight:800;font-family:var(--font-body);letter-spacing:0.3px;text-decoration:none;margin-top:4px;}
+@keyframes sp-border-pulse{0%,100%{border-color:rgba(99,102,241,0.35);}50%{border-color:rgba(34,211,238,0.55);}}
 .sp-sponsor-cta{animation:sp-border-pulse 3s ease infinite;}
 
 </style>
+
+<script>
+(function(){
+  var c=document.createElement('canvas');
+  c.width=c.height=64;
+  var ctx=c.getContext('2d');
+  // Lingkaran background gradient
+  var g=ctx.createLinearGradient(0,0,64,64);
+  g.addColorStop(0,'#4F46E5');g.addColorStop(1,'#06B6D4');
+  ctx.beginPath();ctx.arc(32,32,32,0,Math.PI*2);
+  ctx.fillStyle=g;ctx.fill();
+  // Text CQ
+  ctx.fillStyle='#fff';
+  ctx.font='bold 22px sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('CQ',32,33);
+  // Set favicon
+  var link=document.querySelector('link[rel*="icon"]')||document.createElement('link');
+  link.type='image/x-icon';link.rel='shortcut icon';link.href=c.toDataURL();
+  document.head.appendChild(link);
+})();
+</script>
+
 </head>
 <body>
 
@@ -2807,9 +2831,14 @@ function buildSponsorCard(sp){
   return '';
 }
 function buildSosmedCard(sp){
-  const statsHtml=sp.stats.map(s=>`<div class="sp-sosmed-stat"><span class="sp-sosmed-stat-val">${s.val}</span>${s.lbl}</div>`).join('');
+  const statsHtml=sp.stats.map(s=>`<div class="sp-sosmed-stat"><span class="sp-sosmed-stat-val">${s.val}</span><span class="sp-sosmed-stat-lbl">${s.lbl}</span></div>`).join('');
   return `<a href="${sp.url}" target="_blank" rel="noopener" class="sp-card sp-sosmed" style="--sp-grad:${sp.grad};">
-    <div class="sp-sosmed-header"><div class="sp-sosmed-platform-name">${sp.platformName}</div></div>
+    <div class="sp-sosmed-header">
+      <div class="sp-sosmed-header-content">
+        <span class="sp-sosmed-platform-icon">${sp.icon}</span>
+        <span class="sp-sosmed-platform-name">${sp.platformName}</span>
+      </div>
+    </div>
     <div class="sp-sosmed-body">
       <div class="sp-sosmed-avatar">${sp.icon}</div>
       <div class="sp-sosmed-info">
@@ -2821,24 +2850,20 @@ function buildSosmedCard(sp){
     <div class="sp-sosmed-cta"><span>${sp.ctaIcon}</span> ${sp.cta}</div>
   </a>`;}
 function buildWebsiteCard(sp){
-  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sp-card sp-website" style="--sp-accent:${sp.accent};--sp-fallback-bg:${sp.fallbackBg};">
+  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sp-card sp-website" style="--sp-accent:${sp.accent};">
     <div class="sp-website-preview">
-      <div class="sp-website-preview-fallback">
-        <div class="sp-website-preview-fallback-icon">${sp.icon}</div>
-        <div class="sp-website-preview-fallback-url">${sp.displayUrl}</div>
-      </div>
+      <iframe src="${sp.url}" loading="lazy" scrolling="no" title="${sp.title}" sandbox="allow-scripts allow-same-origin"></iframe>
       <div class="sp-website-preview-overlay"></div>
+      <div class="sp-website-preview-badge">
+        <span class="sp-website-badge">${sp.badge}</span>
+      </div>
     </div>
     <div class="sp-website-body">
-      <div class="sp-website-badge-row">
-        <span class="sp-website-badge">${sp.badge}</span>
-        <span class="sp-website-ad-label">Iklan Sponsor</span>
-      </div>
       <div class="sp-website-title">${sp.title}</div>
       <div class="sp-website-desc">${sp.desc}</div>
       <div class="sp-website-footer">
         <span class="sp-website-url">${sp.displayUrl}</span>
-        <span class="sp-website-visit">Kunjungi</span>
+        <span class="sp-website-visit">Kunjungi &rarr;</span>
       </div>
     </div>
   </a>`;}
