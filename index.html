@@ -849,503 +849,6 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 .ad-fake-text{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
 
 
-/* ============================================================
-   SPONSOR ADS — Updated
-   ============================================================ */
-
-function buildSponsorCard(sp) {
-  if (sp.type === 'social') return buildSocialCard(sp);
-  if (sp.type === 'ad_slot') return buildAdSlotCard(sp);
-  return buildWebsiteCard(sp);
-}
-
-function buildWebsiteCard(sp) {
-  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid ${sp.accent}55;">
-    <div style="background:${sp.bg};padding:18px 16px 14px;position:relative;overflow:hidden;min-height:110px;">
-      <div style="position:absolute;top:-24px;right:-24px;width:90px;height:90px;border-radius:50%;background:${sp.accent}18;"></div>
-      <div style="position:absolute;bottom:-28px;left:-12px;width:70px;height:70px;border-radius:50%;background:${sp.accent}12;"></div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:${sp.accent}22;border:1px solid ${sp.accent}55;border-radius:20px;padding:3px 10px;font-size:10px;color:${sp.accent};font-weight:700;margin-bottom:10px;">${sp.badge}</div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-        <div style="width:46px;height:46px;min-width:46px;border-radius:11px;background:${sp.accent}22;border:1.5px solid ${sp.accent}44;display:flex;align-items:center;justify-content:center;font-size:22px;">${sp.icon}</div>
-        <div>
-          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;">${sp.title}</div>
-          <div style="font-size:10px;color:${sp.accent};opacity:0.8;">${sp.url.replace('https://','')}</div>
-        </div>
-      </div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.72);line-height:1.55;">${sp.desc}</div>
-    </div>
-    <div style="background:#0a0c1a;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${sp.accent}22;">
-      <span style="font-size:10px;color:rgba(255,255,255,0.35);">📢 Sponsor</span>
-      <span style="background:${sp.accent};color:#000;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">Kunjungi →</span>
-    </div>
-  </a>`;
-}
-
-function buildSocialCard(sp) {
-  const gradients = {
-    instagram: 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',
-    tiktok:    'linear-gradient(135deg,#010101,#69C9D0,#EE1D52)',
-    youtube:   'linear-gradient(135deg,#282828,#FF0000,#cc0000)',
-    twitter:   'linear-gradient(135deg,#1a1a2e,#1DA1F2,#0d8ecf)',
-    facebook:  'linear-gradient(135deg,#1a1a3e,#1877F2,#0a5abf)',
-    github:    'linear-gradient(135deg,#0d1117,#333,#666)',
-    linkedin:  'linear-gradient(135deg,#0a0f1e,#0077B5,#005885)',
-  };
-  const platforms = {
-    instagram: { name:'Instagram', icon:'📸', accent:'#E1306C', handle_color:'#f472b6' },
-    tiktok:    { name:'TikTok',    icon:'🎵', accent:'#69C9D0', handle_color:'#22d3ee' },
-    youtube:   { name:'YouTube',   icon:'▶️',  accent:'#FF0000', handle_color:'#f87171' },
-    twitter:   { name:'Twitter/X', icon:'𝕏',  accent:'#1DA1F2', handle_color:'#38bdf8' },
-    facebook:  { name:'Facebook',  icon:'👥', accent:'#1877F2', handle_color:'#60a5fa' },
-    github:    { name:'GitHub',    icon:'🐙', accent:'#aaa',    handle_color:'#d1d5db' },
-    linkedin:  { name:'LinkedIn',  icon:'💼', accent:'#0077B5', handle_color:'#38bdf8' },
-  };
-  const pt = platforms[sp.platform] || { name: sp.platform, icon:'🌐', accent:'#818CF8', handle_color:'#a78bfa' };
-  const bg = gradients[sp.platform] || 'linear-gradient(135deg,#1a1a3e,#2a2a5e)';
-
-  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid ${pt.accent}44;">
-    <div style="background:${bg};padding:18px 16px;position:relative;overflow:hidden;">
-      <!-- decorative blobs -->
-      <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
-      <div style="position:absolute;bottom:-40px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04);"></div>
-      <!-- platform badge -->
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff;font-weight:700;margin-bottom:12px;backdrop-filter:blur(4px);">
-        ${pt.icon} ${pt.name}
-      </div>
-      <!-- handle -->
-      <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;font-family:'Orbitron',sans-serif;letter-spacing:0.5px;">${sp.handle}</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:14px;">${sp.url.replace('https://','')}</div>
-      <!-- stats row if any -->
-      ${sp.stats ? `<div style="display:flex;gap:12px;margin-bottom:12px;">${sp.stats.map(s=>`<div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;text-align:center;"><div style="font-size:13px;font-weight:800;color:#fff;">${s.val}</div><div style="font-size:9px;color:rgba(255,255,255,0.55);">${s.lbl}</div></div>`).join('')}</div>` : ''}
-      <!-- desc -->
-      <div style="font-size:11px;color:rgba(255,255,255,0.75);line-height:1.55;">${sp.desc}</div>
-    </div>
-    <div style="background:#0a0c1a;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.06);">
-      <span style="font-size:10px;color:rgba(255,255,255,0.35);">📢 Sponsor</span>
-      <span style="background:linear-gradient(135deg,${pt.accent},${pt.handle_color});color:#000;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">Follow →</span>
-    </div>
-  </a>`;
-}
-
-function buildAdSlotCard(sp) {
-  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid #6366F155;">
-    <div style="background:linear-gradient(135deg,#0a0c1e,#13102e,#0c1a2e);padding:20px 16px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(99,102,241,0.12);"></div>
-      <div style="position:absolute;bottom:-30px;left:-10px;width:80px;height:80px;border-radius:50%;background:rgba(34,211,238,0.08);"></div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.4);border-radius:20px;padding:4px 12px;font-size:10px;color:#818CF8;font-weight:700;margin-bottom:12px;">🚀 Pasang Iklan</div>
-      <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;font-family:'Orbitron',sans-serif;letter-spacing:0.5px;">Sponsor Slot</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:14px;">${sp.desc}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:8px;padding:6px 12px;font-size:10px;color:#818CF8;font-weight:700;">👁 Ribuan pengguna aktif</div>
-        <div style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);border-radius:8px;padding:6px 12px;font-size:10px;color:#22D3EE;font-weight:700;">🎯 Target: Coder & Pelajar</div>
-      </div>
-    </div>
-    <div style="background:#0a0c1a;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(99,102,241,0.15);">
-      <span style="font-size:10px;color:rgba(255,255,255,0.35);">💬 Hubungi Kami</span>
-      <span style="background:linear-gradient(135deg,#6366F1,#22D3EE);color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">Chat Sekarang →</span>
-    </div>
-  </a>`;
-}
-
-const sponsorLong = [
-  {
-    type: 'website',
-    url: 'https://caelumgladio.com',
-    title: 'Caelum Gladio',
-    desc: 'Pelajari cara kerja teknologi seperti Internet of Things, AI, dan Sistem cerdas yang relevan untuk dunia pertanian. Dari dasar hingga mahir — untuk pelajar, petani muda, dan inovator lokal.',
-    icon: '⚔️',
-    bg: 'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',
-    accent: '#a78bfa',
-    badge: '🌐 Website'
-  },
-  {
-    type: 'website',
-    url: 'https://akademi.caelumgladio.com',
-    title: 'CG Akademi',
-    desc: 'Siap untuk memulai perjalanan dalam dunia IoT? Bergabunglah dengan CG Akademi sekarang dan kuasai kemampuan yang dibutuhkan industri!',
-    icon: '🎓',
-    bg: 'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',
-    accent: '#34d399',
-    badge: '🎓 Akademi'
-  },
-  {
-    type: 'website',
-    url: 'https://domypaulomy.github.io/landpage',
-    title: 'Pau Lomi — Digital',
-    desc: 'Membangun solusi digital yang fungsional, estetis, dan terintegrasi. Dari website modern, aplikasi Android, hingga sistem IoT berbasis web.',
-    icon: '🚀',
-    bg: 'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',
-    accent: '#fbbf24',
-    badge: '💼 Portfolio'
-  },
-  {
-    type: 'website',
-    url: 'https://domypaulomy.github.io/catetin',
-    title: 'Catetin App',
-    desc: 'Catetin adalah aplikasi Android untuk mencatat keuangan pribadi dengan mudah. Tersedia offline & online, ringan, dan cocok untuk semua kalangan.',
-    icon: '📝',
-    bg: 'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',
-    accent: '#38bdf8',
-    badge: '📱 App'
-  },
-  {
-    type: 'ad_slot',
-    url: 'https://s.id/chat-dlomy',
-    desc: 'Ingin produk atau layananmu tampil sebagai sponsor di CodeQuest dan dilihat ribuan coder setiap hari? Hubungi kami sekarang dan pasang banner iklanmu di sini!'
-  },
-];
-
-const sponsorShort = [
-  {
-    type: 'website',
-    url: 'https://caelumgladio.com',
-    title: 'Caelum Gladio',
-    desc: 'Pelajari IoT, AI, dan sistem cerdas — dari dasar hingga mahir untuk pelajar & inovator lokal.',
-    icon: '⚔️',
-    bg: 'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',
-    accent: '#a78bfa',
-    badge: '🌐 Website'
-  },
-  {
-    type: 'website',
-    url: 'https://akademi.caelumgladio.com',
-    title: 'CG Akademi',
-    desc: 'Bergabunglah dan kuasai kemampuan IoT yang dibutuhkan industri bersama CG Akademi!',
-    icon: '🎓',
-    bg: 'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',
-    accent: '#34d399',
-    badge: '🎓 Akademi'
-  },
-  {
-    type: 'website',
-    url: 'https://domypaulomy.github.io/landpage',
-    title: 'Pau Lomi — Digital',
-    desc: 'Website modern, aplikasi Android, hingga sistem IoT berbasis web. Solusi digital terintegrasi.',
-    icon: '🚀',
-    bg: 'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',
-    accent: '#fbbf24',
-    badge: '💼 Portfolio'
-  },
-  {
-    type: 'website',
-    url: 'https://domypaulomy.github.io/catetin',
-    title: 'Catetin App',
-    desc: 'Catat keuangan pribadi dengan mudah. Offline & online, ringan, cocok untuk semua.',
-    icon: '📝',
-    bg: 'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',
-    accent: '#38bdf8',
-    badge: '📱 App'
-  },
-  {
-    type: 'social',
-    platform: 'instagram',
-    url: 'https://instagram.com/caelumgladio',
-    handle: '@caelumgladio',
-    desc: 'Follow sekarang untuk konten teknologi, coding & inspirasi digital setiap hari!',
-    stats: [{val:'✨', lbl:'Tips Harian'}, {val:'🤝', lbl:'Komunitas'}]
-  },
-  {
-    type: 'social',
-    platform: 'tiktok',
-    url: 'https://tiktok.com/@caelumgladio',
-    handle: '@caelumgladio',
-    desc: 'Tonton video coding, tips teknologi & konten viral setiap hari!',
-    stats: [{val:'🔥', lbl:'Trending'}, {val:'🎯', lbl:'Tutorial'}]
-  },
-  {
-    type: 'ad_slot',
-    url: 'https://s.id/chat-dlomy',
-    desc: 'Ingin produkmu tampil di sini? Pasang banner sponsor di CodeQuest dan jangkau ribuan coder aktif!'
-  },
-];
-
-/* ============================
-   NO LIFE MODAL
-   ============================ */
-.nolife-box{
-  background:var(--card);border:1px solid rgba(239,68,68,0.3);
-  border-radius:24px;padding:28px 24px;
-  width:100%;max-width:340px;text-align:center;
-  animation:modalIn 0.35s cubic-bezier(.23,1,.32,1);
-}
-.nolife-icon{font-size:48px;margin-bottom:14px;}
-.nolife-title{
-  font-family:var(--font-display);font-size:18px;color:#FCA5A5;
-  margin-bottom:8px;
-}
-.nolife-sub{font-size:13px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
-
-/* ============================
-   PROFILE SCREEN
-   ============================ */
-.profile-hero{
-  background:linear-gradient(135deg,rgba(79,70,229,0.15),rgba(34,211,238,0.08));
-  padding:60px 20px 20px;border-bottom:1px solid var(--border);
-  text-align:center;
-}
-.avatar-ring{
-  width:80px;height:80px;border-radius:50%;
-  background:conic-gradient(var(--neon),var(--cyan),var(--pink),var(--neon));
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 12px;animation:spin-slow 10s linear infinite;
-}
-.avatar-inner{
-  width:68px;height:68px;border-radius:50%;
-  background:var(--bg3);display:flex;align-items:center;justify-content:center;
-  font-size:30px;
-}
-.profile-name{
-  font-family:var(--font-display);font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;
-}
-.profile-level-badge{
-  display:inline-block;font-size:11px;
-  background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);
-  color:var(--gold);border-radius:20px;padding:4px 14px;margin-bottom:14px;
-  font-family:var(--font-display);font-weight:600;
-}
-.profile-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.ps-item{
-  background:rgba(0,0,0,0.3);border-radius:12px;padding:10px 6px;text-align:center;
-}
-.ps-val{
-  font-family:var(--font-display);font-size:18px;font-weight:700;
-  color:var(--neon2);display:block;
-}
-.ps-lbl{font-size:10px;color:var(--muted);}
-.badges-wrap{padding:16px;}
-.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.badge-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;padding:12px 8px;text-align:center;
-  transition:border-color 0.2s;
-}
-.badge-card.earned{border-color:rgba(245,158,11,0.35);}
-.badge-card.locked-b{opacity:0.35;}
-.badge-ico{font-size:26px;display:block;margin-bottom:5px;}
-.badge-nm{font-size:10px;font-weight:700;color:var(--muted2);}
-.badge-earned-txt{font-size:9px;color:var(--gold);margin-top:2px;display:block;}
-
-/* ============================
-   PARTICLES / EFFECTS
-   ============================ */
-.particle{
-  position:fixed;pointer-events:none;z-index:999;
-  width:6px;height:6px;border-radius:50%;
-  animation:particle-fly 0.8s ease-out both;
-}
-@keyframes particle-fly{
-  from{opacity:1;transform:translate(0,0) scale(1);}
-  to{opacity:0;transform:var(--tx,translate(40px,-80px)) scale(0);}
-}
-
-/* ============================
-   ANIMATIONS
-   ============================ */
-.fade-in{animation:fadeIn 0.4s ease both;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.slide-up{animation:slideUp 0.35s cubic-bezier(.23,1,.32,1) both;}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-
-/* STAGGER CHILDREN */
-.stagger > *:nth-child(1){animation-delay:0.05s}
-.stagger > *:nth-child(2){animation-delay:0.1s}
-.stagger > *:nth-child(3){animation-delay:0.15s}
-.stagger > *:nth-child(4){animation-delay:0.2s}
-.stagger > *:nth-child(5){animation-delay:0.25s}
-.stagger > *:nth-child(6){animation-delay:0.3s}
-
-/* ============================
-   MISC
-   ============================ */
-.divider{height:1px;background:var(--border);margin:0 16px;}
-.section-title{
-  font-family:var(--font-display);font-size:11px;
-  color:var(--muted);letter-spacing:0.5px;
-  padding:12px 16px 6px;
-}
-.empty-state{
-  text-align:center;padding:40px 24px;color:var(--muted);
-  font-size:13px;line-height:1.6;
-}
-.shine{
-  position:relative;overflow:hidden;
-}
-.shine::after{
-  content:'';position:absolute;top:-50%;left:-60%;
-  width:40%;height:200%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
-  transform:skewX(-20deg);
-  animation:shine 3s ease infinite;
-}
-@keyframes shine{0%{left:-60%}100%{left:140%}}
-
-/* LEVEL COMPLETE BURST */
-.burst{
-  position:fixed;inset:0;z-index:500;pointer-events:none;
-  display:flex;align-items:center;justify-content:center;
-  display:none;
-}
-.burst.show{display:flex;}
-.burst-ring{
-  width:200px;height:200px;border-radius:50%;
-  border:3px solid var(--gold);
-  animation:burstRing 0.6s ease-out both;
-}
-@keyframes burstRing{from{transform:scale(0);opacity:1}to{transform:scale(3);opacity:0}}
-
-svg.icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-
-/* ============================
-   FEEDBACK FLOATING BUTTON
-   ============================ */
-#feedback-fab{
-  position:fixed;bottom:28px;right:18px;z-index:150;
-  width:48px;height:48px;border-radius:50%;
-  background:linear-gradient(135deg,#7C3AED,#06B6D4);
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(99,102,241,0.55),0 0 0 0 rgba(99,102,241,0.35);
-  transition:transform 0.2s,box-shadow 0.2s;
-  animation:fab-pulse 3s ease infinite;
-}
-@keyframes fab-pulse{
-  0%,100%{box-shadow:0 4px 20px rgba(99,102,241,0.55),0 0 0 0 rgba(99,102,241,0.3);}
-  50%{box-shadow:0 4px 28px rgba(99,102,241,0.7),0 0 0 10px rgba(99,102,241,0);}
-}
-#feedback-fab:hover{transform:scale(1.1) rotate(8deg);box-shadow:0 6px 28px rgba(99,102,241,0.7);}
-#feedback-fab:active{transform:scale(0.95);}
-#feedback-fab svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
-/* tooltip */
-#feedback-fab::before{
-  content:'Saran & Masukan';
-  position:absolute;right:54px;top:50%;transform:translateY(-50%) translateX(6px);
-  background:rgba(15,15,30,0.92);color:var(--text);
-  font-family:var(--font-body);font-size:11px;font-weight:600;
-  padding:5px 10px;border-radius:8px;white-space:nowrap;
-  border:1px solid var(--border);backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;transition:all 0.2s;
-}
-#feedback-fab:hover::before{opacity:1;transform:translateY(-50%) translateX(0);}
-
-/* ============================
-   FEEDBACK MODAL
-   ============================ */
-#feedback-modal{
-  position:fixed;inset:0;z-index:300;
-  background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);
-  display:none;align-items:flex-end;justify-content:center;
-  padding:0;
-}
-#feedback-modal.show{display:flex;}
-.feedback-sheet{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:24px 24px 0 0;
-  width:100%;max-width:480px;
-  padding:0 0 env(safe-area-inset-bottom,16px);
-  animation:sheetUp 0.38s cubic-bezier(.23,1,.32,1) both;
-  position:relative;overflow:hidden;
-  max-height:92vh;overflow-y:auto;
-}
-@keyframes sheetUp{from{transform:translateY(100%);opacity:0.5;}to{transform:translateY(0);opacity:1;}}
-/* top accent line */
-.feedback-sheet::before{
-  content:'';position:sticky;top:0;display:block;
-  height:3px;background:linear-gradient(90deg,var(--neon),var(--cyan),var(--pink));
-  background-size:200% 100%;animation:gradShift 3s linear infinite;
-}
-.fb-drag{
-  width:40px;height:4px;border-radius:2px;
-  background:rgba(255,255,255,0.12);
-  margin:12px auto 0;
-}
-.fb-header{
-  padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;
-}
-.fb-title{
-  font-family:var(--font-display);font-size:15px;font-weight:700;
-  background:linear-gradient(90deg,var(--neon2),var(--cyan));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.fb-close{
-  width:32px;height:32px;border-radius:8px;
-  background:var(--glass2);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:var(--muted2);font-size:18px;
-  transition:all 0.2s;flex-shrink:0;
-  font-family:monospace;line-height:1;
-}
-.fb-close:hover{border-color:var(--border2);color:var(--text);}
-.fb-desc{
-  padding:0 20px 16px;font-size:12px;color:var(--muted2);line-height:1.7;
-  border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:4px;
-}
-.fb-desc a{color:var(--cyan);text-decoration:none;}
-/* Form */
-.fb-form{padding:16px 20px 24px;display:flex;flex-direction:column;gap:14px;}
-.fb-field{display:flex;flex-direction:column;gap:6px;}
-.fb-label{
-  font-size:11px;font-weight:700;color:var(--muted2);
-  font-family:var(--font-display);letter-spacing:0.4px;
-}
-.fb-input{
-  background:var(--card);border:1.5px solid var(--border);
-  border-radius:12px;padding:12px 14px;
-  font-family:var(--font-body);font-size:13px;color:var(--text);
-  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
-  width:100%;
-}
-.fb-input::placeholder{color:var(--muted);}
-.fb-input:focus{
-  border-color:var(--neon2);
-  box-shadow:0 0 0 3px rgba(99,102,241,0.12);
-}
-.fb-input.error{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,0.1);}
-textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
-.fb-error{font-size:11px;color:var(--red);display:none;margin-top:-4px;}
-.fb-error.show{display:block;}
-.fb-submit{
-  width:100%;padding:15px;
-  background:linear-gradient(135deg,#4F46E5,#06B6D4);
-  color:#fff;font-family:var(--font-body);font-size:14px;font-weight:800;
-  border:none;border-radius:14px;cursor:pointer;
-  transition:all 0.2s;position:relative;overflow:hidden;
-  letter-spacing:0.3px;
-  box-shadow:0 4px 20px rgba(99,102,241,0.4);
-}
-.fb-submit:hover{box-shadow:0 6px 28px rgba(99,102,241,0.6);transform:translateY(-1px);}
-.fb-submit:active{transform:scale(0.97) translateY(0);}
-.fb-submit:disabled{opacity:0.55;cursor:default;transform:none;}
-.fb-submit .submit-spinner{
-  display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);
-  border-top-color:#fff;border-radius:50%;
-  animation:spin 0.7s linear infinite;margin:0 auto;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.fb-submit.loading .submit-text{display:none;}
-.fb-submit.loading .submit-spinner{display:block;}
-/* Success state */
-.fb-success{
-  padding:32px 20px 28px;text-align:center;display:none;
-  flex-direction:column;align-items:center;gap:12px;
-}
-.fb-success.show{display:flex;}
-.fb-success-icon{
-  width:64px;height:64px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.08));
-  border:2px solid rgba(16,185,129,0.4);
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;
-  animation:successPop 0.5s cubic-bezier(.23,1,.32,1) both;
-}
-@keyframes successPop{from{transform:scale(0) rotate(-20deg);}70%{transform:scale(1.1);}to{transform:scale(1);}}
-.fb-success-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:#fff;}
-.fb-success-msg{font-size:12px;color:var(--muted2);line-height:1.6;max-width:260px;}
-.fb-note{
-  padding:0 20px 20px;font-size:10px;color:var(--muted);
-  text-align:center;line-height:1.5;
-}
-.fb-note a{color:var(--muted2);text-decoration:none;}
 </style>
 
 <script>
@@ -2940,103 +2443,80 @@ function updateUpgradeScreen(){
   if(reserveBar)reserveBar.style.width=Math.min(G.hpReserve,100-G.hp)+'%';
 }
 
-let adTimer=null,adPct=0,adDuration=0;
+let adTimer=null,adPct=0,adDuration=0,adFromNolife=false,adWatchCount=0;
 
-/* Sponsor ads fallback — tampil random saat Adsterra belum aktif */
-const sponsorLong=[
-  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & digital terdepan untuk generasi masa depan',icon:'⚔️',bg:'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',accent:'#a78bfa',badge:'🌐 Website'},
-  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding, desain & teknologi bersama mentor berpengalaman',icon:'🎓',bg:'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',accent:'#34d399',badge:'🎓 Akademi'},
-  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page Pro',desc:'Solusi digital kreatif & profesional untuk bisnis kamu',icon:'🚀',bg:'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',accent:'#fbbf24',badge:'💼 Portfolio'},
-  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan cerdas — catat ide, tugas & jadwal dengan mudah',icon:'📝',bg:'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',accent:'#38bdf8',badge:'📱 App'},
-];
-const sponsorShort=[
-  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & digital terdepan',icon:'⚔️',bg:'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',accent:'#a78bfa',badge:'🌐 Website'},
-  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding bersama mentor terbaik',icon:'🎓',bg:'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',accent:'#34d399',badge:'🎓 Akademi'},
-  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page Pro',desc:'Solusi digital kreatif & profesional',icon:'🚀',bg:'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',accent:'#fbbf24',badge:'💼 Portfolio'},
-  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan cerdas & produktif',icon:'📝',bg:'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',accent:'#38bdf8',badge:'📱 App'},
-  {url:'https://instagram.com/caelumgladio',title:'@caelumgladio',desc:'Follow sekarang untuk konten teknologi, coding & inspirasi digital setiap hari!',icon:'📸',bg:'linear-gradient(135deg,#2d0a1a,#4a0a2a,#1a0a3a)',accent:'#f472b6',badge:'📸 Instagram'},
-  {url:'https://tiktok.com/@caelumgladio',title:'@caelumgladio',desc:'Tonton video coding, tips teknologi & konten viral setiap hari!',icon:'🎵',bg:'linear-gradient(135deg,#0a0a1a,#1a0a2a,#0a1a1a)',accent:'#22d3ee',badge:'🎵 TikTok'},
-];
-
-function buildSponsorCard(sp){
-  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid ${sp.accent}44;">
-    <!-- Banner Header -->
-    <div style="background:${sp.bg};padding:20px 16px 16px;position:relative;overflow:hidden;">
-      <!-- Decorative circles -->
-      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:${sp.accent}22;"></div>
-      <div style="position:absolute;bottom:-30px;left:-10px;width:60px;height:60px;border-radius:50%;background:${sp.accent}15;"></div>
-      <!-- Badge -->
-      <div style="display:inline-block;background:${sp.accent}22;border:1px solid ${sp.accent}55;border-radius:20px;padding:3px 10px;font-size:10px;color:${sp.accent};font-weight:600;margin-bottom:12px;">${sp.badge}</div>
-      <!-- Icon + Title -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-        <div style="width:48px;height:48px;border-radius:12px;background:${sp.accent}22;border:1px solid ${sp.accent}44;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">${sp.icon}</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;">${sp.title}</div>
-          <div style="font-size:10px;color:${sp.accent};opacity:0.8;">${sp.url.replace('https://','')}</div>
-        </div>
-      </div>
-      <!-- Desc -->
-      <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;">${sp.desc}</div>
-    </div>
-    <!-- CTA Footer -->
-    <div style="background:#0a0c1a;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-size:11px;color:rgba(255,255,255,0.4);">📢 Iklan Sponsor</span>
-      <span style="background:${sp.accent};color:#000;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;">Kunjungi →</span>
-    </div>
-  </a>`;
-}
-
-function openAdModal(pct,fromNolife){
-  adPct=pct;
-  adDuration=pct===25?30:15;
+function _pickSponsor(pct){
   const pool=pct===25?sponsorLong:sponsorShort;
-  const sp=pool[Math.floor(Math.random()*pool.length)];
-  document.getElementById('ad-modal-title').textContent='Tonton Iklan'+(pct===25?' Premium':'');
-  document.getElementById('ad-modal-sub').textContent='Dapatkan +'+pct+'% HP setelah iklan selesai';
-  
-  /* Cek apakah Adsterra sudah load — jika ada iframe berarti aktif */
-  const adsterraSlot=document.getElementById('adsterra-reward-slot');
-  const adsterraActive=adsterraSlot&&adsterraSlot.querySelector('iframe');
-  
-  if(!adsterraActive){
-    /* Tampilkan sponsor card fallback */
-    adsterraSlot.innerHTML=buildSponsorCard(sp);
-  }
-  
+  let idx=Math.floor(Math.random()*pool.length);
+  if(pool.length>1&&window._lastSpIdx===idx)idx=(idx+1)%pool.length;
+  window._lastSpIdx=idx;
+  return pool[idx];
+}
+function openAdModal(pct,fromNolife){
+  adPct=pct;adFromNolife=!!fromNolife;adWatchCount=0;
+  _runAdRound();
+}
+function _runAdRound(){
+  adWatchCount++;
+  adDuration=adPct===25?30:15;
+  const sp=_pickSponsor(adPct);
+  document.getElementById('ad-modal-title').textContent='Nonton Iklan'+(adPct===25?' Premium':'')+' #'+adWatchCount;
+  document.getElementById('ad-modal-sub').textContent='Setelah selesai +'+adPct+'% HP · HP saat ini: '+G.hp+'%';
+  const slot=document.getElementById('adsterra-reward-slot');
+  if(slot&&!slot.querySelector('iframe')) slot.innerHTML=buildSponsorCard(sp);
   document.getElementById('ad-timer').textContent=adDuration;
   document.getElementById('ad-progress-fill').style.width='0%';
-  document.getElementById('ad-modal-btns').innerHTML=`<button class="btn btn-ghost btn-full" id="ad-close-btn" disabled onclick="closeAdModal(${pct},${fromNolife})">Menunggu... (${adDuration}s)</button>`;
+  document.getElementById('ad-modal-btns').innerHTML=`<button class="btn btn-ghost btn-full" disabled>Menunggu... (${adDuration}s)</button>`;
   document.getElementById('ad-modal').classList.add('show');
-  if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
+  if(adFromNolife)document.getElementById('nolife-modal').classList.remove('show');
   let elapsed=0;
   if(adTimer)clearInterval(adTimer);
   adTimer=setInterval(()=>{
     elapsed++;
-    const prog=(elapsed/adDuration)*100;
-    document.getElementById('ad-progress-fill').style.width=prog+'%';
-    const remaining=adDuration-elapsed;
-    document.getElementById('ad-timer').textContent=remaining>0?remaining:'✓';
-    const closeBtn=document.getElementById('ad-close-btn');
-    closeBtn.textContent=remaining>0?'Menunggu... ('+remaining+'s)':'';
-    if(elapsed>=adDuration){
+    document.getElementById('ad-progress-fill').style.width=(elapsed/adDuration*100)+'%';
+    const rem=adDuration-elapsed;
+    const btns=document.getElementById('ad-modal-btns');
+    if(rem>0){
+      document.getElementById('ad-timer').textContent=rem;
+      btns.innerHTML=`<button class="btn btn-ghost btn-full" disabled>Menunggu... (${rem}s)</button>`;
+    } else {
       clearInterval(adTimer);
-      document.getElementById('ad-timer').textContent='Selesai!';
-      closeBtn.disabled=false;
-      closeBtn.textContent='Klaim +'+pct+'% HP 🎉';
-      closeBtn.className='btn btn-green btn-full';
+      document.getElementById('ad-timer').textContent='✓';
+      _showAdDoneButtons();
     }
   },1000);
 }
-function closeAdModal(pct,fromNolife){
+function _showAdDoneButtons(){
+  const canMore=G.hp<100;
+  document.getElementById('ad-modal-sub').textContent='HP saat ini: '+G.hp+'%';
+  document.getElementById('ad-modal-btns').innerHTML=`
+    <button class="btn btn-green btn-full" style="margin-bottom:8px;" onclick="_claimAd()">Klaim +${adPct}% HP 🎉</button>
+    ${canMore?`<button class="btn btn-cyan btn-full" style="margin-bottom:8px;" onclick="_watchAgain()">▶ Nonton Lagi (+${adPct}% HP)</button>`:''}
+    <button class="btn btn-ghost btn-full" onclick="_dismissAd()">Tutup</button>`;
+}
+function _claimAd(){
+  gainHp(adPct);
+  showToast('+'+adPct+'% HP didapat!','info');
+  updateUpgradeScreen();setHpUI(G.hp);
+  if(G.hp>=100){
+    document.getElementById('ad-modal').classList.remove('show');
+    if(adFromNolife)document.getElementById('nolife-modal').classList.remove('show');
+  } else {
+    document.getElementById('ad-modal-sub').textContent='HP sekarang: '+G.hp+'%';
+    document.getElementById('ad-modal-btns').innerHTML=`
+      <button class="btn btn-cyan btn-full" style="margin-bottom:8px;" onclick="_watchAgain()">▶ Nonton Lagi (+${adPct}% HP)</button>
+      <button class="btn btn-ghost btn-full" onclick="_dismissAd()">Tutup</button>`;
+  }
+}
+function _watchAgain(){ _runAdRound(); }
+function _dismissAd(){
   if(adTimer)clearInterval(adTimer);
   document.getElementById('ad-modal').classList.remove('show');
-  gainHp(pct);
-  showToast('+'+pct+'% HP didapat!','info');
-  updateUpgradeScreen();
-  setHpUI(G.hp);
-  if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
+  if(adFromNolife)document.getElementById('nolife-modal').classList.remove('show');
 }
-function showNolife(){document.getElementById('nolife-modal').classList.add('show');}
+function closeAdModal(pct,fromNolife){ _claimAd(); }
+
+function showNolifefunction showNolife(){document.getElementById('nolife-modal').classList.add('show');}
 function closeNolifeModal(){document.getElementById('nolife-modal').classList.remove('show');goHome();}
 
 /* ============================================================
