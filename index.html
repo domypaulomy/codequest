@@ -2890,29 +2890,47 @@ function openAdModal(pct,fromNolife){
       clearInterval(adTimer);
       document.getElementById('ad-timer').textContent='Selesai!';
       document.getElementById('ad-modal-btns').innerHTML=
-        `<button class="btn btn-green btn-full" style="margin-bottom:8px;" onclick="closeAdModal(${pct},${fromNolife},false)">Klaim +${pct}% HP 🎉</button>`
-        +(G.hp<100?`<button class="btn btn-ghost btn-full" onclick="closeAdModal(${pct},${fromNolife},true)">&#9654; Tonton Lagi (+${pct}% HP)</button>`:'');
+        `<button class="btn btn-green btn-full" onclick="claimAndAsk(${pct},${fromNolife})">Klaim +${pct}% HP 🎉</button>`;
     }
   },1000);
+}
+function claimAndAsk(pct,fromNolife){
+  gainHp(pct);
+  showToast('+'+pct+'% HP didapat!','info');
+  updateUpgradeScreen();
+  setHpUI(G.hp);
+  if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
+  if(G.hp>=100){
+    document.getElementById('ad-modal').classList.remove('show');
+    showToast('HP sudah penuh! 💚','info');
+    return;
+  }
+  /* Tanya mau nonton lagi */
+  document.getElementById('ad-timer').textContent='💚';
+  document.getElementById('ad-modal-title').textContent='HP Berhasil Ditambah!';
+  document.getElementById('ad-modal-sub').textContent='HP kamu sekarang '+G.hp+'%. Mau nonton iklan lagi untuk tambah HP?';
+  document.getElementById('ad-progress-fill').style.width='100%';
+  document.getElementById('ad-modal-btns').innerHTML=
+    `<button class="btn btn-gold btn-full" style="margin-bottom:8px;" onclick="closeAdModal(${pct},${fromNolife},true)">&#9654; Nonton Lagi (+${pct}% HP)</button>`
+    +`<button class="btn btn-ghost btn-full" onclick="closeAdModal(${pct},${fromNolife},false)">Batal / Tutup</button>`;
 }
 function closeAdModal(pct,fromNolife,again){
   if(adTimer)clearInterval(adTimer);
   if(!again){
     document.getElementById('ad-modal').classList.remove('show');
-    gainHp(pct);
-    showToast('+'+pct+'% HP didapat!','info');
-    updateUpgradeScreen();setHpUI(G.hp);
-    if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
   } else {
     const pool=pct===25?sponsorLong:sponsorShort;
     const sp=pool[Math.floor(Math.random()*pool.length)];
     const slot=document.getElementById('adsterra-reward-slot');
     if(slot&&!slot.querySelector('iframe'))slot.innerHTML=buildSponsorCard(sp);
     const dur=pct===25?30:15;
+    document.getElementById('ad-modal-title').textContent='Tonton Iklan'+(pct===25?' Premium':'');
+    document.getElementById('ad-modal-sub').textContent='Dapatkan +'+pct+'% HP setelah iklan selesai';
     document.getElementById('ad-timer').textContent=dur;
     document.getElementById('ad-progress-fill').style.width='0%';
     document.getElementById('ad-modal-btns').innerHTML='<button class="btn btn-ghost btn-full" id="ad-close-btn" disabled>Menunggu... ('+dur+'s)</button>';
     let el=0;
+    if(adTimer)clearInterval(adTimer);
     adTimer=setInterval(function(){
       el++;
       document.getElementById('ad-progress-fill').style.width=(el/dur*100)+'%';
@@ -2922,8 +2940,7 @@ function closeAdModal(pct,fromNolife,again){
         clearInterval(adTimer);
         document.getElementById('ad-timer').textContent='Selesai!';
         document.getElementById('ad-modal-btns').innerHTML=
-          '<button class="btn btn-green btn-full" style="margin-bottom:8px;" onclick="closeAdModal('+pct+','+fromNolife+',false)">Klaim +'+pct+'% HP 🎉</button>'
-          +(G.hp<100?'<button class="btn btn-ghost btn-full" onclick="closeAdModal('+pct+','+fromNolife+',true)">▶ Tonton Lagi (+'+pct+'% HP)</button>':'');
+          '<button class="btn btn-green btn-full" onclick="claimAndAsk('+pct+','+fromNolife+')">Klaim +'+pct+'% HP 🎉</button>';
       } else {
         const b=document.getElementById('ad-close-btn');
         if(b)b.textContent='Menunggu... ('+r+'s)';
