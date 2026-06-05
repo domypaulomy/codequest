@@ -2751,35 +2751,44 @@ let adTimer=null,adPct=0,adDuration=0;
 
 /* Sponsor ads fallback — tampil random saat Adsterra belum aktif */
 const sponsorLong=[
-  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & inovasi digital',icon:'🌐'},
-  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding & teknologi bersama kami',icon:'🎓'},
-  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page',desc:'Temukan solusi digital terbaik untukmu',icon:'🚀'},
-  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan praktis & produktif',icon:'📝'},
+  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & digital terdepan untuk generasi masa depan',icon:'⚔️',bg:'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',accent:'#a78bfa',badge:'🌐 Website'},
+  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding, desain & teknologi bersama mentor berpengalaman',icon:'🎓',bg:'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',accent:'#34d399',badge:'🎓 Akademi'},
+  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page Pro',desc:'Solusi digital kreatif & profesional untuk bisnis kamu',icon:'🚀',bg:'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',accent:'#fbbf24',badge:'💼 Portfolio'},
+  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan cerdas — catat ide, tugas & jadwal dengan mudah',icon:'📝',bg:'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',accent:'#38bdf8',badge:'📱 App'},
 ];
 const sponsorShort=[
-  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & inovasi digital',icon:'🌐'},
-  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding & teknologi',icon:'🎓'},
-  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page',desc:'Solusi digital terbaik',icon:'🚀'},
-  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan praktis',icon:'📝'},
-  {url:'https://instagram.com/caelumgladio',title:'Instagram @caelumgladio',desc:'Follow untuk konten teknologi & inspirasi',icon:'📸'},
-  {url:'https://tiktok.com/@caelumgladio',title:'TikTok @caelumgladio',desc:'Tonton video coding & tech terbaru',icon:'🎵'},
+  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & digital terdepan',icon:'⚔️',bg:'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',accent:'#a78bfa',badge:'🌐 Website'},
+  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding bersama mentor terbaik',icon:'🎓',bg:'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',accent:'#34d399',badge:'🎓 Akademi'},
+  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page Pro',desc:'Solusi digital kreatif & profesional',icon:'🚀',bg:'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',accent:'#fbbf24',badge:'💼 Portfolio'},
+  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan cerdas & produktif',icon:'📝',bg:'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',accent:'#38bdf8',badge:'📱 App'},
+  {url:'https://instagram.com/caelumgladio',title:'@caelumgladio',desc:'Follow sekarang untuk konten teknologi, coding & inspirasi digital setiap hari!',icon:'📸',bg:'linear-gradient(135deg,#2d0a1a,#4a0a2a,#1a0a3a)',accent:'#f472b6',badge:'📸 Instagram'},
+  {url:'https://tiktok.com/@caelumgladio',title:'@caelumgladio',desc:'Tonton video coding, tips teknologi & konten viral setiap hari!',icon:'🎵',bg:'linear-gradient(135deg,#0a0a1a,#1a0a2a,#0a1a1a)',accent:'#22d3ee',badge:'🎵 TikTok'},
 ];
 
 function buildSponsorCard(sp){
-  const thumbUrl='https://api.microlink.io/?url='+encodeURIComponent(sp.url)+'&screenshot=true&meta=false&embed=screenshot.url';
-  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sponsor-card" onclick="void(0)">
-    <img class="sponsor-thumb" src="${thumbUrl}" 
-      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-      alt="${sp.title}">
-    <div class="sponsor-thumb-fallback" style="display:none;">
-      <span style="font-size:36px;">${sp.icon}</span>
-      <span style="font-size:11px;color:var(--muted);">${sp.url.replace('https://','')}</span>
+  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid ${sp.accent}44;">
+    <!-- Banner Header -->
+    <div style="background:${sp.bg};padding:20px 16px 16px;position:relative;overflow:hidden;">
+      <!-- Decorative circles -->
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:${sp.accent}22;"></div>
+      <div style="position:absolute;bottom:-30px;left:-10px;width:60px;height:60px;border-radius:50%;background:${sp.accent}15;"></div>
+      <!-- Badge -->
+      <div style="display:inline-block;background:${sp.accent}22;border:1px solid ${sp.accent}55;border-radius:20px;padding:3px 10px;font-size:10px;color:${sp.accent};font-weight:600;margin-bottom:12px;">${sp.badge}</div>
+      <!-- Icon + Title -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <div style="width:48px;height:48px;border-radius:12px;background:${sp.accent}22;border:1px solid ${sp.accent}44;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">${sp.icon}</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;">${sp.title}</div>
+          <div style="font-size:10px;color:${sp.accent};opacity:0.8;">${sp.url.replace('https://','')}</div>
+        </div>
+      </div>
+      <!-- Desc -->
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;">${sp.desc}</div>
     </div>
-    <div class="sponsor-body">
-      <span class="sponsor-label">📢 Iklan Sponsor</span>
-      <div class="sponsor-title">${sp.title}</div>
-      <div class="sponsor-url">${sp.url.replace('https://','')}</div>
-      <span class="sponsor-cta">Kunjungi Sekarang →</span>
+    <!-- CTA Footer -->
+    <div style="background:#0a0c1a;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:11px;color:rgba(255,255,255,0.4);">📢 Iklan Sponsor</span>
+      <span style="background:${sp.accent};color:#000;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;">Kunjungi →</span>
     </div>
   </a>`;
 }
