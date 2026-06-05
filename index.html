@@ -1171,81 +1171,7 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
   text-align:center;line-height:1.5;
 }
 .fb-note a{color:var(--muted2);text-decoration:none;}
-
-/* ===== SPONSOR CARD v2 ===== */
-.sp-card{display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;transition:transform 0.22s cubic-bezier(.23,1,.32,1),box-shadow 0.22s;position:relative;}
-.sp-card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,0.55);}
-.sp-card:active{transform:scale(0.98);}
-
-/* === SOSMED CARD === */
-.sp-sosmed{background:#111827;border:1px solid rgba(255,255,255,0.12);}
-.sp-sosmed-header{position:relative;height:72px;display:flex;align-items:center;padding:0 16px;gap:12px;overflow:hidden;}
-.sp-sosmed-header::before{content:'';position:absolute;inset:0;background:var(--sp-grad);opacity:1;}
-.sp-sosmed-header-content{position:relative;z-index:2;display:flex;align-items:center;gap:10px;width:100%;}
-.sp-sosmed-platform-icon{font-size:28px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4));}
-.sp-sosmed-platform-name{font-family:var(--font-display);font-size:20px;font-weight:900;color:#fff;letter-spacing:0.5px;text-shadow:0 1px 8px rgba(0,0,0,0.5);}
-.sp-sosmed-body{padding:16px 16px 0;display:flex;align-items:flex-start;gap:12px;}
-.sp-sosmed-avatar{width:44px;height:44px;min-width:44px;border-radius:50%;background:var(--sp-grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-top:-26px;border:3px solid #111827;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
-.sp-sosmed-info{flex:1;min-width:0;padding-top:2px;}
-.sp-sosmed-handle{font-family:var(--font-display);font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:4px;}
-.sp-sosmed-desc{font-size:12px;color:#94A3B8;line-height:1.6;margin-bottom:10px;}
-.sp-sosmed-stats{display:flex;gap:16px;margin-bottom:12px;}
-.sp-sosmed-stat{display:flex;flex-direction:column;align-items:center;gap:1px;}
-.sp-sosmed-stat-val{font-size:14px;font-weight:700;color:#E2E8F0;}
-.sp-sosmed-stat-lbl{font-size:9px;color:#64748B;font-family:var(--font-display);letter-spacing:0.3px;}
-.sp-sosmed-cta{margin:0 16px 16px;padding:10px 0;border-radius:10px;background:var(--sp-grad);font-family:var(--font-body);font-size:12px;font-weight:800;color:#fff;text-align:center;letter-spacing:0.4px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
-
-/* === WEBSITE CARD === */
-.sp-website{border:1px solid rgba(255,255,255,0.1);background:#111827;}
-.sp-website-preview{width:100%;height:160px;overflow:hidden;position:relative;background:#0d0f1a;}
-.sp-website-preview iframe{width:100%;height:100%;border:none;pointer-events:none;transform:scale(1);transform-origin:top left;}
-.sp-website-preview-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,#111827 100%);}
-.sp-website-preview-badge{position:absolute;top:10px;left:10px;z-index:3;display:flex;align-items:center;gap:5px;}
-.sp-website-badge{font-size:9px;font-weight:700;letter-spacing:0.5px;padding:3px 10px;border-radius:20px;background:rgba(0,0,0,0.65);color:var(--sp-accent);border:1px solid color-mix(in srgb,var(--sp-accent) 40%,transparent);font-family:var(--font-display);backdrop-filter:blur(4px);}
-.sp-website-body{padding:12px 14px 14px;}
-.sp-website-title{font-family:var(--font-display);font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:4px;}
-.sp-website-desc{font-size:11px;color:#94A3B8;line-height:1.6;margin-bottom:10px;}
-.sp-website-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.sp-website-url{font-size:10px;color:#475569;font-family:var(--font-display);letter-spacing:0.3px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sp-website-visit{font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;background:var(--sp-accent);color:#000;letter-spacing:0.3px;font-family:var(--font-body);flex-shrink:0;white-space:nowrap;}
-.sp-website-ad-label{font-size:9px;color:#334155;letter-spacing:0.3px;}
-
-/* === SPONSOR CTA === */
-.sp-sponsor-cta{background:linear-gradient(135deg,#0F1729,#111827);border:1px solid rgba(99,102,241,0.35);border-radius:14px;overflow:hidden;position:relative;}
-.sp-sponsor-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 50%,rgba(99,102,241,0.1) 0%,transparent 55%),radial-gradient(ellipse at 85% 50%,rgba(34,211,238,0.07) 0%,transparent 55%);}
-.sp-sponsor-cta-inner{position:relative;z-index:1;padding:20px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;}
-.sp-sponsor-cta-icon{width:50px;height:50px;border-radius:14px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-size:22px;}
-.sp-sponsor-cta-title{font-family:var(--font-display);font-size:13px;font-weight:700;color:#E2E8F0;line-height:1.3;margin-top:2px;}
-.sp-sponsor-cta-accent{font-family:var(--font-display);font-size:11px;font-weight:600;background:linear-gradient(90deg,#818CF8,#22D3EE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.sp-sponsor-cta-desc{font-size:11px;color:#64748B;line-height:1.6;max-width:260px;}
-.sp-sponsor-cta-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:24px;background:linear-gradient(135deg,#4F46E5,#0891B2);color:#fff;font-size:12px;font-weight:800;font-family:var(--font-body);letter-spacing:0.3px;text-decoration:none;margin-top:4px;}
-@keyframes sp-border-pulse{0%,100%{border-color:rgba(99,102,241,0.35);}50%{border-color:rgba(34,211,238,0.55);}}
-.sp-sponsor-cta{animation:sp-border-pulse 3s ease infinite;}
-
 </style>
-
-<script>
-(function(){
-  var c=document.createElement('canvas');
-  c.width=c.height=64;
-  var ctx=c.getContext('2d');
-  // Lingkaran background gradient
-  var g=ctx.createLinearGradient(0,0,64,64);
-  g.addColorStop(0,'#4F46E5');g.addColorStop(1,'#06B6D4');
-  ctx.beginPath();ctx.arc(32,32,32,0,Math.PI*2);
-  ctx.fillStyle=g;ctx.fill();
-  // Text CQ
-  ctx.fillStyle='#fff';
-  ctx.font='bold 22px sans-serif';
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('CQ',32,33);
-  // Set favicon
-  var link=document.querySelector('link[rel*="icon"]')||document.createElement('link');
-  link.type='image/x-icon';link.rel='shortcut icon';link.href=c.toDataURL();
-  document.head.appendChild(link);
-})();
-</script>
-
 </head>
 <body>
 
@@ -2823,75 +2749,20 @@ function updateUpgradeScreen(){
 
 let adTimer=null,adPct=0,adDuration=0;
 
-/* ---- Sponsor card builders ---- */
-function buildSponsorCard(sp){
-  if(sp.type==='sosmed')return buildSosmedCard(sp);
-  if(sp.type==='website')return buildWebsiteCard(sp);
-  if(sp.type==='cta')return buildCtaCard(sp);
-  return '';
-}
-function buildSosmedCard(sp){
-  const statsHtml=sp.stats.map(s=>`<div class="sp-sosmed-stat"><span class="sp-sosmed-stat-val">${s.val}</span><span class="sp-sosmed-stat-lbl">${s.lbl}</span></div>`).join('');
-  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sp-card sp-sosmed" style="--sp-grad:${sp.grad};">
-    <div class="sp-sosmed-header">
-      <div class="sp-sosmed-header-content">
-        <span class="sp-sosmed-platform-icon">${sp.icon}</span>
-        <span class="sp-sosmed-platform-name">${sp.platformName}</span>
-      </div>
-    </div>
-    <div class="sp-sosmed-body">
-      <div class="sp-sosmed-avatar">${sp.icon}</div>
-      <div class="sp-sosmed-info">
-        <div class="sp-sosmed-handle">${sp.handle}</div>
-        <div class="sp-sosmed-desc">${sp.desc}</div>
-        <div class="sp-sosmed-stats">${statsHtml}</div>
-      </div>
-    </div>
-    <div class="sp-sosmed-cta"><span>${sp.ctaIcon}</span> ${sp.cta}</div>
-  </a>`;}
-function buildWebsiteCard(sp){
-  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sp-card sp-website" style="--sp-accent:${sp.accent};">
-    <div class="sp-website-preview">
-      <iframe src="${sp.url}" loading="lazy" scrolling="no" title="${sp.title}" sandbox="allow-scripts allow-same-origin"></iframe>
-      <div class="sp-website-preview-overlay"></div>
-      <div class="sp-website-preview-badge">
-        <span class="sp-website-badge">${sp.badge}</span>
-      </div>
-    </div>
-    <div class="sp-website-body">
-      <div class="sp-website-title">${sp.title}</div>
-      <div class="sp-website-desc">${sp.desc}</div>
-      <div class="sp-website-footer">
-        <span class="sp-website-url">${sp.displayUrl}</span>
-        <span class="sp-website-visit">Kunjungi &rarr;</span>
-      </div>
-    </div>
-  </a>`;}
-function buildCtaCard(sp){
-  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sp-card sp-sponsor-cta">
-    <div class="sp-sponsor-cta-inner">
-      <div class="sp-sponsor-cta-icon">${sp.icon}</div>
-      <div class="sp-sponsor-cta-title">${sp.title}</div>
-      <div class="sp-sponsor-cta-desc">${sp.desc}</div>
-      <span class="sp-sponsor-cta-btn">${sp.cta}</span>
-    </div>
-  </a>`;}
-
+/* Sponsor ads fallback — tampil random saat Adsterra belum aktif */
 const sponsorLong=[
-  {type:'website',url:'https://caelumgladio.com',displayUrl:'caelumgladio.com',title:'Caelum Gladio',badge:'IoT & Agritech',icon:'⚔️',accent:'#34D399',fallbackBg:'linear-gradient(135deg,#071a10,#0d3320,#071a1a)',desc:'Pelajari cara kerja teknologi seperti IoT, AI, dan Sistem Cerdas yang relevan untuk dunia pertanian. Dari dasar hingga mahir — untuk pelajar, petani muda, dan inovator lokal.'},
-  {type:'website',url:'https://akademi.caelumgladio.com',displayUrl:'akademi.caelumgladio.com',title:'CG Akademi',badge:'Platform Belajar',icon:'🎓',accent:'#818CF8',fallbackBg:'linear-gradient(135deg,#0d0a2a,#1a1050,#0a1a3a)',desc:'Siap untuk memulai perjalanan dalam dunia IoT? Bergabunglah dengan CG Akademi sekarang dan kuasai kemampuan yang dibutuhkan industri!'},
-  {type:'website',url:'https://domypaulomy.github.io/landpage',displayUrl:'domypaulomy.github.io/landpage',title:'Landing Page — Pau Lomi',badge:'Digital & Dev',icon:'🚀',accent:'#F59E0B',fallbackBg:'linear-gradient(135deg,#1a120a,#2a1a05,#1a0a12)',desc:'Membangun solusi digital yang fungsional, estetis, dan terintegrasi. Dari website modern, aplikasi Android, hingga sistem IoT berbasis web.'},
-  {type:'sosmed',url:'https://instagram.com/caelumgladio',platformName:'Instagram',handle:'@caelumgladio',icon:'📸',grad:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',desc:'Konten teknologi, IoT, coding dan inovasi digital setiap hari. Ikuti perjalanan kami!',stats:[{val:'🔥',lbl:'Daily'},{val:'📱',lbl:'Reels'},{val:'💡',lbl:'Tips'}],ctaIcon:'📸',cta:'Follow @caelumgladio'},
-  {type:'sosmed',url:'https://tiktok.com/@caelumgladio',platformName:'TikTok',handle:'@caelumgladio',icon:'🎵',grad:'linear-gradient(135deg,#010101,#1a0a2a,#0a1a1a)',desc:'Video coding, tips teknologi dan konten viral setiap hari!',stats:[{val:'🎬',lbl:'Video'},{val:'🔁',lbl:'FYP'},{val:'⚡',lbl:'Viral'}],ctaIcon:'🎵',cta:'Follow @caelumgladio'},
-  {type:'cta',url:'https://s.id/chat-dlomy',icon:'📣',title:'Pasang Iklan di CodeQuest Pro',desc:'Jangkau ribuan pelajar, developer dan tech enthusiast aktif setiap hari. Tampilkan brand atau produkmu sebagai Sponsor Banner di sini!',cta:'Hubungi untuk Pasang Iklan'},
+  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & digital terdepan untuk generasi masa depan',icon:'⚔️',bg:'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',accent:'#a78bfa',badge:'🌐 Website'},
+  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding, desain & teknologi bersama mentor berpengalaman',icon:'🎓',bg:'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',accent:'#34d399',badge:'🎓 Akademi'},
+  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page Pro',desc:'Solusi digital kreatif & profesional untuk bisnis kamu',icon:'🚀',bg:'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',accent:'#fbbf24',badge:'💼 Portfolio'},
+  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan cerdas — catat ide, tugas & jadwal dengan mudah',icon:'📝',bg:'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',accent:'#38bdf8',badge:'📱 App'},
 ];
 const sponsorShort=[
-  {type:'sosmed',url:'https://instagram.com/caelumgladio',platformName:'Instagram',handle:'@caelumgladio',icon:'📸',grad:'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',desc:'Teknologi, IoT dan inovasi digital — update setiap hari!',stats:[{val:'🔥',lbl:'Post'},{val:'📱',lbl:'Reels'},{val:'💡',lbl:'Tips'}],ctaIcon:'📸',cta:'Follow Sekarang'},
-  {type:'sosmed',url:'https://tiktok.com/@caelumgladio',platformName:'TikTok',handle:'@caelumgladio',icon:'🎵',grad:'linear-gradient(135deg,#010101,#1a0a2a,#0a1a1a)',desc:'Video coding, tips teknologi dan konten viral setiap hari!',stats:[{val:'🎬',lbl:'Video'},{val:'🔁',lbl:'FYP'},{val:'⚡',lbl:'Viral'}],ctaIcon:'🎵',cta:'Follow @caelumgladio'},
-  {type:'website',url:'https://caelumgladio.com',displayUrl:'caelumgladio.com',title:'Caelum Gladio',badge:'IoT & Agritech',icon:'⚔️',accent:'#34D399',fallbackBg:'linear-gradient(135deg,#071a10,#0d3320,#071a1a)',desc:'Teknologi IoT, AI dan pertanian cerdas — untuk pelajar dan inovator lokal.'},
-  {type:'website',url:'https://akademi.caelumgladio.com',displayUrl:'akademi.caelumgladio.com',title:'CG Akademi',badge:'Belajar IoT',icon:'🎓',accent:'#818CF8',fallbackBg:'linear-gradient(135deg,#0d0a2a,#1a1050,#0a1a3a)',desc:'Kuasai IoT bersama mentor berpengalaman. Bergabung sekarang!'},
-  {type:'website',url:'https://domypaulomy.github.io/landpage',displayUrl:'domypaulomy.github.io',title:'Portfolio — Pau Lomi',badge:'Dev & IoT',icon:'🚀',accent:'#F59E0B',fallbackBg:'linear-gradient(135deg,#1a120a,#2a1a05,#1a0a12)',desc:'Website, Android dan IoT — solusi digital profesional.'},
-  {type:'cta',url:'https://s.id/chat-dlomy',icon:'📣',title:'Mau Pasang Iklan di Sini?',desc:'Jangkau ribuan developer dan pelajar aktif di CodeQuest. Hubungi kami untuk pasang iklan banner sebagai Sponsor.',cta:'Chat dan Pasang Iklan'},
+  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & digital terdepan',icon:'⚔️',bg:'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',accent:'#a78bfa',badge:'🌐 Website'},
+  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding bersama mentor terbaik',icon:'🎓',bg:'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',accent:'#34d399',badge:'🎓 Akademi'},
+  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page Pro',desc:'Solusi digital kreatif & profesional',icon:'🚀',bg:'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',accent:'#fbbf24',badge:'💼 Portfolio'},
+  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan cerdas & produktif',icon:'📝',bg:'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',accent:'#38bdf8',badge:'📱 App'},
+  {url:'https://instagram.com/caelumgladio',title:'@caelumgladio',desc:'Follow sekarang untuk konten teknologi, coding & inspirasi digital setiap hari!',icon:'📸',bg:'linear-gradient(135deg,#2d0a1a,#4a0a2a,#1a0a3a)',accent:'#f472b6',badge:'📸 Instagram'},
+  {url:'https://tiktok.com/@caelumgladio',title:'@caelumgladio',desc:'Tonton video coding, tips teknologi & konten viral setiap hari!',icon:'🎵',bg:'linear-gradient(135deg,#0a0a1a,#1a0a2a,#0a1a1a)',accent:'#22d3ee',badge:'🎵 TikTok'},
 ];
 
 function buildSponsorCard(sp){
