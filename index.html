@@ -848,6 +848,43 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 .ad-fake-text{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
 
 /* ============================
+   SPONSOR CARD (fallback ad)
+   ============================ */
+.sponsor-card{
+  width:100%;border-radius:12px;overflow:hidden;
+  border:1px solid rgba(34,211,238,0.2);
+  background:#0A0C1A;text-decoration:none;
+  display:block;transition:all 0.2s;
+}
+.sponsor-card:hover{border-color:rgba(34,211,238,0.5);transform:translateY(-2px);}
+.sponsor-thumb{
+  width:100%;height:130px;object-fit:cover;
+  display:block;background:#111427;
+}
+.sponsor-thumb-fallback{
+  width:100%;height:130px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0E1028,#161933);
+  flex-direction:column;gap:8px;
+}
+.sponsor-body{padding:10px 12px;}
+.sponsor-label{
+  font-size:9px;color:var(--muted);letter-spacing:0.5px;
+  text-transform:uppercase;margin-bottom:4px;display:block;
+}
+.sponsor-title{
+  font-family:var(--font-display);font-size:13px;
+  font-weight:700;color:var(--cyan);margin-bottom:3px;
+}
+.sponsor-url{font-size:10px;color:var(--muted2);}
+.sponsor-cta{
+  display:inline-block;margin-top:8px;padding:6px 14px;
+  background:linear-gradient(135deg,var(--neon),var(--cyan));
+  border-radius:20px;font-size:11px;font-weight:700;
+  color:#fff;text-decoration:none;
+}
+
+/* ============================
    NO LIFE MODAL
    ============================ */
 .nolife-box{
@@ -2721,24 +2758,62 @@ function updateUpgradeScreen(){
 }
 
 let adTimer=null,adPct=0,adDuration=0;
-const adFakeContents=[
-  ['Coba CodeQuest Premium!','Akses semua konten tanpa batas. Belajar lebih cepat dengan fitur exclusive.'],
-  ['Master Python dalam 30 hari!','Kursus terlengkap dengan 500+ latihan coding interaktif.'],
-  ['Pelajari Data Science!','Machine Learning, Python, SQL — semua dalam satu platform.'],
-  ['Frontend Developer Bootcamp','React, Vue, CSS Modern — mulai karir web developer sekarang!'],
-  ['Kuasai System Design!','Wawancara software engineer lebih mudah dengan latihan soal FAANG.'],
+
+/* Sponsor ads fallback — tampil random saat Adsterra belum aktif */
+const sponsorLong=[
+  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & inovasi digital',icon:'🌐'},
+  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding & teknologi bersama kami',icon:'🎓'},
+  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page',desc:'Temukan solusi digital terbaik untukmu',icon:'🚀'},
+  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan praktis & produktif',icon:'📝'},
 ];
+const sponsorShort=[
+  {url:'https://caelumgladio.com',title:'Caelum Gladio',desc:'Platform teknologi & inovasi digital',icon:'🌐'},
+  {url:'https://akademi.caelumgladio.com',title:'Akademi Caelum Gladio',desc:'Belajar coding & teknologi',icon:'🎓'},
+  {url:'https://domypaulomy.github.io/landpage',title:'Landing Page',desc:'Solusi digital terbaik',icon:'🚀'},
+  {url:'https://domypaulomy.github.io/catetin',title:'Catetin App',desc:'Aplikasi catatan praktis',icon:'📝'},
+  {url:'https://instagram.com/caelumgladio',title:'Instagram @caelumgladio',desc:'Follow untuk konten teknologi & inspirasi',icon:'📸'},
+  {url:'https://tiktok.com/@caelumgladio',title:'TikTok @caelumgladio',desc:'Tonton video coding & tech terbaru',icon:'🎵'},
+];
+
+function buildSponsorCard(sp){
+  const thumbUrl='https://api.microlink.io/?url='+encodeURIComponent(sp.url)+'&screenshot=true&meta=false&embed=screenshot.url';
+  return `<a href="${sp.url}" target="_blank" rel="noopener" class="sponsor-card" onclick="void(0)">
+    <img class="sponsor-thumb" src="${thumbUrl}" 
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      alt="${sp.title}">
+    <div class="sponsor-thumb-fallback" style="display:none;">
+      <span style="font-size:36px;">${sp.icon}</span>
+      <span style="font-size:11px;color:var(--muted);">${sp.url.replace('https://','')}</span>
+    </div>
+    <div class="sponsor-body">
+      <span class="sponsor-label">📢 Iklan Sponsor</span>
+      <div class="sponsor-title">${sp.title}</div>
+      <div class="sponsor-url">${sp.url.replace('https://','')}</div>
+      <span class="sponsor-cta">Kunjungi Sekarang →</span>
+    </div>
+  </a>`;
+}
 
 function openAdModal(pct,fromNolife){
   adPct=pct;
   adDuration=pct===25?30:15;
-  const fakeContent=adFakeContents[Math.floor(Math.random()*adFakeContents.length)];
+  const pool=pct===25?sponsorLong:sponsorShort;
+  const sp=pool[Math.floor(Math.random()*pool.length)];
   document.getElementById('ad-modal-title').textContent='Tonton Iklan'+(pct===25?' Premium':'');
   document.getElementById('ad-modal-sub').textContent='Dapatkan +'+pct+'% HP setelah iklan selesai';
-  document.getElementById('ad-fake-text').innerHTML='<strong style="color:var(--cyan);font-size:14px;">'+fakeContent[0]+'</strong><br><br>'+fakeContent[1];
+  
+  /* Cek apakah Adsterra sudah load — jika ada iframe berarti aktif */
+  const adsterraSlot=document.getElementById('adsterra-reward-slot');
+  const adsterraActive=adsterraSlot&&adsterraSlot.querySelector('iframe');
+  
+  if(!adsterraActive){
+    /* Tampilkan sponsor card fallback */
+    adsterraSlot.innerHTML=buildSponsorCard(sp);
+  }
+  
   document.getElementById('ad-timer').textContent=adDuration;
   document.getElementById('ad-progress-fill').style.width='0%';
-  document.getElementById('ad-modal-btns').innerHTML=`<button class="btn btn-ghost btn-full" id="ad-close-btn" disabled onclick="closeAdModal(${pct},${fromNolife})">Menunggu...</button>`;
+  document.getElementById('ad-modal-btns').innerHTML=`<button class="btn btn-ghost btn-full" id="ad-close-btn" disabled onclick="closeAdModal(${pct},${fromNolife})">Menunggu... (${adDuration}s)</button>`;
   document.getElementById('ad-modal').classList.add('show');
   if(fromNolife)document.getElementById('nolife-modal').classList.remove('show');
   let elapsed=0;
@@ -2747,13 +2822,15 @@ function openAdModal(pct,fromNolife){
     elapsed++;
     const prog=(elapsed/adDuration)*100;
     document.getElementById('ad-progress-fill').style.width=prog+'%';
-    document.getElementById('ad-timer').textContent=adDuration-elapsed;
+    const remaining=adDuration-elapsed;
+    document.getElementById('ad-timer').textContent=remaining>0?remaining:'✓';
+    const closeBtn=document.getElementById('ad-close-btn');
+    closeBtn.textContent=remaining>0?'Menunggu... ('+remaining+'s)':'';
     if(elapsed>=adDuration){
       clearInterval(adTimer);
       document.getElementById('ad-timer').textContent='Selesai!';
-      const closeBtn=document.getElementById('ad-close-btn');
       closeBtn.disabled=false;
-      closeBtn.textContent='Klaim +'+pct+'% HP';
+      closeBtn.textContent='Klaim +'+pct+'% HP 🎉';
       closeBtn.className='btn btn-green btn-full';
     }
   },1000);
