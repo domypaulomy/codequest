@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>CodeQuest Pro</title>
+<link rel="icon" href="favicon.png" type="image/png" style="border-radius:50%">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -847,42 +848,216 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 }
 .ad-fake-text{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
 
-/* ============================
-   SPONSOR CARD (fallback ad)
-   ============================ */
-.sponsor-card{
-  width:100%;border-radius:12px;overflow:hidden;
-  border:1px solid rgba(34,211,238,0.2);
-  background:#0A0C1A;text-decoration:none;
-  display:block;transition:all 0.2s;
+
+/* ============================================================
+   SPONSOR ADS — Updated
+   ============================================================ */
+
+function buildSponsorCard(sp) {
+  if (sp.type === 'social') return buildSocialCard(sp);
+  if (sp.type === 'ad_slot') return buildAdSlotCard(sp);
+  return buildWebsiteCard(sp);
 }
-.sponsor-card:hover{border-color:rgba(34,211,238,0.5);transform:translateY(-2px);}
-.sponsor-thumb{
-  width:100%;height:130px;object-fit:cover;
-  display:block;background:#111427;
+
+function buildWebsiteCard(sp) {
+  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid ${sp.accent}55;">
+    <div style="background:${sp.bg};padding:18px 16px 14px;position:relative;overflow:hidden;min-height:110px;">
+      <div style="position:absolute;top:-24px;right:-24px;width:90px;height:90px;border-radius:50%;background:${sp.accent}18;"></div>
+      <div style="position:absolute;bottom:-28px;left:-12px;width:70px;height:70px;border-radius:50%;background:${sp.accent}12;"></div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:${sp.accent}22;border:1px solid ${sp.accent}55;border-radius:20px;padding:3px 10px;font-size:10px;color:${sp.accent};font-weight:700;margin-bottom:10px;">${sp.badge}</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <div style="width:46px;height:46px;min-width:46px;border-radius:11px;background:${sp.accent}22;border:1.5px solid ${sp.accent}44;display:flex;align-items:center;justify-content:center;font-size:22px;">${sp.icon}</div>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;">${sp.title}</div>
+          <div style="font-size:10px;color:${sp.accent};opacity:0.8;">${sp.url.replace('https://','')}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.72);line-height:1.55;">${sp.desc}</div>
+    </div>
+    <div style="background:#0a0c1a;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid ${sp.accent}22;">
+      <span style="font-size:10px;color:rgba(255,255,255,0.35);">📢 Sponsor</span>
+      <span style="background:${sp.accent};color:#000;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">Kunjungi →</span>
+    </div>
+  </a>`;
 }
-.sponsor-thumb-fallback{
-  width:100%;height:130px;
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,#0E1028,#161933);
-  flex-direction:column;gap:8px;
+
+function buildSocialCard(sp) {
+  const gradients = {
+    instagram: 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',
+    tiktok:    'linear-gradient(135deg,#010101,#69C9D0,#EE1D52)',
+    youtube:   'linear-gradient(135deg,#282828,#FF0000,#cc0000)',
+    twitter:   'linear-gradient(135deg,#1a1a2e,#1DA1F2,#0d8ecf)',
+    facebook:  'linear-gradient(135deg,#1a1a3e,#1877F2,#0a5abf)',
+    github:    'linear-gradient(135deg,#0d1117,#333,#666)',
+    linkedin:  'linear-gradient(135deg,#0a0f1e,#0077B5,#005885)',
+  };
+  const platforms = {
+    instagram: { name:'Instagram', icon:'📸', accent:'#E1306C', handle_color:'#f472b6' },
+    tiktok:    { name:'TikTok',    icon:'🎵', accent:'#69C9D0', handle_color:'#22d3ee' },
+    youtube:   { name:'YouTube',   icon:'▶️',  accent:'#FF0000', handle_color:'#f87171' },
+    twitter:   { name:'Twitter/X', icon:'𝕏',  accent:'#1DA1F2', handle_color:'#38bdf8' },
+    facebook:  { name:'Facebook',  icon:'👥', accent:'#1877F2', handle_color:'#60a5fa' },
+    github:    { name:'GitHub',    icon:'🐙', accent:'#aaa',    handle_color:'#d1d5db' },
+    linkedin:  { name:'LinkedIn',  icon:'💼', accent:'#0077B5', handle_color:'#38bdf8' },
+  };
+  const pt = platforms[sp.platform] || { name: sp.platform, icon:'🌐', accent:'#818CF8', handle_color:'#a78bfa' };
+  const bg = gradients[sp.platform] || 'linear-gradient(135deg,#1a1a3e,#2a2a5e)';
+
+  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid ${pt.accent}44;">
+    <div style="background:${bg};padding:18px 16px;position:relative;overflow:hidden;">
+      <!-- decorative blobs -->
+      <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
+      <div style="position:absolute;bottom:-40px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04);"></div>
+      <!-- platform badge -->
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff;font-weight:700;margin-bottom:12px;backdrop-filter:blur(4px);">
+        ${pt.icon} ${pt.name}
+      </div>
+      <!-- handle -->
+      <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;font-family:'Orbitron',sans-serif;letter-spacing:0.5px;">${sp.handle}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:14px;">${sp.url.replace('https://','')}</div>
+      <!-- stats row if any -->
+      ${sp.stats ? `<div style="display:flex;gap:12px;margin-bottom:12px;">${sp.stats.map(s=>`<div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;text-align:center;"><div style="font-size:13px;font-weight:800;color:#fff;">${s.val}</div><div style="font-size:9px;color:rgba(255,255,255,0.55);">${s.lbl}</div></div>`).join('')}</div>` : ''}
+      <!-- desc -->
+      <div style="font-size:11px;color:rgba(255,255,255,0.75);line-height:1.55;">${sp.desc}</div>
+    </div>
+    <div style="background:#0a0c1a;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.06);">
+      <span style="font-size:10px;color:rgba(255,255,255,0.35);">📢 Sponsor</span>
+      <span style="background:linear-gradient(135deg,${pt.accent},${pt.handle_color});color:#000;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">Follow →</span>
+    </div>
+  </a>`;
 }
-.sponsor-body{padding:10px 12px;}
-.sponsor-label{
-  font-size:9px;color:var(--muted);letter-spacing:0.5px;
-  text-transform:uppercase;margin-bottom:4px;display:block;
+
+function buildAdSlotCard(sp) {
+  return `<a href="${sp.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid #6366F155;">
+    <div style="background:linear-gradient(135deg,#0a0c1e,#13102e,#0c1a2e);padding:20px 16px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(99,102,241,0.12);"></div>
+      <div style="position:absolute;bottom:-30px;left:-10px;width:80px;height:80px;border-radius:50%;background:rgba(34,211,238,0.08);"></div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.4);border-radius:20px;padding:4px 12px;font-size:10px;color:#818CF8;font-weight:700;margin-bottom:12px;">🚀 Pasang Iklan</div>
+      <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;font-family:'Orbitron',sans-serif;letter-spacing:0.5px;">Sponsor Slot</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:14px;">${sp.desc}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:8px;padding:6px 12px;font-size:10px;color:#818CF8;font-weight:700;">👁 Ribuan pengguna aktif</div>
+        <div style="background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);border-radius:8px;padding:6px 12px;font-size:10px;color:#22D3EE;font-weight:700;">🎯 Target: Coder & Pelajar</div>
+      </div>
+    </div>
+    <div style="background:#0a0c1a;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(99,102,241,0.15);">
+      <span style="font-size:10px;color:rgba(255,255,255,0.35);">💬 Hubungi Kami</span>
+      <span style="background:linear-gradient(135deg,#6366F1,#22D3EE);color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;">Chat Sekarang →</span>
+    </div>
+  </a>`;
 }
-.sponsor-title{
-  font-family:var(--font-display);font-size:13px;
-  font-weight:700;color:var(--cyan);margin-bottom:3px;
-}
-.sponsor-url{font-size:10px;color:var(--muted2);}
-.sponsor-cta{
-  display:inline-block;margin-top:8px;padding:6px 14px;
-  background:linear-gradient(135deg,var(--neon),var(--cyan));
-  border-radius:20px;font-size:11px;font-weight:700;
-  color:#fff;text-decoration:none;
-}
+
+const sponsorLong = [
+  {
+    type: 'website',
+    url: 'https://caelumgladio.com',
+    title: 'Caelum Gladio',
+    desc: 'Pelajari cara kerja teknologi seperti Internet of Things, AI, dan Sistem cerdas yang relevan untuk dunia pertanian. Dari dasar hingga mahir — untuk pelajar, petani muda, dan inovator lokal.',
+    icon: '⚔️',
+    bg: 'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',
+    accent: '#a78bfa',
+    badge: '🌐 Website'
+  },
+  {
+    type: 'website',
+    url: 'https://akademi.caelumgladio.com',
+    title: 'CG Akademi',
+    desc: 'Siap untuk memulai perjalanan dalam dunia IoT? Bergabunglah dengan CG Akademi sekarang dan kuasai kemampuan yang dibutuhkan industri!',
+    icon: '🎓',
+    bg: 'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',
+    accent: '#34d399',
+    badge: '🎓 Akademi'
+  },
+  {
+    type: 'website',
+    url: 'https://domypaulomy.github.io/landpage',
+    title: 'Pau Lomi — Digital',
+    desc: 'Membangun solusi digital yang fungsional, estetis, dan terintegrasi. Dari website modern, aplikasi Android, hingga sistem IoT berbasis web.',
+    icon: '🚀',
+    bg: 'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',
+    accent: '#fbbf24',
+    badge: '💼 Portfolio'
+  },
+  {
+    type: 'website',
+    url: 'https://domypaulomy.github.io/catetin',
+    title: 'Catetin App',
+    desc: 'Catetin adalah aplikasi Android untuk mencatat keuangan pribadi dengan mudah. Tersedia offline & online, ringan, dan cocok untuk semua kalangan.',
+    icon: '📝',
+    bg: 'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',
+    accent: '#38bdf8',
+    badge: '📱 App'
+  },
+  {
+    type: 'ad_slot',
+    url: 'https://s.id/chat-dlomy',
+    desc: 'Ingin produk atau layananmu tampil sebagai sponsor di CodeQuest dan dilihat ribuan coder setiap hari? Hubungi kami sekarang dan pasang banner iklanmu di sini!'
+  },
+];
+
+const sponsorShort = [
+  {
+    type: 'website',
+    url: 'https://caelumgladio.com',
+    title: 'Caelum Gladio',
+    desc: 'Pelajari IoT, AI, dan sistem cerdas — dari dasar hingga mahir untuk pelajar & inovator lokal.',
+    icon: '⚔️',
+    bg: 'linear-gradient(135deg,#1a0533,#2d0a6e,#0a1a4e)',
+    accent: '#a78bfa',
+    badge: '🌐 Website'
+  },
+  {
+    type: 'website',
+    url: 'https://akademi.caelumgladio.com',
+    title: 'CG Akademi',
+    desc: 'Bergabunglah dan kuasai kemampuan IoT yang dibutuhkan industri bersama CG Akademi!',
+    icon: '🎓',
+    bg: 'linear-gradient(135deg,#0a2a1a,#0d4a2a,#0a3a4e)',
+    accent: '#34d399',
+    badge: '🎓 Akademi'
+  },
+  {
+    type: 'website',
+    url: 'https://domypaulomy.github.io/landpage',
+    title: 'Pau Lomi — Digital',
+    desc: 'Website modern, aplikasi Android, hingga sistem IoT berbasis web. Solusi digital terintegrasi.',
+    icon: '🚀',
+    bg: 'linear-gradient(135deg,#1a1a0a,#2a2a0d,#1a0a2a)',
+    accent: '#fbbf24',
+    badge: '💼 Portfolio'
+  },
+  {
+    type: 'website',
+    url: 'https://domypaulomy.github.io/catetin',
+    title: 'Catetin App',
+    desc: 'Catat keuangan pribadi dengan mudah. Offline & online, ringan, cocok untuk semua.',
+    icon: '📝',
+    bg: 'linear-gradient(135deg,#0a1a2a,#0d2a4a,#1a0a3a)',
+    accent: '#38bdf8',
+    badge: '📱 App'
+  },
+  {
+    type: 'social',
+    platform: 'instagram',
+    url: 'https://instagram.com/caelumgladio',
+    handle: '@caelumgladio',
+    desc: 'Follow sekarang untuk konten teknologi, coding & inspirasi digital setiap hari!',
+    stats: [{val:'✨', lbl:'Tips Harian'}, {val:'🤝', lbl:'Komunitas'}]
+  },
+  {
+    type: 'social',
+    platform: 'tiktok',
+    url: 'https://tiktok.com/@caelumgladio',
+    handle: '@caelumgladio',
+    desc: 'Tonton video coding, tips teknologi & konten viral setiap hari!',
+    stats: [{val:'🔥', lbl:'Trending'}, {val:'🎯', lbl:'Tutorial'}]
+  },
+  {
+    type: 'ad_slot',
+    url: 'https://s.id/chat-dlomy',
+    desc: 'Ingin produkmu tampil di sini? Pasang banner sponsor di CodeQuest dan jangkau ribuan coder aktif!'
+  },
+];
 
 /* ============================
    NO LIFE MODAL
@@ -1172,6 +1347,24 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
 }
 .fb-note a{color:var(--muted2);text-decoration:none;}
 </style>
+
+<script>
+(function(){
+  var canvas=document.createElement('canvas');
+  canvas.width=64;canvas.height=64;
+  var ctx=canvas.getContext('2d');
+  ctx.beginPath();ctx.arc(32,32,32,0,Math.PI*2);ctx.closePath();ctx.clip();
+  var img=new Image();
+  img.onload=function(){
+    ctx.drawImage(img,0,0,64,64);
+    var link=document.querySelector('link[rel="icon"]')||document.createElement('link');
+    link.rel='icon';link.href=canvas.toDataURL('image/png');
+    document.head.appendChild(link);
+  };
+  img.onerror=function(){};
+  img.src='favicon.png';
+})();
+</script>
 </head>
 <body>
 
