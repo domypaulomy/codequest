@@ -2889,9 +2889,9 @@ function openAdModal(pct,fromNolife){
     if(elapsed>=adDuration){
       clearInterval(adTimer);
       document.getElementById('ad-timer').textContent='Selesai!';
-      closeBtn.disabled=false;
-      closeBtn.textContent='Klaim +'+pct+'% HP 🎉';
-      closeBtn.className='btn btn-green btn-full';
+      document.getElementById('ad-modal-btns').innerHTML=
+        `<button class="btn btn-green btn-full" style="margin-bottom:8px;" onclick="closeAdModal(${pct},${fromNolife},false)">Klaim +${pct}% HP 🎉</button>`
+        +(G.hp<100?`<button class="btn btn-ghost btn-full" onclick="closeAdModal(${pct},${fromNolife},true)">&#9654; Tonton Lagi (+${pct}% HP)</button>`:'');
     }
   },1000);
 }
