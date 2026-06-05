@@ -229,28 +229,22 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   position:relative;margin-bottom:24px;
 }
 .logo-ring{
-  width:110px;height:110px;border-radius:50%;
+  width:90px;height:90px;border-radius:50%;
   background:conic-gradient(var(--neon) 0deg,var(--cyan) 120deg,var(--pink) 240deg,var(--neon) 360deg);
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 40px rgba(99,102,241,0.5),0 0 80px rgba(34,211,238,0.2);
-  padding:3px;
-  animation:logo-glow 3s ease-in-out infinite;
-}
-@keyframes logo-glow{
-  0%,100%{box-shadow:0 0 30px rgba(99,102,241,0.5),0 0 60px rgba(34,211,238,0.15);}
-  50%{box-shadow:0 0 50px rgba(99,102,241,0.8),0 0 100px rgba(34,211,238,0.3);}
+  animation:spin-slow 8s linear infinite;
+  box-shadow:0 0 40px rgba(99,102,241,0.5);
 }
 @keyframes spin-slow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .logo-inner{
-  width:100%;height:100%;border-radius:50%;
-  overflow:hidden;
+  width:76px;height:76px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:22px;font-weight:900;
   background:var(--bg);
-}
-.logo-inner img{
-  width:100%;height:100%;
-  object-fit:cover;border-radius:50%;
-  display:block;
+  color:transparent;
+  background-clip:text;-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  /* Use a div inside instead — handled below */
 }
 .home-title{
   font-family:var(--font-display);font-size:28px;font-weight:900;
@@ -311,25 +305,30 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 }
 .cat-card{
   background:var(--card);border:1px solid var(--border);
-  border-radius:var(--r);padding:16px 14px;
+  border-radius:var(--r);padding:16px 14px 14px;
   cursor:pointer;transition:all 0.25s;
-  position:relative;overflow:hidden;
+  position:relative;
+  /* overflow:hidden removed — was clipping icons */
 }
 .cat-card::before{
   content:'';position:absolute;top:-40px;right:-40px;
   width:100px;height:100px;border-radius:50%;
   background:radial-gradient(circle,rgba(99,102,241,0.15),transparent 70%);
-  pointer-events:none;transition:transform 0.3s;
+  pointer-events:none;transition:transform 0.3s;z-index:0;
 }
+.cat-card > *{position:relative;z-index:1;}
 .cat-card:hover::before{transform:scale(1.5);}
 .cat-card:hover{border-color:var(--border2);transform:translateY(-3px);
   box-shadow:0 8px 24px rgba(0,0,0,0.3);}
 .cat-card:active{transform:scale(0.97) translateY(0);}
 .cat-icon{
-  width:44px;height:44px;border-radius:12px;
+  width:44px;height:44px;min-width:44px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:10px;font-size:22px;
+  margin-bottom:10px;
+  overflow:visible;
+  flex-shrink:0;
 }
+.cat-icon span{line-height:1;display:flex;align-items:center;justify-content:center;}
 .cat-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
 .cat-sub{font-size:10px;color:var(--muted);line-height:1.5;}
 .cat-prog-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:8px;overflow:hidden;}
@@ -339,38 +338,39 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   color:var(--neon2);font-family:var(--font-display);
 }
 .cat-lock{
-  position:absolute;top:10px;right:10px;
-  font-size:16px;opacity:0.5;
+  position:absolute;top:10px;right:10px;z-index:2;
+  font-size:16px;opacity:0.6;
 }
 
 /* ============================
    LEVEL MAP SCREEN
    ============================ */
-.level-map-wrap{padding:12px 16px 32px;}
+.level-map-wrap{padding:12px 16px 100px;}
 .level-path{
   display:flex;flex-direction:column;gap:0;
   position:relative;
 }
 .level-path::before{
-  content:'';position:absolute;left:29px;top:20px;bottom:20px;width:2px;
+  content:'';position:absolute;left:32px;top:30px;bottom:30px;width:2px;
   background:linear-gradient(to bottom,var(--neon),var(--cyan));
-  opacity:0.3;
+  opacity:0.25;
 }
 .level-node{
   display:flex;align-items:center;gap:14px;
   padding:10px 0;position:relative;z-index:1;
   cursor:pointer;
 }
-.level-node.locked-node{cursor:default;opacity:0.4;}
+.level-node.locked-node{cursor:default;opacity:0.45;}
 .node-circle{
-  width:58px;height:58px;border-radius:50%;
+  width:64px;height:64px;min-width:64px;border-radius:50%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   flex-shrink:0;position:relative;
   border:2px solid var(--border);
   background:var(--card2);
   transition:all 0.2s;
+  overflow:visible;
 }
-.level-node:not(.locked-node):hover .node-circle{border-color:var(--neon);}
+.level-node:not(.locked-node):hover .node-circle{border-color:var(--neon);box-shadow:0 0 16px rgba(99,102,241,0.3);}
 .node-circle.done-circle{
   background:linear-gradient(135deg,#065F46,#10B981);
   border-color:#10B981;
@@ -384,13 +384,14 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 }
 @keyframes node-pulse{0%,100%{box-shadow:0 0 20px rgba(99,102,241,0.4)}50%{box-shadow:0 0 35px rgba(99,102,241,0.7)}}
 .node-num{
-  font-family:var(--font-display);font-size:14px;font-weight:700;
+  font-family:var(--font-display);font-size:15px;font-weight:700;
   color:var(--text);line-height:1;
 }
-.node-stars{display:flex;gap:1px;margin-top:2px;}
-.star-icon{font-size:8px;}
-.node-info{flex:1;}
-.node-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.node-lock-icon{font-size:20px;line-height:1;}
+.node-stars{display:flex;gap:2px;margin-top:3px;}
+.star-icon{font-size:9px;}
+.node-info{flex:1;min-width:0;}
+.node-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;white-space:normal;}
 .node-meta{font-size:11px;color:var(--muted);}
 .node-badge{
   font-size:10px;padding:3px 10px;border-radius:20px;
@@ -406,55 +407,58 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
    GAME SCREEN
    ============================ */
 .game-hud{
-  padding:52px 16px 12px;
-  background:linear-gradient(to bottom,rgba(5,6,15,0.98),transparent);
-  position:sticky;top:0;z-index:50;
+  padding:52px 16px 10px;
+  background:linear-gradient(to bottom,rgba(5,6,15,0.98) 85%,transparent);
+  position:sticky;top:0;z-index:50;flex-shrink:0;
 }
 .hud-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .hud-back{
-  width:36px;height:36px;border-radius:10px;
+  width:36px;height:36px;min-width:36px;border-radius:10px;
   background:var(--glass2);border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:15px;color:var(--muted2);flex-shrink:0;
+  cursor:pointer;color:var(--muted2);flex-shrink:0;
+  transition:all 0.2s;
 }
+.hud-back svg{width:18px;height:18px;flex-shrink:0;}
+.hud-back:hover{border-color:var(--border2);color:var(--text);}
 .hud-title{
   flex:1;font-size:11px;color:var(--muted2);
   font-family:var(--font-display);letter-spacing:0.3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .hud-xp{
   font-family:var(--font-display);font-size:10px;
   color:var(--gold);background:rgba(245,158,11,0.1);
   border:1px solid rgba(245,158,11,0.2);
-  border-radius:20px;padding:4px 10px;
+  border-radius:20px;padding:4px 10px;white-space:nowrap;flex-shrink:0;
 }
 .hud-hp-row{
   display:flex;align-items:center;gap:8px;
 }
-.hp-icon{font-size:14px;}
+.hp-icon{font-size:14px;flex-shrink:0;}
 .hp-track{
   flex:1;height:8px;background:rgba(255,255,255,0.08);
   border-radius:4px;overflow:hidden;position:relative;
 }
 .hp-fill{
   height:100%;border-radius:4px;
-  background:linear-gradient(90deg,#EF4444,#F97316,#F59E0B);
+  background:linear-gradient(90deg,#10B981,#F59E0B);
   transition:width 0.5s cubic-bezier(.23,1,.32,1);
   position:relative;
   box-shadow:0 0 8px rgba(245,158,11,0.5);
 }
 .hp-pct{
   font-family:var(--font-display);font-size:10px;
-  color:var(--gold);font-weight:700;min-width:32px;text-align:right;
+  color:var(--gold);font-weight:700;min-width:36px;text-align:right;flex-shrink:0;
 }
 .hp-btn{
   padding:4px 10px;font-size:10px;
   background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);
   color:#FCA5A5;border-radius:8px;cursor:pointer;
-  font-family:var(--font-display);white-space:nowrap;
+  font-family:var(--font-display);white-space:nowrap;flex-shrink:0;
   transition:all 0.2s;
 }
 .hp-btn:hover{background:rgba(239,68,68,0.25);}
-
 .q-progress{
   display:flex;gap:4px;align-items:center;margin-top:8px;
 }
@@ -465,9 +469,28 @@ body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 .q-pip.done-pip{background:var(--green);}
 .q-pip.wrong-pip{background:var(--red);}
 .q-pip.curr-pip{background:var(--neon2);}
-.q-num{font-size:10px;color:var(--muted);font-family:var(--font-display);margin-left:4px;}
-
-/* QUESTION CARD */
+.q-num{font-size:10px;color:var(--muted);font-family:var(--font-display);margin-left:4px;flex-shrink:0;}
+/* Game scrollable zone */
+#screen-game{overflow-y:auto;display:none;flex-direction:column;}
+#screen-game.active{display:flex;}
+.game-scroll-zone{flex:1;overflow-y:auto;padding-bottom:8px;}
+/* GAME ACTION BAR */
+.game-action{
+  padding:10px 16px 28px;
+  flex-shrink:0;
+  background:linear-gradient(to top,rgba(5,6,15,1) 70%,transparent);
+}
+.action-feedback{
+  border-radius:12px;padding:10px 14px;margin-bottom:10px;
+  font-size:13px;font-weight:600;display:none;
+  animation:feedIn 0.3s ease;
+  align-items:center;gap:8px;
+}
+.action-feedback.show{display:flex;}
+@keyframes feedIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.feedback-ok{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34D399;}
+.feedback-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#FCA5A5;}
+.feedback-icon{font-size:18px;flex-shrink:0;}
 .q-card-wrap{padding:12px 16px;}
 .q-card{
   background:var(--card);border:1px solid var(--border);
@@ -1003,6 +1026,7 @@ svg.icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;str
   box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(99,102,241,0.15);
 }
 @keyframes modalIn{from{transform:scale(0.92) translateY(16px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+@keyframes sheetUp{from{transform:translateY(100%);opacity:0.5;}to{transform:translateY(0);opacity:1;}}
 /* top accent line */
 .feedback-sheet::before{
   content:'';position:sticky;top:0;display:block;
@@ -1112,6 +1136,60 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
 <!-- BURST EFFECT -->
 <div class="burst" id="burst"><div class="burst-ring"></div></div>
 
+<!-- FEEDBACK FAB -->
+<button id="feedback-fab" onclick="openFeedback()" aria-label="Saran dan Masukan">
+  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+</button>
+
+<!-- FEEDBACK MODAL -->
+<div id="feedback-modal">
+  <div class="feedback-sheet" id="feedback-sheet">
+    <div class="fb-drag"></div>
+    <div class="fb-header">
+      <div class="fb-title">Saran &amp; Masukan</div>
+      <div class="fb-close" onclick="closeFeedback()">&#x2715;</div>
+    </div>
+    <div class="fb-desc">
+      Bantu kami menjadikan CodeQuest lebih baik! Masukan kamu sangat berarti.
+      Dibuat oleh <a href="https://github.com/domypaulomy" target="_blank">@domypaulomy</a>
+    </div>
+    <!-- Form -->
+    <div id="fb-form-wrap">
+      <div class="fb-form" id="fb-form">
+        <div class="fb-field">
+          <label class="fb-label">NAMA LENGKAP</label>
+          <input class="fb-input" id="fb-name" type="text" placeholder="Masukkan nama kamu..." autocomplete="name"/>
+          <div class="fb-error" id="fb-name-err">Nama tidak boleh kosong</div>
+        </div>
+        <div class="fb-field">
+          <label class="fb-label">EMAIL</label>
+          <input class="fb-input" id="fb-email" type="email" placeholder="email@contoh.com" autocomplete="email"/>
+          <div class="fb-error" id="fb-email-err">Email tidak valid</div>
+        </div>
+        <div class="fb-field">
+          <label class="fb-label">MASUKAN / SARAN</label>
+          <textarea class="fb-input" id="fb-msg" placeholder="Ceritakan pengalamanmu, bug yang ditemukan, atau fitur yang diinginkan..."></textarea>
+          <div class="fb-error" id="fb-msg-err">Pesan tidak boleh kosong</div>
+        </div>
+        <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">
+          <span class="submit-text">Kirim Masukan</span>
+          <div class="submit-spinner"></div>
+        </button>
+      </div>
+    </div>
+    <!-- Success State -->
+    <div class="fb-success" id="fb-success">
+      <div class="fb-success-icon">&#10003;</div>
+      <div class="fb-success-title">Terima Kasih!</div>
+      <div class="fb-success-msg">Masukan kamu sudah kami terima. Kami akan terus memperbaiki CodeQuest berkat bantuan kamu!</div>
+      <button class="btn btn-primary" style="margin-top:8px;" onclick="closeFeedback()">Tutup</button>
+    </div>
+    <div class="fb-note">
+      Pesan dikirim via <a href="https://web3forms.com" target="_blank">Web3Forms</a> &bull; Data aman &amp; tidak disalahgunakan
+    </div>
+  </div>
+</div>
+
 <!-- AD MODAL -->
 <div class="modal-overlay" id="ad-modal">
   <div class="modal-box">
@@ -1146,43 +1224,13 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
   </div>
 </div>
 
-
-<!-- ======================== FEEDBACK FAB ======================== -->
-<button id="feedback-fab" onclick="openFeedback()" title="Saran &amp; Masukan">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-</button>
-
-<!-- ======================== FEEDBACK MODAL ======================== -->
-<div id="feedback-modal" onclick="handleFbOverlay(event)">
-  <div class="feedback-sheet" id="feedback-sheet">
-    <div class="fb-handle"></div>
-    <div class="fb-header">
-      <div>
-        <div class="fb-title">💬 Saran &amp; Masukan</div>
-        <div class="fb-subtitle">Bantu kami tingkatkan CodeQuest untuk kamu!</div>
-      </div>
-      <div class="fb-close" onclick="closeFeedback()">✕</div>
-    </div>
-    <div class="fb-body" id="fb-form-body">
-      <div class="fb-field"><label class="fb-label" for="fb-name">Nama</label><input class="fb-input" id="fb-name" type="text" placeholder="Nama lengkap kamu..." autocomplete="name"></div>
-      <div class="fb-field"><label class="fb-label" for="fb-email">Email</label><input class="fb-input" id="fb-email" type="email" placeholder="email@kamu.com" autocomplete="email"></div>
-      <div class="fb-field"><label class="fb-label" for="fb-msg">Saran / Masukan</label><textarea class="fb-input" id="fb-msg" placeholder="Tulis saran, bug, atau masukan kamu di sini..."></textarea></div>
-      <button class="fb-submit" id="fb-submit-btn" onclick="submitFeedback()">Kirim Masukan</button>
-    </div>
-    <div class="fb-success" id="fb-success">
-      <div class="fb-success-icon">🎉</div>
-      <div class="fb-success-title">Terima Kasih!</div>
-      <div class="fb-success-sub">Masukan kamu sudah kami terima. Kami akan terus meningkatkan CodeQuest!</div>
-    </div>
-  </div>
-</div>
 <!-- ======================== HOME ======================== -->
 <div class="screen active" id="screen-home">
   <div class="home-hero fade-in">
     <div class="home-logo">
       <div class="logo-ring">
-        <div class="logo-inner">
-          <img src="logo.png" alt="CodeQuest Logo">
+        <div class="logo-inner" style="background:var(--bg);-webkit-text-fill-color:initial;">
+          <img src="logo.png" alt="CodeQuest" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">
         </div>
       </div>
     </div>
@@ -1239,7 +1287,7 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
     <div class="nav-xp" id="cats-xp">0 XP</div>
   </div>
   <div style="padding:8px 16px 12px;">
-    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Pilih kategori untuk mulai belajar. Selesaikan level minimal 2 bintang untuk membuka yang berikutnya.</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Pilih kategori yang ingin dipelajari. Di dalam setiap kategori, selesaikan level secara bertahap — minimal 2 bintang untuk membuka level berikutnya.</div>
   </div>
   <div class="cat-grid stagger" id="cat-grid"></div>
 </div>
@@ -1279,8 +1327,10 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
     </div>
     <div class="q-progress" id="q-progress"></div>
   </div>
-  <div class="q-card-wrap" id="q-card-wrap"></div>
-  <div class="opts-grid" id="opts-grid"></div>
+  <div class="game-scroll-zone">
+    <div class="q-card-wrap" id="q-card-wrap"></div>
+    <div class="opts-grid" id="opts-grid"></div>
+  </div>
   <div class="game-action">
     <div class="action-feedback" id="action-feedback"></div>
     <button class="btn btn-primary btn-full btn-lg" id="game-action-btn" disabled onclick="handleGameAction()">Pilih Jawaban</button>
@@ -1987,12 +2037,14 @@ load();
    SCREEN NAVIGATION
    ============================================================ */
 function goScreen(id, fromId){
+  Audio.tap();
   const cur=document.querySelector('.screen.active');
   if(cur) cur.classList.remove('active');
   const next=document.getElementById(id);
   next.classList.add('active','screen-enter');
   setTimeout(()=>next.classList.remove('screen-enter'),400);
   G.prevScreen=fromId||cur?.id||'screen-home';
+  if(id==='screen-upgrade')updateUpgradeScreen();
   updateHealthBar();
 }
 function goBack(){goScreen(G.prevScreen||'screen-home');}
@@ -2003,7 +2055,6 @@ function goCats(){buildCats();goScreen('screen-cats','screen-home');}
    HEALTH BAR
    ============================================================ */
 function updateHealthBar(){
-  const inGame=document.getElementById('screen-game').classList.contains('active');
   document.getElementById('health-bar-wrap').style.display='block';
   document.getElementById('health-label').style.display='block';
   setHpUI(G.hp);
@@ -2071,8 +2122,150 @@ function checkStreakBonus(){
 }
 
 /* ============================================================
-   TOAST
+   AUDIO ENGINE — Web Audio API (no external files needed)
    ============================================================ */
+const Audio={
+  ctx:null,
+  _init(){
+    if(this.ctx)return;
+    try{this.ctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  },
+  _tone(freq,type,vol,dur,delay=0){
+    if(!G.settings.sound)return;
+    this._init();if(!this.ctx)return;
+    try{
+      const o=this.ctx.createOscillator();
+      const g=this.ctx.createGain();
+      o.connect(g);g.connect(this.ctx.destination);
+      o.type=type;o.frequency.setValueAtTime(freq,this.ctx.currentTime+delay);
+      g.gain.setValueAtTime(0,this.ctx.currentTime+delay);
+      g.gain.linearRampToValueAtTime(vol,this.ctx.currentTime+delay+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+delay+dur);
+      o.start(this.ctx.currentTime+delay);
+      o.stop(this.ctx.currentTime+delay+dur+0.05);
+    }catch(e){}
+  },
+  _noise(vol,dur,delay=0){
+    if(!G.settings.sound)return;
+    this._init();if(!this.ctx)return;
+    try{
+      const buf=this.ctx.createBuffer(1,this.ctx.sampleRate*dur,this.ctx.sampleRate);
+      const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+      const src=this.ctx.createBufferSource();src.buffer=buf;
+      const g=this.ctx.createGain();
+      const f=this.ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=800;
+      src.connect(f);f.connect(g);g.connect(this.ctx.destination);
+      g.gain.setValueAtTime(vol,this.ctx.currentTime+delay);
+      g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+delay+dur);
+      src.start(this.ctx.currentTime+delay);
+      src.stop(this.ctx.currentTime+delay+dur+0.05);
+    }catch(e){}
+  },
+  correct(){
+    /* Rising chime ding */
+    this._tone(523.25,'sine',0.18,0.12);
+    this._tone(659.25,'sine',0.15,0.10,0.10);
+    this._tone(783.99,'sine',0.18,0.18,0.19);
+    this._tone(1046.5,'sine',0.12,0.22,0.30);
+  },
+  wrong(){
+    /* Thud drop */
+    this._tone(220,'sawtooth',0.14,0.08);
+    this._tone(185,'sawtooth',0.12,0.12,0.06);
+    this._tone(150,'square',0.08,0.18,0.14);
+    this._noise(0.04,0.12,0.02);
+  },
+  select(){
+    /* Soft click */
+    this._tone(880,'sine',0.06,0.06);
+    this._tone(1100,'sine',0.04,0.05,0.04);
+  },
+  levelUp(){
+    /* Fanfare */
+    const notes=[523,659,784,1047,1319];
+    notes.forEach((f,i)=>{this._tone(f,'sine',0.15,0.18,i*0.10);});
+  },
+  star3(){
+    /* Grand finish */
+    const seq=[523,659,784,988,1319,1568];
+    seq.forEach((f,i)=>{
+      this._tone(f,'sine',0.13,0.22,i*0.08);
+      this._tone(f*1.5,'sine',0.05,0.20,i*0.08+0.04);
+    });
+  },
+  levelPass(){
+    this._tone(659,'sine',0.14,0.15);
+    this._tone(784,'sine',0.14,0.15,0.12);
+    this._tone(988,'sine',0.16,0.25,0.24);
+  },
+  tap(){this._tone(1200,'sine',0.04,0.04);},
+  back(){this._tone(440,'sine',0.05,0.06);this._tone(350,'sine',0.04,0.06,0.04);},
+  /* ---- Backsound (generative ambient loop) ---- */
+  _bgRunning:false,
+  _bgGain:null,
+  _bgNodes:[],
+  startBg(){
+    if(!G.settings.sound||this._bgRunning)return;
+    this._init();if(!this.ctx)return;
+    this._bgRunning=true;
+    /* Master gain for bg */
+    const master=this.ctx.createGain();
+    master.gain.setValueAtTime(0.04,this.ctx.currentTime);
+    master.connect(this.ctx.destination);
+    this._bgGain=master;
+    /* Low drone */
+    const drone=this.ctx.createOscillator();
+    drone.type='sine';drone.frequency.value=55;
+    const droneG=this.ctx.createGain();droneG.gain.value=0.5;
+    drone.connect(droneG);droneG.connect(master);drone.start();
+    this._bgNodes.push(drone);
+    /* Harmonic pad */
+    [110,165,220,275].forEach((f,i)=>{
+      const o=this.ctx.createOscillator();
+      o.type='sine';o.frequency.value=f;
+      const g=this.ctx.createGain();g.gain.value=0.25-i*0.05;
+      /* Slow LFO on each */
+      const lfo=this.ctx.createOscillator();
+      lfo.frequency.value=0.1+i*0.07;
+      const lfoG=this.ctx.createGain();lfoG.gain.value=0.04;
+      lfo.connect(lfoG);lfoG.connect(g.gain);
+      lfo.start();o.connect(g);g.connect(master);o.start();
+      this._bgNodes.push(o,lfo);
+    });
+    /* Reverb-like delay */
+    const delay=this.ctx.createDelay(2);delay.delayTime.value=0.75;
+    const fb=this.ctx.createGain();fb.gain.value=0.3;
+    delay.connect(fb);fb.connect(delay);
+    master.connect(delay);delay.connect(this.ctx.destination);
+    /* Slowly fade in */
+    master.gain.linearRampToValueAtTime(0.04,this.ctx.currentTime+3);
+  },
+  stopBg(){
+    if(!this._bgRunning)return;
+    this._bgRunning=false;
+    if(this._bgGain){
+      this._bgGain.gain.linearRampToValueAtTime(0,this.ctx.currentTime+1.5);
+      setTimeout(()=>{
+        this._bgNodes.forEach(n=>{try{n.stop();}catch(e){}});
+        this._bgNodes=[];this._bgGain=null;
+      },1600);
+    }
+  },
+  resumeCtx(){
+    if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume();
+  }
+};
+
+/* Start backsound on first user interaction */
+let _audioStarted=false;
+function ensureAudio(){
+  if(_audioStarted)return;
+  _audioStarted=true;
+  Audio.resumeCtx();
+  if(G.settings.sound)Audio.startBg();
+}
+document.addEventListener('click',ensureAudio,{once:true});
+document.addEventListener('touchstart',ensureAudio,{once:true});
 function showToast(msg,type){
   /* Remove existing toasts */
   document.querySelectorAll('.cq-toast').forEach(t=>t.remove());
@@ -2143,15 +2336,17 @@ function buildCats(){
   CATEGORIES.forEach((cat,ci)=>{
     const prog=G.progress[cat.id]||{levelIdx:0,stars:[]};
     const done=prog.stars.filter(s=>s>=2).length;
+    const allDone=done===cat.levels.length&&cat.levels.length>0;
     const div=document.createElement('div');
     div.className='cat-card slide-up';
     div.style.animationDelay=(ci*0.06)+'s';
-    div.innerHTML=`<div class="cat-icon" style="background:${cat.iconBg};border:1px solid ${cat.color}33;">${renderCatIcon(cat)}</div>
+    div.innerHTML=`
+      <div class="cat-icon" style="background:${cat.iconBg};border:1px solid ${cat.color}33;">${renderCatIcon(cat)}</div>
       <div class="cat-name">${cat.name}</div>
       <div class="cat-sub">${cat.sub}</div>
       <div class="cat-prog-bar"><div class="cat-prog-fill" style="width:${cat.levels.length>0?Math.round(done/cat.levels.length*100):0}%;background:${cat.color};opacity:0.8;"></div></div>
       <div class="cat-levels">${done}/${cat.levels.length} level selesai</div>
-      ${done===cat.levels.length&&cat.levels.length>0?'<div style="position:absolute;top:8px;right:8px;font-size:13px;color:#10B981;font-weight:700;">&#10003;</div>':''}
+      ${allDone?'<div style="position:absolute;top:8px;right:8px;font-size:13px;color:#10B981;font-weight:700;">&#10003;</div>':''}
     `;
     div.onclick=()=>goLevels(cat.id);
     grid.appendChild(div);
@@ -2162,6 +2357,7 @@ function renderCatIcon(cat){
   if(cat.id==='cpp') return '<span style="font-family:var(--font-display);font-size:16px;font-weight:700;color:'+cat.color+';">C++</span>';
   return '<span style="font-size:22px;">'+cat.icon+'</span>';
 }
+
 /* ============================================================
    LEVELS
    ============================================================ */
@@ -2188,18 +2384,20 @@ function goLevels(catId){
     const diffLabel={easy:'Mudah',medium:'Menengah',hard:'Sulit',expert:'Expert'};
     node.innerHTML=`
       <div class="node-circle ${done?'done-circle':isActive?'active-circle':''}">
-        <div class="node-num" style="font-size:${locked?'16px':'14px'}">${locked?'&#128274;':(i+1)}</div>
-        <div class="node-stars">${starHtml}</div>
+        ${locked
+          ? '<div class="node-lock-icon">&#128274;</div>'
+          : `<div class="node-num">${i+1}</div><div class="node-stars">${starHtml}</div>`
+        }
       </div>
       <div class="node-info">
         <div class="node-title">${lv.title}</div>
-        <div class="node-meta" style="display:flex;align-items:center;gap:6px;">
+        <div class="node-meta" style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
           <span>${lv.questions.length} soal</span>
           <span style="color:var(--gold);font-family:var(--font-display);font-size:10px;font-weight:700;">+${lv.xp} XP</span>
         </div>
-        <span class="node-badge ${diffBadge[lv.diff]||'badge-easy'}" style="margin-top:5px;display:inline-block;">${diffLabel[lv.diff]||'Mudah'}</span>
+        <span class="node-badge ${diffBadge[lv.diff]||'badge-easy'}">${diffLabel[lv.diff]||'Mudah'}</span>
       </div>
-      ${done?'<div style="font-size:20px;color:#10B981;padding-right:4px;filter:drop-shadow(0 0 6px rgba(16,185,129,0.5));">&#10003;</div>':''}
+      ${done?'<div style="font-size:22px;color:#10B981;padding-right:4px;filter:drop-shadow(0 0 6px rgba(16,185,129,0.5));">&#10003;</div>':''}
     `;
     if(!locked)node.onclick=()=>startGame(catId,i);
     path.appendChild(node);
@@ -2286,7 +2484,7 @@ function renderQuestion(){
     opts.appendChild(btn);
   });
   const actionBtn=document.getElementById('game-action-btn');
-  actionBtn.textContent='Pilih Jawaban';
+  actionBtn.innerHTML='Pilih Jawaban';
   actionBtn.disabled=true;
   const fb=document.getElementById('action-feedback');
   fb.className='action-feedback';fb.innerHTML='';
@@ -2307,10 +2505,11 @@ function formatCode(code){
 
 function selectOpt(i,btn){
   if(G.answered)return;
+  Audio.select();
   G.selected=i;
   document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
-  document.getElementById('game-action-btn').textContent='Konfirmasi Jawaban';
+  document.getElementById('game-action-btn').innerHTML='Konfirmasi Jawaban';
   document.getElementById('game-action-btn').disabled=false;
 }
 
@@ -2335,6 +2534,7 @@ function handleGameAction(){
   if(!correct){
     opts[G.selected].classList.add('wrong');
     opts[G.selected].querySelector('.opt-tick').textContent='✗';
+    Audio.wrong();
     loseHp();
     G.wrong++;
     G.streak=0;
@@ -2344,6 +2544,7 @@ function handleGameAction(){
     gameScreen.classList.remove('flash-red','flash-green');void gameScreen.offsetWidth;gameScreen.classList.add('flash-red');
   } else {
     G.score++;
+    Audio.correct();
     checkStreakBonus();
     gameScreen.classList.remove('flash-red','flash-green');void gameScreen.offsetWidth;gameScreen.classList.add('flash-green');
   }
@@ -2361,9 +2562,9 @@ function handleGameAction(){
   }
   const actionBtn=document.getElementById('game-action-btn');
   if(G.qIdx<G.questions.length-1){
-    actionBtn.textContent='Soal Berikutnya &#8594;';
+    actionBtn.innerHTML='Soal Berikutnya &rarr;';
   } else {
-    actionBtn.textContent='Lihat Hasil &#8594;';
+    actionBtn.innerHTML='Lihat Hasil &rarr;';
   }
   actionBtn.disabled=false;
   document.getElementById('game-hud-xp').textContent=G.xp+' XP';
@@ -2401,9 +2602,13 @@ function endGame(){
     const prevLv=getLevel(prevXp);
     const newLv=getLevel(G.xp);
     if(newLv.lbl!==prevLv.lbl){
-      setTimeout(()=>showToast('Level naik! ' + newLv.lbl),800);
+      setTimeout(()=>{showToast('Level naik! '+newLv.lbl);Audio.levelUp();},800);
     }
   }
+  /* Audio feedback */
+  if(stars===3)setTimeout(()=>Audio.star3(),200);
+  else if(passed)setTimeout(()=>Audio.levelPass(),200);
+  else setTimeout(()=>Audio.wrong(),100);
   save();
   /* Build result screen */
   const starsEl=document.getElementById('result-stars');
@@ -2428,7 +2633,7 @@ function endGame(){
   if(passed&&G.currentLevel<cat.levels.length-1){
     const nb=document.createElement('button');
     nb.className='btn btn-primary btn-full btn-lg';
-    nb.innerHTML='Level Berikutnya &#8594;';
+    nb.innerHTML='Level Berikutnya &rarr;';
     nb.onclick=()=>startGame(G.currentCat,G.currentLevel+1);
     btns.appendChild(nb);
   }
@@ -2441,7 +2646,7 @@ function endGame(){
   }
   const mb=document.createElement('button');
   mb.className='btn btn-ghost btn-full';
-  mb.innerHTML='&#8592; Kembali ke Peta';
+  mb.innerHTML='&larr; Kembali ke Peta';
   mb.onclick=()=>goLevels(G.currentCat);
   btns.appendChild(mb);
   /* Burst effect for 3 stars */
@@ -2534,6 +2739,10 @@ function toggleSetting(key){
   G.settings[key]=!G.settings[key];
   const el=document.getElementById('toggle-'+key);
   if(G.settings[key])el.classList.add('on');else el.classList.remove('on');
+  if(key==='sound'){
+    if(G.settings.sound){Audio.startBg();}
+    else{Audio.stopBg();}
+  }
   save();
 }
 function resetProgress(){
@@ -2583,85 +2792,111 @@ function buildProfile(){
   });
 }
 
-/* Override goScreen to hook profile build */
-const _origGoScreen=goScreen;
-window.showProfile=function(){buildProfile();goScreen('screen-profile','screen-home');};
-window.goScreen=function(id,from){
-  if(id==='screen-upgrade')updateUpgradeScreen();
-  _origGoScreen(id,from);
-};
+/* showProfile hooks */
+window.showProfile=function(){Audio.tap();buildProfile();goScreen('screen-profile','screen-home');};
+
+/* ============================================================
+   FEEDBACK MODAL
+   ============================================================ */
+function openFeedback(){
+  Audio.tap();
+  document.getElementById('feedback-modal').classList.add('show');
+  /* Reset form */
+  document.getElementById('fb-name').value='';
+  document.getElementById('fb-email').value='';
+  document.getElementById('fb-msg').value='';
+  ['fb-name','fb-email','fb-msg'].forEach(id=>{
+    document.getElementById(id).classList.remove('error');
+  });
+  ['fb-name-err','fb-email-err','fb-msg-err'].forEach(id=>{
+    document.getElementById(id).classList.remove('show');
+  });
+  document.getElementById('fb-form-wrap').style.display='';
+  document.getElementById('fb-success').classList.remove('show');
+  const btn=document.getElementById('fb-submit-btn');
+  btn.classList.remove('loading');btn.disabled=false;
+}
+function closeFeedback(){
+  Audio.back();
+  document.getElementById('feedback-modal').classList.remove('show');
+}
+/* Close on backdrop click */
+document.getElementById('feedback-modal').addEventListener('click',function(e){
+  if(e.target===this)closeFeedback();
+});
+/* Swipe down to close */
+(function(){
+  let startY=0;
+  const sheet=document.getElementById('feedback-sheet');
+  sheet.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;},{passive:true});
+  sheet.addEventListener('touchend',e=>{
+    if(e.changedTouches[0].clientY-startY>80)closeFeedback();
+  },{passive:true});
+})();
+
+async function submitFeedback(){
+  const name=document.getElementById('fb-name').value.trim();
+  const email=document.getElementById('fb-email').value.trim();
+  const msg=document.getElementById('fb-msg').value.trim();
+  let valid=true;
+  /* Validate */
+  if(!name){
+    document.getElementById('fb-name').classList.add('error');
+    document.getElementById('fb-name-err').classList.add('show');
+    valid=false;
+  } else {
+    document.getElementById('fb-name').classList.remove('error');
+    document.getElementById('fb-name-err').classList.remove('show');
+  }
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    document.getElementById('fb-email').classList.add('error');
+    document.getElementById('fb-email-err').classList.add('show');
+    valid=false;
+  } else {
+    document.getElementById('fb-email').classList.remove('error');
+    document.getElementById('fb-email-err').classList.remove('show');
+  }
+  if(!msg){
+    document.getElementById('fb-msg').classList.add('error');
+    document.getElementById('fb-msg-err').classList.add('show');
+    valid=false;
+  } else {
+    document.getElementById('fb-msg').classList.remove('error');
+    document.getElementById('fb-msg-err').classList.remove('show');
+  }
+  if(!valid)return;
+  /* Submit */
+  const btn=document.getElementById('fb-submit-btn');
+  btn.classList.add('loading');btn.disabled=true;
+  try{
+    const res=await fetch('https://api.web3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        access_key:'YOUR_W3FORMS_ACCESS_KEY', /* <-- Ganti dengan access key kamu */
+        subject:'[CodeQuest] Masukan dari '+name,
+        name,email,message:msg,
+        botcheck:'',
+      })
+    });
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('fb-form-wrap').style.display='none';
+      document.getElementById('fb-success').classList.add('show');
+      Audio.levelPass();
+    } else {
+      throw new Error(data.message||'Gagal mengirim');
+    }
+  } catch(err){
+    btn.classList.remove('loading');btn.disabled=false;
+    showToast('Gagal mengirim: '+err.message,'error');
+  }
+}
 
 /* ============================================================
    INIT
    ============================================================ */
 updateHealthBar();
-
-/* ============================================================
-   FEEDBACK / SARAN & MASUKAN
-   ============================================================ */
-function openFeedback(){
-  const modal=document.getElementById('feedback-modal');
-  modal.classList.add('show');
-  document.body.style.overflow='hidden';
-  /* Reset form state */
-  document.getElementById('fb-form-body').style.display='block';
-  document.getElementById('fb-success').classList.remove('show');
-  const btn=document.getElementById('fb-submit-btn');
-  btn.disabled=false;
-  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Masukan';
-}
-function closeFeedback(){
-  const modal=document.getElementById('feedback-modal');
-  modal.classList.remove('show');
-  document.body.style.overflow='';
-}
-function handleFbOverlay(e){
-  if(e.target===document.getElementById('feedback-modal'))closeFeedback();
-}
-async function submitFeedback(){
-  const name=document.getElementById('fb-name').value.trim();
-  const email=document.getElementById('fb-email').value.trim();
-  const msg=document.getElementById('fb-msg').value.trim();
-  if(!name){showToast('Nama tidak boleh kosong','warning');return;}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Email tidak valid','warning');return;}
-  if(!msg){showToast('Masukan tidak boleh kosong','warning');return;}
-  const btn=document.getElementById('fb-submit-btn');
-  btn.disabled=true;
-  btn.innerHTML='<div class="fb-spinner"></div> Mengirim...';
-  try{
-    const res=await fetch('https://api.w3forms.com/submit',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        access_key:'14dafb37-07c1-4903-bd8b-5e99f24b4d9d',
-        subject:'[CodeQuest] Saran & Masukan dari '+name,
-        from_name:'CodeQuest — '+name,
-        name:name,
-        email:email,
-        message:msg,
-        redirect:'https://domypaulomy.github.io/codequest'
-      })
-    });
-    const data=await res.json();
-    if(data.success){
-      document.getElementById('fb-form-body').style.display='none';
-      document.getElementById('fb-success').classList.add('show');
-      /* Clear fields */
-      document.getElementById('fb-name').value='';
-      document.getElementById('fb-email').value='';
-      document.getElementById('fb-msg').value='';
-      setTimeout(closeFeedback,3000);
-    } else {
-      showToast('Gagal mengirim. Coba lagi.','warning');
-      btn.disabled=false;
-      btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Masukan';
-    }
-  } catch(err){
-    showToast('Koneksi bermasalah. Coba lagi.','warning');
-    btn.disabled=false;
-    btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Masukan';
-  }
-}
 </script>
 </body>
 </html>
