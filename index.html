@@ -39,7 +39,20 @@ body{font-family:var(--font-body);color:var(--text);position:relative;}
 
 /* CANVAS BG */
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-/* GRAIN OVERLAY */
+/* ============================================================
+   AD CONTAINERS
+   ============================================================ */
+.ad-banner-wrap{
+  display:flex;align-items:center;justify-content:center;
+  margin:16px auto 8px;
+  min-height:50px;width:320px;max-width:100%;
+  overflow:hidden;border-radius:8px;
+}
+.ad-native-wrap{
+  display:flex;align-items:center;justify-content:center;
+  margin:8px 16px 12px;
+  min-height:60px;border-radius:12px;overflow:hidden;
+}
 body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   opacity:0.35;mix-blend-mode:overlay;}
@@ -1270,10 +1283,23 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
         Pengaturan
       </button>
     </div>
+
+    <!-- ADSTERRA BANNER 320x50 -->
+    <div class="ad-banner-wrap">
+      <script>
+        atOptions = {
+          'key' : 'c63e6491908fb4136a1d3225444775aa',
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script src="https://www.highperformanceformat.com/c63e6491908fb4136a1d3225444775aa/invoke.js"></script>
+    </div>
+
   </div>
 </div>
-
-<!-- ======================== CATEGORIES ======================== -->
 <div class="screen" id="screen-cats">
   <div class="top-nav">
     <div class="nav-back" onclick="goHome()">
@@ -1284,6 +1310,11 @@ textarea.fb-input{resize:none;min-height:110px;line-height:1.6;}
   </div>
   <div style="padding:8px 16px 12px;">
     <div style="font-size:12px;color:var(--muted);line-height:1.6;">Pilih kategori yang ingin dipelajari. Di dalam setiap kategori, selesaikan level secara bertahap — minimal 2 bintang untuk membuka level berikutnya.</div>
+  </div>
+  <!-- ADSTERRA NATIVE BANNER -->
+  <div class="ad-native-wrap">
+    <script async="async" data-cfasync="false" src="https://pl29642416.effectivecpmnetwork.com/f88eb5d285a87ac852daf023dfef78a4/invoke.js"></script>
+    <div id="container-f88eb5d285a87ac852daf023dfef78a4"></div>
   </div>
   <div class="cat-grid stagger" id="cat-grid"></div>
 </div>
@@ -2894,5 +2925,9 @@ async function submitFeedback(){
    ============================================================ */
 updateHealthBar();
 </script>
+<!-- ADSTERRA POPUNDER -->
+<script src="https://pl29642415.effectivecpmnetwork.com/d1/3a/8d/d13a8dfb7094bfc5ec14e25eaaf21d38.js"></script>
+<!-- ADSTERRA SOCIAL BAR -->
+<script src="https://pl29642417.effectivecpmnetwork.com/75/59/45/7559453b9311bf416994b84783af3ed6.js"></script>
 </body>
 </html>
